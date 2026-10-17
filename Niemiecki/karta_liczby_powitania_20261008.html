@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Niemiecki — liczby 0–20 i powitania</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#fdf0f5;color:#222;
+  padding:16px 14px 50px;max-width:640px;margin:0 auto;font-size:19px;line-height:1.5}
+h1{font-size:24px;color:#ad1457;margin-bottom:2px}
+.subject-tag{display:inline-block;background:#fce4ec;color:#ad1457;font-size:13px;
+  padding:3px 10px;border-radius:10px;margin-bottom:16px}
+.ekran{display:none}.ekran.aktywny{display:block}
+.btn{display:block;width:100%;min-height:76px;font-size:21px;font-weight:700;border:none;
+  border-radius:16px;margin-bottom:14px;cursor:pointer;font-family:inherit;padding:10px 16px}
+.glowny{background:#ad1457;color:#fff}
+.drugi{background:#fff;color:#ad1457;border:3px solid #f8bbd0}
+.opcja{background:#fff;color:#222;border:3px solid #f8bbd0;text-align:left}
+.opcja.dobrze{background:#e8f5e9;border-color:#2e7d32;color:#1b5e20}
+.opcja.zle{background:#ffebee;border-color:#c62828;color:#b71c1c}
+.cw{text-align:left}
+.cw small{display:block;font-size:15px;font-weight:600;opacity:.75}
+.karta{background:#fff;border-radius:18px;padding:22px 20px;margin-bottom:16px;
+  box-shadow:0 1px 4px rgba(0,0,0,.08);border-left:8px solid #d81b60;min-height:220px}
+.slowo{font-size:28px;font-weight:800;color:#ad1457;margin-bottom:12px;line-height:1.2}
+.tekst{font-size:21px;white-space:pre-line}
+.licznik{font-size:15px;color:#d81b60;font-weight:700;margin-bottom:10px}
+.polecenie{font-size:15px;color:#d81b60;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px}
+.polecenie-de{font-size:15px;color:#888;font-style:italic;margin-bottom:10px}
+.pytanie{font-size:22px;font-weight:600;margin-bottom:18px}
+.duze{font-size:44px;font-weight:800;color:#ad1457;text-align:center;margin:4px 0 18px}
+.okienka{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 18px}
+.okno{width:44px;height:54px;border:3px solid #ad1457;border-radius:8px;background:#fff;
+  font-size:28px;font-weight:800;display:flex;align-items:center;justify-content:center;color:#ad1457}
+.okno.stale{border-color:transparent;background:#fce4ec;color:#555}
+.okienka.dobrze .okno{border-color:#2e7d32;color:#1b5e20;background:#e8f5e9}
+.okienka.zle .okno{border-color:#c62828;color:#b71c1c;background:#ffebee}
+.kafle{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kafel{min-height:76px;font-size:32px;font-weight:800;border:3px solid #f8bbd0;border-radius:14px;
+  background:#fff;color:#ad1457;cursor:pointer;font-family:inherit}
+.kafel:disabled{opacity:.25}
+.info{font-size:19px;font-weight:700;margin:4px 0 16px;min-height:28px}
+.info.dobrze{color:#2e7d32}.info.zle{color:#c62828}
+.wynik{font-size:46px;font-weight:800;color:#ad1457;text-align:center;margin:10px 0}
+.pod{text-align:center;font-size:19px;margin-bottom:22px}
+.glos{background:none;border:2px solid #f8bbd0;border-radius:12px;font-size:17px;padding:8px 14px;
+  color:#ad1457;font-weight:700;margin:14px 8px 0 0;cursor:pointer;min-height:48px}
+</style>
+</head>
+<body>
+<h1>Liczby 0–20 i powitania</h1>
+<div class="subject-tag">Niemiecki · karta pracy</div>
+
+<!-- START -->
+<div class="ekran aktywny" id="start">
+  <div class="karta" style="min-height:0">
+    <div class="tekst">Karta pracy z niemieckiego: powitania i pożegnania oraz liczby od 0 do 20.
+Najpierw <b>ucz się</b> — 12 krótkich kart, każdą możesz usłyszeć po niemiecku.
+Potem <b>sprawdź się</b> — te same ćwiczenia co na kartce, tylko stukasz.</div>
+  </div>
+  <div class="karta" style="min-height:0;margin-top:14px">
+    <div class="tekst"><b>🎧 Posłuchaj powtórki</b> — wymowa po niemiecku. W przerwach powtarzaj na głos.</div>
+    <audio controls preload="none" src="niem_podcast_liczby_powitania.mp3" style="width:100%;margin-top:10px"></audio>
+  </div>
+  <button class="btn glowny" onclick="startNauki()">📖 Ucz się</button>
+  <button class="btn drugi" onclick="pokaz('wybor')">✏️ Sprawdź się</button>
+</div>
+
+<!-- WYBOR CWICZENIA -->
+<div class="ekran" id="wybor">
+  <div class="polecenie" style="margin-bottom:12px">Które ćwiczenie?</div>
+  <div id="w-lista"></div>
+  <button class="btn drugi" onclick="pokaz('start')">‹ Wróć</button>
+</div>
+
+<!-- NAUKA -->
+<div class="ekran" id="nauka">
+  <div class="licznik" id="n-licznik"></div>
+  <div class="karta">
+    <div class="slowo" id="n-slowo"></div>
+    <div class="tekst" id="n-tekst"></div>
+    <button class="glos" id="n-glos-de" onclick="czytajDE()">🇩🇪 Posłuchaj po niemiecku</button>
+  </div>
+  <button class="btn glowny" id="n-dalej" onclick="dalejNauka()">Dalej ›</button>
+  <button class="btn drugi" onclick="wsteczNauka()">‹ Wstecz</button>
+</div>
+
+<!-- SPRAWDZANIE -->
+<div class="ekran" id="test">
+  <div class="licznik" id="t-licznik"></div>
+  <div class="polecenie" id="t-polecenie"></div>
+  <div class="polecenie-de" id="t-polecenie-de"></div>
+  <div class="pytanie" id="t-pytanie"></div>
+  <div id="t-okienka" class="okienka"></div>
+  <div id="t-odp"></div>
+  <div class="info" id="t-info"></div>
+  <button class="btn glowny" id="t-dalej" style="display:none" onclick="dalejTest()">Dalej ›</button>
+</div>
+
+<!-- WYNIK -->
+<div class="ekran" id="koniec">
+  <div class="wynik" id="w-liczba"></div>
+  <div class="pod" id="w-slowo"></div>
+  <button class="btn glowny" id="w-nastepne" onclick="nastepneCw()">Następne ćwiczenie ›</button>
+  <button class="btn drugi" onclick="startSprawdzania(cwTeraz)">↻ To samo jeszcze raz</button>
+  <button class="btn drugi" onclick="pokaz('wybor')">Wybierz inne ćwiczenie</button>
+  <button class="btn drugi" onclick="startNauki()">📖 Wróć do nauki</button>
+</div>
+
+<script>
+var RESULTS_URL="https://julia-hub-161045418771.europe-west1.run.app/results",RESULTS_TOKEN="XW09DH2_fs8SdHh7B9pGMoCZuDVwAHSQ";
+function postResult(score,total,nazwa){
+  if(!RESULTS_URL||!RESULTS_TOKEN)return;
+  try{fetch(RESULTS_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({token:RESULTS_TOKEN,subject:'Niemiecki',title:'Liczby 0–20 i powitania — '+nazwa,
+      score:score,total:total})});}catch(e){}
+}
+
+var KARTY=[
+ {
+  "s": "POWITANIE — NA DZIEŃ DOBRY",
+  "t": "Guten Tag! — dzień dobry.\nGuten Abend! — dobry wieczór.\nHallo! — cześć (na powitanie).",
+  "de": "Guten Tag! Guten Abend! Hallo!"
+ },
+ {
+  "s": "POŻEGNANIE — NA DO WIDZENIA",
+  "t": "Tschüs! — cześć (na pożegnanie).\nAuf Wiedersehen! — do widzenia.\nBis dann! — do zobaczenia.",
+  "de": "Tschüs! Auf Wiedersehen! Bis dann!"
+ },
+ {
+  "s": "PUŁAPKA: GUTE NACHT",
+  "t": "Gute Nacht! — dobranoc. Mówimy to, gdy ktoś idzie spać, czyli na POŻEGNANIE, a nie na powitanie. Wieczorem na powitanie mówimy Guten Abend!",
+  "de": "Gute Nacht! Guten Abend!"
+ },
+ {
+  "s": "0 · NULL",
+  "t": "Zero to null — piszemy przez dwa L.",
+  "de": "null"
+ },
+ {
+  "s": "1–6",
+  "t": "1 eins · 2 zwei · 3 drei · 4 vier · 5 fünf · 6 sechs",
+  "de": "eins, zwei, drei, vier, fünf, sechs"
+ },
+ {
+  "s": "7–12",
+  "t": "7 sieben · 8 acht · 9 neun · 10 zehn · 11 elf · 12 zwölf",
+  "de": "sieben, acht, neun, zehn, elf, zwölf"
+ },
+ {
+  "s": "13–19: DOKŁADASZ -ZEHN",
+  "t": "13 dreizehn · 14 vierzehn · 15 fünfzehn · 18 achtzehn · 19 neunzehn. To jak po polsku: trzy + naście = trzynaście.",
+  "de": "dreizehn, vierzehn, fünfzehn, achtzehn, neunzehn"
+ },
+ {
+  "s": "DWA WYJĄTKI: 16 i 17",
+  "t": "16 = sechzehn — znika S z sechs.\n17 = siebzehn — znika EN z sieben.",
+  "de": "sechzehn, siebzehn"
+ },
+ {
+  "s": "20 · ZWANZIG",
+  "t": "Dwadzieścia to zwanzig — na końcu -zig, a nie -zehn.",
+  "de": "zwanzig"
+ },
+ {
+  "s": "PISOWNIA: EI czytamy „AJ”",
+  "t": "zwei, drei, dreizehn — piszemy EI, a czytamy „aj”. Na kartce są pułapki: zwai, driezehn — to błędy.",
+  "de": "zwei, drei, dreizehn"
+ },
+ {
+  "s": "PISOWNIA: Ü i Ö",
+  "t": "fünf, fünfzehn — z kropkami nad U.\nzwölf — z kropkami nad O i z literą W na początku.",
+  "de": "fünf, fünfzehn, zwölf"
+ },
+ {
+  "s": "PISOWNIA: ZEHN Z LITERĄ H",
+  "t": "zehn i wszystkie -zehn: dreizehn, siebzehn — zawsze z H w środku. „zen”, „zhen”, „siebzen” to błędy.",
+  "de": "zehn, dreizehn, siebzehn"
+ }
+];
+
+// Cwiczenia jak na karcie pracy (kolejnosc i polecenia z kartki). Typy: x (stukasz odpowiedz), litery (ukladasz slowo), braki (tylko brakujace litery).
+var CWICZENIA=[
+ {
+  "nazwa": "Powitanie czy pożegnanie?",
+  "de": "Begrüßung und Verabschiedung. Was sagst du?",
+  "zadania": [
+   {
+    "typ": "x",
+    "duze": "Tschüs!",
+    "pytanie": "To jest powitanie czy pożegnanie?",
+    "opcje": [
+     "Powitanie",
+     "Pożegnanie"
+    ],
+    "dobra": 1,
+    "staly": true,
+    "po": "Tschüs! = cześć, na pożegnanie"
+   },
+   {
+    "typ": "x",
+    "duze": "Guten Tag!",
+    "pytanie": "To jest powitanie czy pożegnanie?",
+    "opcje": [
+     "Powitanie",
+     "Pożegnanie"
+    ],
+    "dobra": 0,
+    "staly": true,
+    "po": "Guten Tag! = dzień dobry"
+   },
+   {
+    "typ": "x",
+    "duze": "Gute Nacht!",
+    "pytanie": "To jest powitanie czy pożegnanie?",
+    "opcje": [
+     "Powitanie",
+     "Pożegnanie"
+    ],
+    "dobra": 1,
+    "staly": true,
+    "po": "Gute Nacht! = dobranoc"
+   },
+   {
+    "typ": "x",
+    "duze": "Auf Wiedersehen!",
+    "pytanie": "To jest powitanie czy pożegnanie?",
+    "opcje": [
+     "Powitanie",
+     "Pożegnanie"
+    ],
+    "dobra": 1,
+    "staly": true,
+    "po": "Auf Wiedersehen! = do widzenia"
+   },
+   {
+    "typ": "x",
+    "duze": "Guten Abend!",
+    "pytanie": "To jest powitanie czy pożegnanie?",
+    "opcje": [
+     "Powitanie",
+     "Pożegnanie"
+    ],
+    "dobra": 0,
+    "staly": true,
+    "po": "Guten Abend! = dobry wieczór"
+   },
+   {
+    "typ": "x",
+    "duze": "Hallo!",
+    "pytanie": "To jest powitanie czy pożegnanie?",
+    "opcje": [
+     "Powitanie",
+     "Pożegnanie"
+    ],
+    "dobra": 0,
+    "staly": true,
+    "po": "Hallo! = cześć"
+   },
+   {
+    "typ": "x",
+    "duze": "Bis dann!",
+    "pytanie": "To jest powitanie czy pożegnanie?",
+    "opcje": [
+     "Powitanie",
+     "Pożegnanie"
+    ],
+    "dobra": 1,
+    "staly": true,
+    "po": "Bis dann! = do zobaczenia"
+   }
+  ]
+ },
+ {
+  "nazwa": "Połącz liczby ze słowami",
+  "de": "Verbinde die Zahlen mit den Wörtern.",
+  "zadania": [
+   {
+    "typ": "x",
+    "duze": "fünfzehn",
+    "pytanie": "Jaka to liczba?",
+    "opcje": [
+     "15",
+     "5",
+     "14"
+    ],
+    "dobra": 0
+   },
+   {
+    "typ": "x",
+    "duze": "zwanzig",
+    "pytanie": "Jaka to liczba?",
+    "opcje": [
+     "20",
+     "12",
+     "2"
+    ],
+    "dobra": 0
+   },
+   {
+    "typ": "x",
+    "duze": "elf",
+    "pytanie": "Jaka to liczba?",
+    "opcje": [
+     "11",
+     "12",
+     "8"
+    ],
+    "dobra": 0
+   },
+   {
+    "typ": "x",
+    "duze": "siebzehn",
+    "pytanie": "Jaka to liczba?",
+    "opcje": [
+     "17",
+     "7",
+     "16"
+    ],
+    "dobra": 0
+   },
+   {
+    "typ": "x",
+    "duze": "drei",
+    "pytanie": "Jaka to liczba?",
+    "opcje": [
+     "3",
+     "13",
+     "2"
+    ],
+    "dobra": 0
+   },
+   {
+    "typ": "x",
+    "duze": "zwölf",
+    "pytanie": "Jaka to liczba?",
+    "opcje": [
+     "12",
+     "11",
+     "20"
+    ],
+    "dobra": 0
+   },
+   {
+    "typ": "x",
+    "duze": "null",
+    "pytanie": "Jaka to liczba?",
+    "opcje": [
+     "0",
+     "9",
+     "10"
+    ],
+    "dobra": 0
+   },
+   {
+    "typ": "x",
+    "duze": "vierzehn",
+    "pytanie": "Jaka to liczba?",
+    "opcje": [
+     "14",
+     "4",
+     "15"
+    ],
+    "dobra": 0
+   },
+   {
+    "typ": "x",
+    "duze": "achtzehn",
+    "pytanie": "Jaka to liczba?",
+    "opcje": [
+     "18",
+     "8",
+     "19"
+    ],
+    "dobra": 0
+   }
+  ]
+ },
+ {
+  "nazwa": "Wpisz brakujące litery",
+  "de": "Ergänze die Lücken.",
+  "zadania": [
+   {
+    "typ": "braki",
+    "wzor": "_ÜNF",
+    "slowo": "FÜNF",
+    "litery": [
+     "F",
+     "V",
+     "W"
+    ],
+    "pytanie": "Stukaj brakujące litery po kolei.",
+    "po": "FÜNF = 5"
+   },
+   {
+    "typ": "braki",
+    "wzor": "EL_",
+    "slowo": "ELF",
+    "litery": [
+     "F",
+     "V",
+     "W"
+    ],
+    "pytanie": "Stukaj brakujące litery po kolei.",
+    "po": "ELF = 11"
+   },
+   {
+    "typ": "braki",
+    "wzor": "DR__ZE_N",
+    "slowo": "DREIZEHN",
+    "litery": [
+     "E",
+     "I",
+     "H",
+     "A",
+     "S"
+    ],
+    "pytanie": "Stukaj brakujące litery po kolei.",
+    "po": "DREIZEHN = 13"
+   },
+   {
+    "typ": "braki",
+    "wzor": "Z_AN_IG",
+    "slowo": "ZWANZIG",
+    "litery": [
+     "W",
+     "Z",
+     "S",
+     "V"
+    ],
+    "pytanie": "Stukaj brakujące litery po kolei.",
+    "po": "ZWANZIG = 20"
+   },
+   {
+    "typ": "braki",
+    "wzor": "NE_N",
+    "slowo": "NEUN",
+    "litery": [
+     "U",
+     "Ü",
+     "O"
+    ],
+    "pytanie": "Stukaj brakujące litery po kolei.",
+    "po": "NEUN = 9"
+   },
+   {
+    "typ": "braki",
+    "wzor": "VIE_Z_HN",
+    "slowo": "VIERZEHN",
+    "litery": [
+     "R",
+     "E",
+     "I",
+     "A"
+    ],
+    "pytanie": "Stukaj brakujące litery po kolei.",
+    "po": "VIERZEHN = 14"
+   },
+   {
+    "typ": "braki",
+    "wzor": "S_CH_",
+    "slowo": "SECHS",
+    "litery": [
+     "E",
+     "S",
+     "Z",
+     "I"
+    ],
+    "pytanie": "Stukaj brakujące litery po kolei.",
+    "po": "SECHS = 6"
+   },
+   {
+    "typ": "braki",
+    "wzor": "F__FZ__N",
+    "slowo": "FÜNFZEHN",
+    "litery": [
+     "Ü",
+     "N",
+     "E",
+     "H",
+     "U",
+     "I"
+    ],
+    "pytanie": "Stukaj brakujące litery po kolei.",
+    "po": "FÜNFZEHN = 15"
+   },
+   {
+    "typ": "braki",
+    "wzor": "S__BEN",
+    "slowo": "SIEBEN",
+    "litery": [
+     "I",
+     "E",
+     "A",
+     "U"
+    ],
+    "pytanie": "Stukaj brakujące litery po kolei.",
+    "po": "SIEBEN = 7"
+   },
+   {
+    "typ": "braki",
+    "wzor": "ACH_",
+    "slowo": "ACHT",
+    "litery": [
+     "T",
+     "D",
+     "S"
+    ],
+    "pytanie": "Stukaj brakujące litery po kolei.",
+    "po": "ACHT = 8"
+   },
+   {
+    "typ": "braki",
+    "wzor": "Z_Ö_F",
+    "slowo": "ZWÖLF",
+    "litery": [
+     "W",
+     "L",
+     "V",
+     "R"
+    ],
+    "pytanie": "Stukaj brakujące litery po kolei.",
+    "po": "ZWÖLF = 12"
+   },
+   {
+    "typ": "braki",
+    "wzor": "SI__Z__N",
+    "slowo": "SIEBZEHN",
+    "litery": [
+     "E",
+     "B",
+     "E",
+     "H",
+     "P",
+     "I"
+    ],
+    "pytanie": "Stukaj brakujące litery po kolei.",
+    "po": "SIEBZEHN = 17"
+   }
+  ]
+ },
+ {
+  "nazwa": "Zaznacz poprawną formę",
+  "de": "Kreuze die richtige Form an.",
+  "zadania": [
+   {
+    "typ": "x",
+    "pytanie": "Która forma jest poprawna?",
+    "opcje": [
+     "zwai",
+     "zwei",
+     "szwai"
+    ],
+    "dobra": 1,
+    "staly": true,
+    "po": "zwei = 2"
+   },
+   {
+    "typ": "x",
+    "pytanie": "Która forma jest poprawna?",
+    "opcje": [
+     "fünf",
+     "funf",
+     "füfn"
+    ],
+    "dobra": 0,
+    "staly": true,
+    "po": "fünf = 5"
+   },
+   {
+    "typ": "x",
+    "pytanie": "Która forma jest poprawna?",
+    "opcje": [
+     "sieben",
+     "siben",
+     "siebn"
+    ],
+    "dobra": 0,
+    "staly": true,
+    "po": "sieben = 7"
+   },
+   {
+    "typ": "x",
+    "pytanie": "Która forma jest poprawna?",
+    "opcje": [
+     "zen",
+     "zhen",
+     "zehn"
+    ],
+    "dobra": 2,
+    "staly": true,
+    "po": "zehn = 10"
+   },
+   {
+    "typ": "x",
+    "pytanie": "Która forma jest poprawna?",
+    "opcje": [
+     "zölf",
+     "zwolf",
+     "zwölf"
+    ],
+    "dobra": 2,
+    "staly": true,
+    "po": "zwölf = 12"
+   },
+   {
+    "typ": "x",
+    "pytanie": "Która forma jest poprawna?",
+    "opcje": [
+     "dreizehn",
+     "dreizen",
+     "driezehn"
+    ],
+    "dobra": 0,
+    "staly": true,
+    "po": "dreizehn = 13"
+   },
+   {
+    "typ": "x",
+    "pytanie": "Która forma jest poprawna?",
+    "opcje": [
+     "siebzen",
+     "siebzehn",
+     "siebensehn"
+    ],
+    "dobra": 1,
+    "staly": true,
+    "po": "siebzehn = 17"
+   },
+   {
+    "typ": "x",
+    "pytanie": "Która forma jest poprawna?",
+    "opcje": [
+     "zwanzig",
+     "zwanzich",
+     "zwansig"
+    ],
+    "dobra": 0,
+    "staly": true,
+    "po": "zwanzig = 20"
+   }
+  ]
+ },
+ {
+  "nazwa": "Napisz liczby słownie",
+  "de": "Schreib die Zahlen in Worten.",
+  "zadania": [
+   {
+    "typ": "litery",
+    "duze": "7",
+    "pytanie": "Napisz słownie — ułóż słowo z liter.",
+    "slowo": "SIEBEN",
+    "litery": [
+     "S",
+     "I",
+     "E",
+     "B",
+     "E",
+     "N"
+    ]
+   },
+   {
+    "typ": "litery",
+    "duze": "5",
+    "pytanie": "Napisz słownie — ułóż słowo z liter.",
+    "slowo": "FÜNF",
+    "litery": [
+     "F",
+     "Ü",
+     "N",
+     "F"
+    ]
+   },
+   {
+    "typ": "litery",
+    "duze": "12",
+    "pytanie": "Napisz słownie — ułóż słowo z liter.",
+    "slowo": "ZWÖLF",
+    "litery": [
+     "Z",
+     "W",
+     "Ö",
+     "L",
+     "F"
+    ]
+   },
+   {
+    "typ": "litery",
+    "duze": "17",
+    "pytanie": "Napisz słownie — ułóż słowo z liter.",
+    "slowo": "SIEBZEHN",
+    "litery": [
+     "S",
+     "I",
+     "E",
+     "B",
+     "Z",
+     "E",
+     "H",
+     "N"
+    ]
+   },
+   {
+    "typ": "litery",
+    "duze": "16",
+    "pytanie": "Napisz słownie — ułóż słowo z liter.",
+    "slowo": "SECHZEHN",
+    "litery": [
+     "S",
+     "E",
+     "C",
+     "H",
+     "Z",
+     "E",
+     "H",
+     "N"
+    ]
+   },
+   {
+    "typ": "litery",
+    "duze": "20",
+    "pytanie": "Napisz słownie — ułóż słowo z liter.",
+    "slowo": "ZWANZIG",
+    "litery": [
+     "Z",
+     "W",
+     "A",
+     "N",
+     "Z",
+     "I",
+     "G"
+    ]
+   },
+   {
+    "typ": "litery",
+    "duze": "11",
+    "pytanie": "Napisz słownie — ułóż słowo z liter.",
+    "slowo": "ELF",
+    "litery": [
+     "E",
+     "L",
+     "F"
+    ]
+   },
+   {
+    "typ": "litery",
+    "duze": "0",
+    "pytanie": "Napisz słownie — ułóż słowo z liter.",
+    "slowo": "NULL",
+    "litery": [
+     "N",
+     "U",
+     "L",
+     "L"
+    ]
+   }
+  ]
+ }
+];
+
+function pokaz(id){ document.querySelectorAll('.ekran').forEach(function(e){e.classList.remove('aktywny');});
+  document.getElementById(id).classList.add('aktywny'); window.scrollTo(0,0); if(window.speechSynthesis) speechSynthesis.cancel(); }
+function potasuj(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
+
+// lista cwiczen na ekranie wyboru
+(function(){
+  var w=document.getElementById('w-lista'), suma=0;
+  CWICZENIA.forEach(function(c,i){
+    suma+=c.zadania.length;
+    var b=document.createElement('button'); b.className='btn drugi cw';
+    b.innerHTML=(i+1)+'. '+c.nazwa+'<small>'+c.de+' · '+c.zadania.length+' zadań</small>';
+    b.onclick=function(){ startSprawdzania(i); }; w.appendChild(b);
+  });
+  var b=document.createElement('button'); b.className='btn glowny cw';
+  b.innerHTML='Cała karta po kolei<small>'+suma+' zadań</small>';
+  b.onclick=function(){ startSprawdzania(-1); }; w.insertBefore(b,w.firstChild);
+})();
+
+// ---------------- NAUKA
+var nk=0;
+function startNauki(){ nk=0; rysujKarte(); pokaz('nauka'); }
+function rysujKarte(){
+  document.getElementById('n-licznik').textContent='Karta '+(nk+1)+' z '+KARTY.length;
+  document.getElementById('n-slowo').textContent=KARTY[nk].s;
+  document.getElementById('n-tekst').textContent=KARTY[nk].t;
+  document.getElementById('n-dalej').textContent = nk===KARTY.length-1 ? '✏️ Teraz sprawdź się' : 'Dalej ›';
+  if(window.speechSynthesis) speechSynthesis.cancel();
+}
+function dalejNauka(){ if(nk<KARTY.length-1){nk++;rysujKarte();} else pokaz('wybor'); }
+function wsteczNauka(){ if(nk>0){nk--;rysujKarte();} else pokaz('start'); }
+// Glos niemiecki wybierany jawnie (Chrome na Windows laduje glosy z opoznieniem)
+var glosDE=null;
+function szukajGlosu(){
+  var v=window.speechSynthesis ? speechSynthesis.getVoices() : [];
+  var de=v.filter(function(x){ return /^de/i.test(x.lang); });
+  glosDE = de.filter(function(x){ return /natural|online|google/i.test(x.name); })[0] || de[0] || null;
+}
+if(window.speechSynthesis){ szukajGlosu(); speechSynthesis.onvoiceschanged=szukajGlosu; }
+function czytajDE(){
+  if(!window.speechSynthesis) return;
+  if(!glosDE) szukajGlosu();
+  var btn=document.getElementById('n-glos-de');
+  if(!glosDE && speechSynthesis.getVoices().length){ btn.textContent='🔇 Brak niemieckiego głosu na tym urządzeniu'; return; }
+  speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(KARTY[nk].de); u.lang='de-DE'; u.rate=0.8;
+  if(glosDE) u.voice=glosDE;
+  setTimeout(function(){ speechSynthesis.resume(); speechSynthesis.speak(u); }, 60);
+}
+if(!window.speechSynthesis) document.getElementById('n-glos-de').style.display='none';
+
+// ---------------- SPRAWDZANIE
+var LISTA=[], tk=0, punkty=0, ulozone=[], cwTeraz=-1;
+function startSprawdzania(cw){
+  cwTeraz=cw; LISTA=[];
+  CWICZENIA.forEach(function(c,i){ if(cw<0||cw===i) c.zadania.forEach(function(z){ LISTA.push({c:c,z:z}); }); });
+  tk=0; punkty=0; rysujZadanie(); pokaz('test');
+}
+
+function rysujZadanie(){
+  var c=LISTA[tk].c, z=LISTA[tk].z;
+  document.getElementById('t-licznik').textContent='Zadanie '+(tk+1)+' z '+LISTA.length;
+  document.getElementById('t-polecenie').textContent=c.nazwa;
+  document.getElementById('t-polecenie-de').textContent=c.de;
+  document.getElementById('t-info').textContent=''; document.getElementById('t-info').className='info';
+  document.getElementById('t-dalej').style.display='none';
+  var odp=document.getElementById('t-odp'); odp.innerHTML='';
+  var ok=document.getElementById('t-okienka'); ok.innerHTML=''; ok.className='okienka'; ok.style.display='none';
+  var pyt=document.getElementById('t-pytanie');
+  pyt.innerHTML = z.duze ? '<div class="duze">'+z.duze+'</div>'+(z.pytanie||'') : (z.pytanie||'');
+
+  if(z.typ==='x'){
+    var opcje = z.staly ? z.opcje : potasuj(z.opcje);
+    opcje.forEach(function(o,i){ odp.appendChild(przycisk(o, z.opcje[z.dobra], z.staly ? 'abc'[i]+'.  ' : '')); });
+  } else {
+    // litery: cale slowo z kafelkow; braki: stale litery juz wpisane, ukladasz tylko luki
+    ulozone=[]; ok.style.display='flex';
+    for(var i=0;i<z.slowo.length;i++){
+      var d=document.createElement('div');
+      if(z.typ==='braki' && z.wzor[i]!=='_'){ d.className='okno stale'; d.textContent=z.wzor[i]; }
+      else { d.className='okno luka'; }
+      ok.appendChild(d);
+    }
+    var kafle=document.createElement('div'); kafle.className='kafle';
+    potasuj(z.litery).forEach(function(l){
+      var b=document.createElement('button'); b.className='kafel'; b.textContent=l;
+      b.onclick=function(){ if(b.disabled) return; b.disabled=true; ulozone.push({l:l,b:b}); odswiezOkienka(); };
+      kafle.appendChild(b);
+    });
+    odp.appendChild(kafle);
+    var cof=document.createElement('button'); cof.className='btn drugi'; cof.textContent='⌫ Cofnij literę'; cof.id='cofnij';
+    cof.onclick=function(){ var o=ulozone.pop(); if(o){ o.b.disabled=false; odswiezOkienka(); } };
+    odp.appendChild(cof);
+  }
+}
+
+function przycisk(tekst, dobra, prefiks){
+  var b=document.createElement('button'); b.className='btn opcja'; b.textContent=prefiks+tekst; b.dataset.o=tekst;
+  b.onclick=function(){
+    document.querySelectorAll('#t-odp .opcja').forEach(function(x){ x.disabled=true; if(x.dataset.o===dobra) x.classList.add('dobrze'); });
+    if(tekst===dobra){ punkty++; ocena(true,''); }
+    else { b.classList.add('zle'); ocena(false,'Poprawnie: '+dobra); }
+  };
+  return b;
+}
+
+function odswiezOkienka(){
+  var z=LISTA[tk].z, luki=document.querySelectorAll('#t-okienka .luka');
+  for(var i=0;i<luki.length;i++) luki[i].textContent = ulozone[i] ? ulozone[i].l : '';
+  if(ulozone.length===luki.length){
+    var j=0, slowo='';
+    for(var k=0;k<z.slowo.length;k++) slowo += (z.typ==='braki' && z.wzor[k]!=='_') ? z.wzor[k] : ulozone[j++].l;
+    document.querySelectorAll('.kafel').forEach(function(k){k.disabled=true;});
+    document.getElementById('cofnij').style.display='none';
+    var ok=document.getElementById('t-okienka');
+    if(slowo===z.slowo){ punkty++; ok.classList.add('dobrze'); ocena(true,''); }
+    else { ok.classList.add('zle'); ocena(false,'Poprawnie: '+z.slowo); }
+  }
+}
+
+function ocena(dobrze, poprawka){
+  var z=LISTA[tk].z, i=document.getElementById('t-info');
+  i.className='info '+(dobrze?'dobrze':'zle');
+  i.textContent = (dobrze ? '✓ Dobrze!' : '✗ '+poprawka) + (z.po ? '  ('+z.po+')' : '');
+  var d=document.getElementById('t-dalej');
+  d.textContent = tk===LISTA.length-1 ? 'Zobacz wynik ›' : 'Dalej ›';
+  d.style.display='block';
+}
+
+function dalejTest(){
+  if(tk<LISTA.length-1){ tk++; rysujZadanie(); window.scrollTo(0,0); return; }
+  var t=LISTA.length;
+  document.getElementById('w-liczba').textContent=punkty+' / '+t;
+  document.getElementById('w-slowo').textContent =
+    punkty===t ? 'Wszystko dobrze. Super!' :
+    punkty>=t-2 ? 'Bardzo dobrze! Spróbuj jeszcze raz, będzie komplet.' :
+    'Wróć do nauki, a potem spróbuj jeszcze raz.';
+  document.getElementById('w-nastepne').style.display = (cwTeraz>=0 && cwTeraz<CWICZENIA.length-1) ? 'block' : 'none';
+  postResult(punkty,t, cwTeraz<0 ? 'cała karta' : (cwTeraz+1)+'. '+CWICZENIA[cwTeraz].nazwa);
+  pokaz('koniec');
+}
+function nastepneCw(){ startSprawdzania(cwTeraz+1); }
+</script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Czasowniki be-bite - część 1</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f8f9fa;color:#1a1a1a;
+  padding:16px;max-width:700px;margin:0 auto;padding-bottom:40px}
+.subject-tag{display:inline-block;background:#e9ecef;color:#555;font-size:13px;
+  padding:4px 12px;border-radius:20px;margin-bottom:10px}
+h1{font-size:24px;color:#1a1a1a;margin-bottom:16px;line-height:1.3}
+audio{width:100%;margin:16px 0;border-radius:8px}
+.lesson{font-size:18px;line-height:1.75;margin-bottom:32px}
+.lesson p{margin-bottom:14px}
+.test-header{font-size:22px;font-weight:bold;color:#1a1a1a;margin-bottom:20px;
+  padding-top:16px;border-top:3px solid #dee2e6}
+.question{margin-bottom:36px}
+.qt{font-size:20px;font-weight:bold;margin-bottom:16px;line-height:1.4}
+.btn{display:block;width:100%;min-height:76px;font-size:18px;
+  font-family:'Segoe UI',Arial,sans-serif;margin-bottom:12px;padding:16px 20px;
+  border:2px solid #dee2e6;border-radius:14px;background:#fff;color:#1a1a1a;
+  cursor:pointer;text-align:left;line-height:1.35;
+  box-shadow:0 2px 4px rgba(0,0,0,.06);transition:background .15s,border-color .15s}
+.btn:active{background:#e9ecef}
+.btn.correct{background:#d4edda;border-color:#28a745;color:#155724}
+.btn.wrong{background:#f8d7da;border-color:#dc3545;color:#721c24}
+.btn:disabled{cursor:default}
+.score-box{font-size:24px;font-weight:bold;text-align:center;padding:28px;
+  margin-top:8px;border-radius:16px;background:#fff;border:2px solid #dee2e6;display:none}
+.back-btn{display:block;width:100%;min-height:64px;font-size:18px;margin-top:24px;
+  padding:16px;border:none;border-radius:14px;background:#343a40;color:#fff;
+  cursor:pointer;font-family:'Segoe UI',Arial,sans-serif}
+</style>
+</head>
+<body>
+<div class="subject-tag">Angielski</div>
+<h1>Czasowniki be-bite - część 1</h1>
+<audio controls src="czasowniki_be_bite_czesc_1_20260922.mp3">Twoja przeglądarka nie obsługuje audio.</audio>
+<div class="lesson"><p>Pięć czasowników na kartkówkę: be, was lub were, been — być. Beat, beat, beaten — bić, pokonać. Become, became, become — stawać się. Begin, began, begun — zaczynać. Bite, bit, bitten — gryźć. Uważaj na trzy rzeczy. Be ma dwie formy przeszłe: was dla ja, on, ona, oraz were dla ty, my, oni. Przy beat pierwsza i druga forma wyglądają tak samo. Przy become pierwsza i trzecia forma wyglądają tak samo. Zanim wybierzesz odpowiedź, poszukaj wskazówki. Jeśli w zdaniu jest have albo has — wybierz trzecią formę. Jeśli jest yesterday, ago albo last — wybierz drugą formę. Jeśli zdanie mówi o tym, co dzieje się zwykle — wybierz pierwszą formę. W tej części jest piętnaście zdań. Nie spiesz się.</p></div>
+<div class="test-header">Sprawdzian</div>
+<div id="test"></div>
+<div id="score" class="score-box"></div>
+<button class="back-btn" onclick="history.back()">&#8592; Powrót</button>
+<script>
+var qs=[{"question": "I want to ____ a good student.", "options": ["was", "been", "be"], "correct": 2}, {"question": "She ____ at home yesterday.", "options": ["be", "was", "been"], "correct": 1}, {"question": "I have ____ to London.", "options": ["been", "be", "was"], "correct": 0}, {"question": "We ____ them every year.", "options": ["beat", "beaten", "began"], "correct": 0}, {"question": "They ____ us last Sunday.", "options": ["beaten", "beat", "begun"], "correct": 1}, {"question": "We have ____ them twice.", "options": ["beaten", "beat", "became"], "correct": 0}, {"question": "I want to ____ a teacher.", "options": ["became", "become", "begun"], "correct": 1}, {"question": "He ____ famous last year.", "options": ["became", "become", "been"], "correct": 0}, {"question": "She has ____ much stronger.", "options": ["become", "became", "begun"], "correct": 0}, {"question": "Lessons ____ at eight.", "options": ["began", "begun", "begin"], "correct": 2}, {"question": "The concert ____ two hours ago.", "options": ["begin", "begun", "began"], "correct": 2}, {"question": "The lesson has ____.", "options": ["begin", "began", "begun"], "correct": 2}, {"question": "Dogs ____ when they are scared.", "options": ["bit", "bite", "bitten"], "correct": 1}, {"question": "A dog ____ my leg last summer.", "options": ["bite", "bitten", "bit"], "correct": 2}, {"question": "A mosquito has ____ me.", "options": ["bite", "bitten", "bit"], "correct": 1}],ans=new Array(qs.length).fill(null);
+var RESULTS_URL="https://julia-hub-161045418771.europe-west1.run.app/results",RESULTS_TOKEN="XW09DH2_fs8SdHh7B9pGMoCZuDVwAHSQ",posted=false;
+function postResult(score,total){
+  if(posted||!RESULTS_URL||!RESULTS_TOKEN)return;posted=true;
+  try{
+    fetch(RESULTS_URL,{method:'POST',keepalive:true,
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({token:RESULTS_TOKEN,
+        subject:document.querySelector('.subject-tag').textContent,
+        title:document.querySelector('h1').textContent,
+        score:score,total:total})});
+  }catch(e){}
+}
+function render(){
+  var c=document.getElementById('test');c.innerHTML='';
+  for(var i=0;i<qs.length;i++){
+    (function(qi){
+      var q=qs[qi],div=document.createElement('div');
+      div.className='question';
+      var qt=document.createElement('div');qt.className='qt';
+      qt.textContent=(qi+1)+'. '+q.question;div.appendChild(qt);
+      for(var j=0;j<q.options.length;j++){
+        (function(oi){
+          var b=document.createElement('button');b.className='btn';
+          b.textContent=q.options[oi];
+          if(ans[qi]!==null){b.disabled=true;
+            if(oi===q.correct)b.classList.add('correct');
+            else if(oi===ans[qi])b.classList.add('wrong');}
+          b.onclick=function(){if(ans[qi]===null){ans[qi]=oi;render();}};
+          div.appendChild(b);
+        })(j);
+      }
+      c.appendChild(div);
+    })(i);
+  }
+  var done=ans.every(function(a){return a!==null;});
+  if(done){
+    var ok=ans.filter(function(a,i){return a===qs[i].correct;}).length;
+    var s=document.getElementById('score');
+    s.style.display='block';
+    s.textContent='Wynik: '+ok+' / '+qs.length;
+    postResult(ok,qs.length);
+  }
+}
+render();
+</script>
+</body>
+</html>

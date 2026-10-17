@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pierwiastki — karta pracy</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mathlive@0.105.3/mathlive.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<!-- arkusz do PDF: MathJax SVG (same ścieżki, bez fontów) — KaTeX gubi znak pierwiastka w html2canvas -->
+<script>window.MathJax={svg:{fontCache:'none'},startup:{typeset:false}};</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#eef0fa;color:#222;padding:14px 14px 40px;max-width:760px;margin:0 auto;font-size:19px;line-height:1.5}
+h1{font-size:25px;color:#283593;margin-bottom:4px}
+.subject-tag{display:inline-block;background:#dde1f5;color:#283593;font-size:13px;padding:3px 10px;border-radius:10px;margin-bottom:8px}
+.ekran{display:none}.ekran.aktywny{display:block}
+.karta{background:#fff;border-radius:18px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-top:10px}
+.licznik{color:#5c6bc0;font-weight:700;font-size:16px}
+.polecenie{font-weight:600;margin:4px 0 6px}
+.polecenie .katex{font-size:1.25em}
+.mapa{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+.mapa button{min-height:52px;font-size:20px;font-weight:700;border:3px solid #c5cae9;border-radius:12px;background:#fff;color:#283593;cursor:pointer;font-family:inherit}
+.mapa button.gotowe{background:#e8f5e9;border-color:#66bb6a;color:#1b5e20}
+.mapa button.czesc{background:#fff8e1;border-color:#ffb300}
+.mapa button.tu{outline:4px solid #283593;outline-offset:1px}
+.btn{display:block;width:100%;min-height:72px;font-size:21px;font-weight:700;border:3px solid #c5cae9;border-radius:16px;margin-top:10px;cursor:pointer;font-family:inherit;background:#fff;color:#283593;text-align:left;padding:8px 16px}
+.btn .katex{font-size:1.3em}
+.btn .lit{display:inline-block;min-width:34px}
+.btn.wybrana{background:#283593;color:#fff;border-color:#283593}
+.btn.glowny{background:#283593;color:#fff;border-color:#283593;text-align:center}
+.btn.drugi{text-align:center}
+.btn.maly{min-height:60px;font-size:19px;text-align:center;border-style:dashed}
+.btn:disabled{opacity:.6;cursor:default}
+.nawigacja{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.wiersz{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #e3e6f3;flex-wrap:wrap}
+.wiersz .wyr{flex:1 1 260px;font-size:24px}
+.wiersz .para{display:flex;gap:10px}
+.wiersz .btn{width:auto;min-width:108px;margin-top:0;text-align:center}
+.cz{font-size:24px;margin:4px 0 6px}
+.cz b{color:#283593;font-size:21px}
+.linia{display:flex;align-items:center;gap:8px;margin-top:8px}
+math-field{flex:1;min-width:0;font-size:30px;padding:6px 10px;border:3px solid #c5cae9;border-radius:12px;background:#f8f9ff}
+math-field:focus-within{border-color:#283593;background:#fff;outline:none}
+math-field::part(virtual-keyboard-toggle),math-field::part(menu-toggle){display:none}
+.usun{flex:0 0 56px;height:56px;font-size:22px;border:3px solid #ef9a9a;border-radius:12px;background:#fff;color:#c62828;cursor:pointer}
+.podpowiedz{font-size:15px;color:#5c6bc0;margin-top:6px}
+#klaw{display:none;position:fixed;left:0;right:0;bottom:0;background:#dde1f5;padding:8px;box-shadow:0 -2px 10px rgba(0,0,0,.2);z-index:10}
+#klaw .siatka{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(9,1fr);gap:6px}
+#klaw button{min-height:58px;font-size:26px;font-weight:700;border:2px solid #9fa8da;border-radius:12px;background:#fff;color:#283593;cursor:pointer;font-family:inherit;padding:0 2px}
+#klaw button .katex{font-size:1.05em}
+#klaw button.szeroki{grid-column:span 3;font-size:20px}
+#klaw button.fun{background:#e8eaf6}
+#klaw button.ok{background:#283593;color:#fff}
+body.z-klaw{padding-bottom:300px}
+.info{margin-top:10px;font-weight:700;text-align:center;font-size:19px;min-height:28px}
+.info.dobrze{color:#2e7d32}.info.zle{color:#c62828}
+.imie{width:100%;font-size:22px;padding:12px;border:3px solid #c5cae9;border-radius:12px;font-family:inherit;margin-top:6px}
+.arkusz-ramka{overflow-x:auto;margin-top:10px;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,.15)}
+/* ARKUSZ ODPOWIEDZI (to idzie do PDF) */
+#arkusz{width:720px;background:#fff;color:#000;font-family:Arial,sans-serif;font-size:15px;line-height:1.45;padding:18px 22px}
+#arkusz img.mj{display:inline-block}
+.a-glowa{border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:10px}
+.a-tytul{font-size:21px;font-weight:700}
+.zb{margin-top:12px}
+.a-opcje{display:flex;flex-wrap:wrap;gap:6px 22px;margin:4px 0 0 14px}
+.a-op{padding:2px 8px;border:2px solid transparent;border-radius:14px}
+.a-op.a-wyb{border-color:#000;font-weight:700}
+.a-brak{margin-left:14px;color:#777;font-style:italic}
+.a-tab{border-collapse:collapse;margin:4px 0 0 14px}
+.a-tab td{padding:3px 10px;vertical-align:middle}
+.a-kr{display:inline-block;width:18px;height:18px;border:1.5px solid #000;text-align:center;line-height:16px;font-weight:700;margin-right:5px;vertical-align:middle}
+.a-cz{margin:6px 0 0 14px}
+.a-lin{margin:3px 0 0 40px}
+.a-oblt{margin:6px 0 0 14px;font-style:italic}
+@media print{
+  body{background:#fff;max-width:none;padding:0}
+  .nie-drukuj,#klaw{display:none!important}
+  .ekran{display:none!important}
+  #ekran-arkusz{display:block!important}
+  .arkusz-ramka{box-shadow:none;overflow:visible}
+  #arkusz{width:auto;padding:0}
+  .unit{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="nie-drukuj">
+  <div class="subject-tag">Matematyka</div>
+  <h1>Pierwiastki — karta pracy</h1>
+  <div class="karta"><div class="mapa" id="mapa"></div></div>
+</div>
+
+<div class="ekran aktywny" id="ekran-zadanie">
+  <div id="tresc"></div>
+  <div class="nawigacja nie-drukuj">
+    <button class="btn drugi" id="wstecz" onclick="idz(biez-1)">‹ Poprzednie</button>
+    <button class="btn glowny" id="dalej" onclick="biez<Z.length-1?idz(biez+1):pokazArkusz()">Następne ›</button>
+  </div>
+</div>
+
+<div class="ekran" id="ekran-arkusz">
+  <div class="karta nie-drukuj">
+    <div class="polecenie">Arkusz odpowiedzi</div>
+    <div id="a-stan"></div>
+    <label style="display:block;margin-top:10px;font-weight:600">Imię i nazwisko (wpisz raz, strona zapamięta):
+      <input class="imie" id="imie" autocomplete="off"></label>
+    <button class="btn glowny" id="pdf-btn" onclick="zapiszPDF()">📄 Zapisz PDF z odpowiedziami</button>
+    <button class="btn drugi" onclick="window.print()">🖨 Drukuj (albo „Zapisz jako PDF” w oknie drukowania)</button>
+    <div class="info" id="pdf-info"></div>
+    <button class="btn drugi" onclick="idz(biez)">‹ Wróć do zadań</button>
+  </div>
+  <div class="arkusz-ramka"><div id="arkusz"></div></div>
+  <div class="nie-drukuj"><button class="btn maly" style="margin-top:30px;border-color:#ef9a9a;color:#c62828" onclick="wyczysc()">Wyczyść wszystkie odpowiedzi</button></div>
+</div>
+
+<div id="klaw" class="nie-drukuj"><div class="siatka" id="klaw-siatka"></div></div>
+
+<script>
+var RESULTS_URL="https://julia-hub-161045418771.europe-west1.run.app/results",RESULTS_TOKEN="XW09DH2_fs8SdHh7B9pGMoCZuDVwAHSQ";
+var PAMIEC='mat_pierwiastki_gwo_v1';
+var R=String.raw;
+
+/* ===== TREŚĆ KARTY (wiernie ze skanu matematyka2.pdf, GWO „Pierwiastki”) ===== */
+var Z=[
+ {nr:1,typ:'abcd',p:R`Iloczyn $\sqrt{15}\cdot\sqrt{3}$ jest równy:`,
+  o:[R`$\sqrt{5}$`,R`$\sqrt{45}$`,R`$\sqrt{12}$`,R`$\sqrt{18}$`]},
+ {nr:2,typ:'abcd',p:R`Wartością wyrażenia $\dfrac{\sqrt{6}\cdot\sqrt{2}}{\sqrt{3}}$ jest liczba:`,
+  o:[R`$2$`,R`$5$`,R`$4$`,R`$2\frac{2}{3}$`]},
+ {nr:3,typ:'abcd',p:R`Wartość wyrażenia $4\sqrt{5}-\sqrt{80}-2\sqrt{5}+\sqrt{125}$ jest równa:`,
+  o:[R`$3\sqrt{5}$`,R`$\sqrt{105}$`,R`$11\sqrt{5}$`,R`$105$`]},
+ {nr:4,typ:'abcd',p:R`Liczbę $\sqrt{28}$ można zapisać jako:`,
+  o:[R`$7\sqrt{2}$`,R`$4\sqrt{7}$`,R`$7\sqrt{4}$`,R`$2\sqrt{7}$`]},
+ {nr:5,typ:'otw',p:R`Zapisz w prostszej postaci.`,
+  cz:[['a',R`2\sqrt{11}+15-7\sqrt{11}-8`],['b',R`5(1+3\sqrt{5})-2(5+2\sqrt{5})`],['c',R`2(\sqrt[3]{2}-4)-3(\sqrt[3]{2}-3)`]]},
+ {nr:6,typ:'otw',p:R`Oblicz. Wynik zapisz w jak najprostszej postaci:`,
+  cz:[['a',R`7\sqrt{6}-2\sqrt{6}`],['b',R`\sqrt{77}\cdot\sqrt{1\frac{4}{7}}`],['c',R`\sqrt{500}+7\sqrt{5}`],
+      ['d',R`7\sqrt{21}\cdot\frac{1}{3}\sqrt{3}`],['e',R`\left(\frac{2\sqrt{21}}{7}\right)^{2}`]]},
+ {nr:7,typ:'wiersze',p:R`Oceń, czy poniższe równości są prawdziwe. Wstaw znak X w odpowiednią kratkę.`,et:['TAK','NIE'],
+  w:[R`\sqrt[3]{16}=\sqrt{8}`,R`\sqrt[3]{(-36)^{3}}=\sqrt{(-6)^{4}}`,R`\sqrt{24}=2\sqrt{3}`,R`2\cdot\sqrt{13^{2}-12^{2}}=10`]},
+ {nr:8,typ:'abcd',p:R`Między jakimi dwiema kolejnymi liczbami całkowitymi znajduje się liczba $\frac{1}{2}\sqrt[3]{100}$?`,
+  o:['0 i 1','1 i 2','2 i 3','3 i 4']},
+ {nr:9,typ:'abcd',p:R`Liczbą przeciwną do $\sqrt{45}$ jest liczba:`,
+  o:[R`$-22{,}5$`,R`$\frac{1}{3\sqrt{5}}$`,R`$-3\sqrt{5}$`,R`$\frac{\sqrt{5}}{15}$`]},
+ {nr:10,typ:'ab123',p:R`Czy prawdą jest, że ułamek $\frac{18\sqrt{2}}{2\sqrt{18}}$ jest równy 1? Wybierz odpowiedź A albo B i jej uzasadnienie spośród 1., 2. albo 3.`,
+  ab:['TAK,','NIE,'],u:[R`$\frac{\sqrt{2}}{\sqrt{18}}=\sqrt{\frac{1}{9}}=\frac{1}{3}$ i $\frac{18}{2}=9$`,R`$\sqrt{18}>\sqrt{2}$`,R`$18\cdot 2=2\cdot 18=36$ i $\frac{36}{36}=1$`]},
+ {nr:11,typ:'abcd',p:R`Pierwiastek kwadratowy z liczby $2\frac{7}{9}$ wynosi:`,
+  o:[R`$2\frac{\sqrt{7}}{3}$`,R`$4\frac{49}{81}$`,R`$1\frac{7}{18}$`,R`$1\frac{2}{3}$`]},
+ {nr:12,typ:'abcd',p:R`Liczbą wymierną jest:`,
+  o:[R`$\sqrt{27}$`,R`$\sqrt{16\frac{1}{16}}$`,R`$\sqrt{2\frac{7}{9}}$`,R`$\sqrt[3]{16}$`]},
+ {nr:13,typ:'abcd',p:R`Pierwiastek $\sqrt{5\frac{4}{9}}$ jest równy:`,
+  o:[R`$\frac{7}{3}$`,R`$\frac{49}{18}$`,R`$\frac{3}{7}$`,R`$\frac{49}{9}$`]},
+ {nr:14,typ:'otw',p:R`Oblicz.`,
+  cz:[['a',R`5(\sqrt{6})^{2}`],['b',R`3\sqrt{11}\cdot 2\sqrt{11}`],['c',R`\left(\frac{7}{10}\sqrt{5}\right)^{2}`]]},
+ {nr:15,typ:'wiersze',p:R`Oceń prawdziwość podanych zdań. Wybierz P, jeśli zdanie jest prawdziwe, albo F — jeśli jest fałszywe.`,et:['P','F'],
+  w:[R`\sqrt{6}>2`,R`\sqrt{15}<4`,R`\sqrt[3]{25}<3`,R`\sqrt[3]{1005}>10`]}
+];
+var LIT='ABCD';
+
+/* ===== PAMIĘĆ ===== */
+var stan; try{ stan=JSON.parse(localStorage.getItem(PAMIEC)||'{}'); }catch(e){ stan={}; }
+stan.odp=stan.odp||{}; stan.obl=stan.obl||{}; stan.imie=stan.imie||'';
+function zapamietaj(){ try{ localStorage.setItem(PAMIEC,JSON.stringify(stan)); }catch(e){} }
+
+/* ===== WZORY: KaTeX do wyświetlania ===== */
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function czysc(l){ // LaTeX z MathLive -> zrozumiały dla KaTeX
+  return String(l).replace(/\\placeholder(\[[^\]]*\])?\{[^}]*\}/g,'\\square').replace(/\\mleft/g,'\\left').replace(/\\mright/g,'\\right')
+    .replace(/\\differentialD/g,'d').replace(/\\exponentialE/g,'e').replace(/\\imaginaryI/g,'i');
+}
+function km(l){ return katex.renderToString(czysc(l),{throwOnError:false}); }
+function tm(s){ return String(s).split('$').map(function(c,i){ return i%2?km(c):esc(c); }).join(''); }
+
+/* ===== CO JEST WYPEŁNIONE ===== */
+function pelneLinie(k){ return (stan.obl[k]||[]).filter(function(v){ v=String(v).trim(); return v!==''&&v!=='='; }); }
+function pozycje(z){ // [klucz, wypełnione?] dla każdej oceniaanej pozycji zadania
+  if(z.typ==='abcd') return [[z.nr,stan.odp[z.nr]!=null]];
+  if(z.typ==='wiersze') return z.w.map(function(_,i){ return [z.nr+'-'+i,stan.odp[z.nr+'-'+i]!=null]; });
+  if(z.typ==='ab123') return [[z.nr,stan.odp[z.nr+'ab']!=null&&stan.odp[z.nr+'u']!=null]];
+  return z.cz.map(function(c){ return [z.nr+c[0],pelneLinie(z.nr+c[0]).length>0]; });
+}
+function policz(){ var w=0,n=0,braki=[];
+  Z.forEach(function(z){ var p=pozycje(z),ok=p.filter(function(x){return x[1];}).length; n+=p.length; w+=ok; if(ok<p.length) braki.push(z.nr); });
+  return {w:w,n:n,braki:braki}; }
+
+function odswiezMape(){
+  var h=''; Z.forEach(function(z,i){ var p=pozycje(z),ok=p.filter(function(x){return x[1];}).length;
+    h+='<button class="'+(ok===p.length?'gotowe':ok?'czesc':'')+(i===biez&&!naArkuszu?' tu':'')+'" onclick="idz('+i+')">'+z.nr+'</button>'; });
+  h+='<button class="'+(naArkuszu?'tu':'')+'" onclick="pokazArkusz()" title="Arkusz odpowiedzi">📄</button>';
+  document.getElementById('mapa').innerHTML=h;
+}
+
+/* ===== EKRAN ZADANIA ===== */
+var biez=0,naArkuszu=false,aktywne=null;
+function przycisk(k,v,html,klasa){ return '<button class="btn wybor '+(klasa||'')+(stan.odp[k]===v?' wybrana':'')+'" data-k="'+k+'" data-v="'+v+'">'+html+'</button>'; }
+function pudelkoLinii(k,rown){ return '<div class="linie" data-key="'+k+'" data-rown="'+(rown?1:0)+'"></div>'
+  +'<button class="btn maly nie-drukuj" onclick="nowaLinia(\''+k+'\',null)">＋ nowa linijka</button>'; }
+
+function idz(i){
+  if(i<0||i>=Z.length) return;
+  biez=i; naArkuszu=false; schowajKlaw();
+  document.getElementById('ekran-arkusz').classList.remove('aktywny');
+  document.getElementById('ekran-zadanie').classList.add('aktywny');
+  var z=Z[i],h='<div class="karta"><div class="licznik">Zadanie '+z.nr+' z '+Z.length+'</div><div class="polecenie">'+tm(z.p)+'</div>';
+  if(z.typ==='abcd') z.o.forEach(function(o,j){ h+=przycisk(z.nr,j,'<span class="lit">'+LIT[j]+'.</span> '+tm(o)); });
+  if(z.typ==='wiersze') z.w.forEach(function(w,j){ var k=z.nr+'-'+j;
+    h+='<div class="wiersz"><div class="wyr">'+km(w)+'</div><div class="para">'+przycisk(k,0,z.et[0])+przycisk(k,1,z.et[1])+'</div></div>'; });
+  if(z.typ==='ab123'){
+    z.ab.forEach(function(t,j){ h+=przycisk(z.nr+'ab',j,'<span class="lit">'+LIT[j]+'.</span> '+t); });
+    h+='<div class="polecenie" style="margin-top:12px">ponieważ</div>';
+    z.u.forEach(function(t,j){ h+=przycisk(z.nr+'u',j,'<span class="lit">'+(j+1)+'.</span> '+tm(t)); });
+  }
+  h+='</div>';
+  if(z.typ==='otw'){
+    z.cz.forEach(function(c){ h+='<div class="karta"><div class="cz"><b>'+c[0]+')</b> '+km(c[1])+'</div>'+pudelkoLinii(z.nr+c[0],true)+'</div>'; });
+    h+='<div class="podpowiedz nie-drukuj">Każdy krok w nowej linijce (klawisz ↵). Linijka zaczyna się od „=”, możesz go skasować ⌫.</div>';
+  } else {
+    h+='<div class="karta"><div class="polecenie">Moje obliczenia <span style="font-weight:400;color:#777">(nieobowiązkowe)</span></div>'+pudelkoLinii(String(z.nr),false)+'</div>';
+  }
+  document.getElementById('tresc').innerHTML=h;
+  document.querySelectorAll('.linie').forEach(zbudujLinie);
+  document.getElementById('wstecz').disabled=(i===0);
+  document.getElementById('dalej').textContent=(i<Z.length-1)?'Następne ›':'📄 Arkusz odpowiedzi ›';
+  odswiezMape(); window.scrollTo(0,0);
+}
+
+document.addEventListener('click',function(e){
+  var b=e.target.closest('.wybor'); if(!b) return;
+  var k=b.dataset.k,v=+b.dataset.v;
+  stan.odp[k]=(stan.odp[k]===v)?null:v; // drugie stuknięcie odznacza
+  if(stan.odp[k]==null) delete stan.odp[k];
+  zapamietaj();
+  document.querySelectorAll('.wybor[data-k="'+k+'"]').forEach(function(x){ x.classList.toggle('wybrana',stan.odp[k]===+x.dataset.v); });
+  odswiezMape();
+});
+
+/* ===== LINIJKI OBLICZEŃ (MathLive) ===== */
+function zbudujLinie(box){
+  var k=box.dataset.key,L=stan.obl[k];
+  if(!L||!L.length) L=(box.dataset.rown==='1')?['=']:[];
+  L.forEach(function(v){ dodajPole(box,v,null); });
+}
+function dodajPole(box,v,po){
+  var d=document.createElement('div'); d.className='linia';
+  var mf=document.createElement('math-field'); mf.dataset.key=box.dataset.key;
+  var x=document.createElement('button'); x.className='usun'; x.textContent='✕'; x.title='Usuń linijkę';
+  d.appendChild(mf); d.appendChild(x);
+  if(po) po.closest('.linia').after(d); else box.appendChild(d);
+  mf.mathVirtualKeyboardPolicy='manual';
+  try{ mf.menuItems=[]; }catch(e){}
+  mf.value=v||'';
+  mf.addEventListener('input',function(){ zbierz(mf.dataset.key); });
+  mf.addEventListener('focusin',function(){ aktywne=mf; pokazKlaw(); });
+  mf.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); e.stopPropagation(); nowaLinia(mf.dataset.key,mf); } },true);
+  x.onclick=function(){ if(aktywne===mf){ aktywne=null; schowajKlaw(); } d.remove(); zbierz(box.dataset.key); };
+  return mf;
+}
+function zbierz(k){
+  var box=document.querySelector('.linie[data-key="'+k+'"]'); if(!box) return;
+  stan.obl[k]=Array.prototype.map.call(box.querySelectorAll('math-field'),function(m){ return m.value; });
+  if(!pelneLinie(k).length) delete stan.obl[k];
+  zapamietaj(); odswiezMape();
+}
+function nowaLinia(k,po){
+  var box=document.querySelector('.linie[data-key="'+k+'"]');
+  var mf=dodajPole(box,box.dataset.rown==='1'?'=':'',po);
+  setTimeout(function(){ mf.focus(); mf.executeCommand('moveToMathfieldEnd'); },30);
+}
+
+/* ===== KLAWIATURA EKRANOWA (duże klawisze, do stukania) ===== */
+var KLAW=[
+ ['7','7'],['8','8'],['9','9'],['+','+'],['−','-'],['·',R`\cdot`],[':',':'],['(','('],[')',')'],
+ ['4','4'],['5','5'],['6','6'],['$\\sqrt{\\square}$',R`\sqrt{#0}`,'fun'],['$\\sqrt[3]{\\square}$',R`\sqrt[3]{#0}`,'fun'],
+   ['$\\frac{\\square}{\\square}$',R`\frac{#0}{#?}`,'fun'],['$\\square^{2}$','^{2}','fun'],['$\\square^{n}$','^{#0}','fun'],['=','='],
+ ['1','1'],['2','2'],['3','3'],['0','0'],[',','{,}'],['<','<'],['>','>'],['←','@L','fun'],['→','@R','fun'],
+ ['⌫ cofnij','@B','szeroki fun'],['↵ nowa linijka','@N','szeroki fun'],['✓ gotowe','@H','szeroki ok']
+];
+(function(){
+  var h=''; KLAW.forEach(function(k,i){ h+='<button class="'+(k[2]||'')+'" data-i="'+i+'">'+(k[0].indexOf('$')===0?tm(k[0]):esc(k[0]))+'</button>'; });
+  var s=document.getElementById('klaw-siatka'); s.innerHTML=h;
+  // nie zabieraj fokusu polu wzoru
+  s.addEventListener('pointerdown',function(e){ e.preventDefault(); });
+  s.addEventListener('mousedown',function(e){ e.preventDefault(); });
+  s.addEventListener('click',function(e){ var b=e.target.closest('button'); if(b) klawisz(KLAW[+b.dataset.i][1]); });
+})();
+function klawisz(a){
+  var mf=aktywne; if(!mf) return;
+  if(a==='@H'){ mf.blur(); aktywne=null; schowajKlaw(); return; }
+  if(a==='@N'){ nowaLinia(mf.dataset.key,mf); return; }
+  mf.focus();
+  if(a==='@L') mf.executeCommand('moveToPreviousChar');
+  else if(a==='@R') mf.executeCommand('moveToNextChar');
+  else if(a==='@B') mf.executeCommand('deleteBackward');
+  else mf.insert(a,{format:'latex',selectionMode:'placeholder',focus:true,scrollIntoView:true});
+  zbierz(mf.dataset.key);
+}
+function pokazKlaw(){ document.getElementById('klaw').style.display='block'; document.body.classList.add('z-klaw');
+  if(aktywne) setTimeout(function(){ aktywne.scrollIntoView({block:'center',behavior:'smooth'}); },50); }
+function schowajKlaw(){ document.getElementById('klaw').style.display='none'; document.body.classList.remove('z-klaw'); }
+
+/* ===== ARKUSZ ODPOWIEDZI ===== */
+function dzis(){ var d=new Date(); return ('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+d.getFullYear(); }
+function kmA(l){ try{ return MathJax.tex2svg(czysc(l),{display:false}).outerHTML; }catch(e){ return esc(l); } }
+function tmA(s){ return String(s).split('$').map(function(c,i){ return i%2?kmA(c):esc(c); }).join(''); }
+function svgNaImg(root){ // inline SVG -> <img> w wysokiej rozdzielczości (pewne w html2canvas)
+  root.querySelectorAll('mjx-container svg').forEach(function(svg){
+    var r=svg.getBoundingClientRect(); if(!r.width) return;
+    var c=svg.cloneNode(true); c.setAttribute('xmlns','http://www.w3.org/2000/svg');
+    c.setAttribute('width',r.width*3); c.setAttribute('height',r.height*3);
+    var img=new Image(); img.className='mj'; img.alt='';
+    img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(new XMLSerializer().serializeToString(c));
+    img.style.width=r.width+'px'; img.style.height=r.height+'px'; img.style.verticalAlign=svg.style.verticalAlign;
+    svg.closest('mjx-container').replaceWith(img);
+  });
+}
+function rysujArkusz(){ var a=document.getElementById('arkusz'); a.innerHTML=arkuszHTML(); svgNaImg(a); }
+function linieA(k){ return pelneLinie(k).map(function(l){ return '<div class="unit a-lin">'+kmA(String.fromCharCode(92)+'displaystyle '+l)+'</div>'; }).join(''); }
+function arkuszHTML(){
+  var km=kmA,tm=tmA;
+  var h='<div class="unit a-glowa"><div class="a-tytul">Pierwiastki — karta odpowiedzi</div>'
+    +'<div>Imię i nazwisko: <b>'+(stan.imie?esc(stan.imie):'...............................')+'</b> &nbsp;&nbsp; Data: '+dzis()+'</div></div>';
+  Z.forEach(function(z){
+    h+='<div class="zb"><div class="unit"><b>Zadanie '+z.nr+'.</b> '+tm(z.p)+'</div>';
+    if(z.typ==='abcd'){
+      h+='<div class="unit a-opcje">'+z.o.map(function(o,j){ return '<span class="a-op'+(stan.odp[z.nr]===j?' a-wyb':'')+'"><b>'+LIT[j]+'.</b> '+tm(o)+'</span>'; }).join('')+'</div>';
+      if(stan.odp[z.nr]==null) h+='<div class="unit a-brak">brak odpowiedzi</div>';
+    }
+    if(z.typ==='wiersze'){
+      h+='<table class="a-tab">'+z.w.map(function(w,j){ var v=stan.odp[z.nr+'-'+j];
+        return '<tr class="unit"><td>'+km(w)+'</td>'+z.et.map(function(t,m){ return '<td><span class="a-kr">'+(v===m?'X':'')+'</span>'+t+'</td>'; }).join('')+'</tr>'; }).join('')+'</table>';
+    }
+    if(z.typ==='ab123'){
+      var a=stan.odp[z.nr+'ab'],u=stan.odp[z.nr+'u'];
+      h+='<div class="unit a-opcje">'+z.ab.map(function(t,j){ return '<span class="a-op'+(a===j?' a-wyb':'')+'"><b>'+LIT[j]+'.</b> '+t+'</span>'; }).join('')+'<span>ponieważ</span></div>';
+      h+=z.u.map(function(t,j){ return '<div class="unit a-opcje"><span class="a-op'+(u===j?' a-wyb':'')+'"><b>'+(j+1)+'.</b> '+tm(t)+'</span></div>'; }).join('');
+      if(a==null||u==null) h+='<div class="unit a-brak">'+(a==null&&u==null?'brak odpowiedzi':'odpowiedź niepełna')+'</div>';
+    }
+    if(z.typ==='otw'){
+      z.cz.forEach(function(c){ var k=z.nr+c[0];
+        h+='<div class="unit a-cz"><b>'+c[0]+')</b> '+km(c[1])+'</div>'+(pelneLinie(k).length?linieA(k):'<div class="unit a-brak" style="margin-left:40px">brak obliczeń</div>'); });
+    } else if(pelneLinie(String(z.nr)).length){
+      h+='<div class="unit a-oblt">Obliczenia:</div>'+linieA(String(z.nr));
+    }
+    h+='</div>';
+  });
+  return h;
+}
+function pokazArkusz(){
+  naArkuszu=true; schowajKlaw(); aktywne=null;
+  document.getElementById('ekran-zadanie').classList.remove('aktywny');
+  document.getElementById('ekran-arkusz').classList.add('aktywny');
+  var p=policz();
+  document.getElementById('a-stan').innerHTML='Wypełnione: <b>'+p.w+' z '+p.n+'</b>'
+    +(p.braki.length?'<br><span style="color:#c62828">Do uzupełnienia: zad. '+p.braki.join(', ')+'</span>':' — wszystko gotowe ✓');
+  document.getElementById('imie').value=stan.imie;
+  document.getElementById('arkusz').innerHTML='Przygotowuję arkusz…';
+  MathJax.startup.promise.then(rysujArkusz);
+  document.getElementById('pdf-info').textContent=''; document.getElementById('pdf-info').className='info';
+  odswiezMape(); window.scrollTo(0,0);
+}
+document.getElementById('imie').addEventListener('input',function(e){ stan.imie=e.target.value; zapamietaj(); rysujArkusz(); });
+
+function opcjePDF(){
+  var d=new Date(),dd=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+  return {margin:[12,10,14,10],filename:'pierwiastki_odpowiedzi_'+dd+'.pdf',image:{type:'jpeg',quality:0.96},
+    html2canvas:{scale:2.5,useCORS:true,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
+    pagebreak:{mode:['css'],avoid:['.zb','.unit']}};
+}
+function zapiszPDF(){
+  var b=document.getElementById('pdf-btn'),inf=document.getElementById('pdf-info'),o=opcjePDF();
+  b.disabled=true; b.textContent='⏳ Zapisuję…';
+  document.fonts.ready.then(function(){ return html2pdf().set(o).from(document.getElementById('arkusz')).save(); })
+  .then(function(){ inf.className='info dobrze'; inf.textContent='✓ Zapisano: '+o.filename+' (folder Pobrane)'; wyslijWynik(); })
+  .catch(function(){ inf.className='info zle'; inf.textContent='Nie udało się — użyj przycisku „Drukuj” i wybierz „Zapisz jako PDF”.'; })
+  .then(function(){ b.disabled=false; b.textContent='📄 Zapisz PDF z odpowiedziami'; });
+}
+function wyslijWynik(){ var p=policz();
+  try{ fetch(RESULTS_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({token:RESULTS_TOKEN,subject:'Matematyka',title:'Pierwiastki — karta pracy: zapisano PDF (wypełnione pozycje)',score:p.w,total:p.n})}); }catch(e){} }
+function wyczysc(){ if(!confirm('Na pewno usunąć wszystkie odpowiedzi i obliczenia?')) return;
+  stan={odp:{},obl:{},imie:stan.imie}; zapamietaj(); idz(0); }
+
+/* ===== START ===== */
+(function(){ var M=customElements.get('math-field');
+  if(M){ try{ M.soundsDirectory=null; M.plonkSound=null; M.keypressSound=null; M.decimalSeparator=','; }catch(e){} }
+  idz(0); })();
+</script>
+</body>
+</html>

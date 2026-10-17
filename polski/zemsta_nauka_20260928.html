@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zemsta — nauka</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#eef3fb;color:#222;
+  padding:16px 14px 50px;max-width:640px;margin:0 auto;font-size:19px;line-height:1.5}
+h1{font-size:24px;color:#1565c0;margin-bottom:2px}
+.subject-tag{display:inline-block;background:#dde7f5;color:#1565c0;font-size:13px;
+  padding:3px 10px;border-radius:10px;margin-bottom:16px}
+.ekran{display:none}.ekran.aktywny{display:block}
+.btn{display:block;width:100%;min-height:76px;font-size:21px;font-weight:700;border:none;
+  border-radius:16px;margin-bottom:14px;cursor:pointer;font-family:inherit;padding:10px 16px}
+.glowny{background:#1565c0;color:#fff}
+.drugi{background:#fff;color:#1565c0;border:3px solid #cfd8e3}
+.opcja{background:#fff;color:#222;border:3px solid #cfd8e3;text-align:left}
+.opcja.dobrze{background:#e8f5e9;border-color:#2e7d32;color:#1b5e20}
+.opcja.zle{background:#ffebee;border-color:#c62828;color:#b71c1c}
+.karta{background:#fff;border-radius:18px;padding:22px 20px;margin-bottom:16px;
+  box-shadow:0 1px 4px rgba(0,0,0,.08);border-left:8px solid #1e88e5;min-height:220px}
+.slowo{font-size:30px;font-weight:800;color:#1565c0;margin-bottom:12px;line-height:1.2}
+.tekst{font-size:21px}
+.licznik{font-size:15px;color:#1e88e5;font-weight:700;margin-bottom:10px}
+.polecenie{font-size:15px;color:#1e88e5;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.pytanie{font-size:22px;font-weight:600;margin-bottom:18px}
+.luka{display:inline-block;min-width:120px;border-bottom:3px solid #1565c0;text-align:center;color:#1565c0}
+.okienka{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 18px}
+.okno{width:44px;height:54px;border:3px solid #1565c0;border-radius:8px;background:#fff;
+  font-size:28px;font-weight:800;display:flex;align-items:center;justify-content:center;color:#1565c0}
+.okienka.dobrze .okno{border-color:#2e7d32;color:#1b5e20;background:#e8f5e9}
+.okienka.zle .okno{border-color:#c62828;color:#b71c1c;background:#ffebee}
+.kafle{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kafel{min-height:76px;font-size:32px;font-weight:800;border:3px solid #cfd8e3;border-radius:14px;
+  background:#fff;color:#1565c0;cursor:pointer;font-family:inherit}
+.kafel:disabled{opacity:.25}
+.info{font-size:19px;font-weight:700;margin:4px 0 16px;min-height:28px}
+.info.dobrze{color:#2e7d32}.info.zle{color:#c62828}
+.wynik{font-size:46px;font-weight:800;color:#1565c0;text-align:center;margin:10px 0}
+.pod{text-align:center;font-size:19px;margin-bottom:22px}
+.glos{background:none;border:2px solid #cfd8e3;border-radius:12px;font-size:17px;padding:8px 14px;
+  color:#1565c0;font-weight:700;margin-top:14px;cursor:pointer;min-height:48px}
+</style>
+</head>
+<body>
+<h1>„Zemsta” — sprawdzian</h1>
+<div class="subject-tag">Polski</div>
+
+<!-- START -->
+<div class="ekran aktywny" id="start">
+  <div class="karta" style="min-height:0">
+    <div class="tekst">Aleksander Fredro, „Zemsta”. Najpierw <b>ucz się</b> — dziesięć kart z najważniejszymi rzeczami.
+    Potem <b>sprawdź się</b> — pytania jak na sprawdzianie. Na koniec poćwicz pisanie zaproszenia.</div>
+  </div>
+  <button class="btn glowny" onclick="startNauki()">📖 Ucz się</button>
+  <button class="btn drugi" onclick="startSprawdzania()">✏️ Sprawdź się</button>
+  <a class="btn drugi" style="display:flex;align-items:center;justify-content:center;text-decoration:none" href="zemsta_sprawdzian_wpisz_20260928.html">📝 Sprawdzian na już — wpisz odpowiedzi</a>
+</div>
+
+<!-- NAUKA -->
+<div class="ekran" id="nauka">
+  <div class="licznik" id="n-licznik"></div>
+  <div class="karta">
+    <div class="slowo" id="n-slowo"></div>
+    <div class="tekst" id="n-tekst"></div>
+    <button class="glos" id="n-glos" onclick="czytaj()">🔊 Przeczytaj na głos</button>
+  </div>
+  <button class="btn glowny" id="n-dalej" onclick="dalejNauka()">Dalej ›</button>
+  <button class="btn drugi" onclick="wsteczNauka()">‹ Wstecz</button>
+</div>
+
+<!-- SPRAWDZANIE -->
+<div class="ekran" id="test">
+  <div class="licznik" id="t-licznik"></div>
+  <div class="polecenie" id="t-polecenie"></div>
+  <div class="pytanie" id="t-pytanie"></div>
+  <div id="t-okienka" class="okienka"></div>
+  <div id="t-odp"></div>
+  <div class="info" id="t-info"></div>
+  <button class="btn glowny" id="t-dalej" style="display:none" onclick="dalejTest()">Dalej ›</button>
+</div>
+
+<!-- WYNIK -->
+<div class="ekran" id="koniec">
+  <div class="wynik" id="w-liczba"></div>
+  <div class="pod" id="w-slowo"></div>
+  <button class="btn glowny" onclick="startSprawdzania()">↻ Sprawdź się jeszcze raz</button>
+  <button class="btn drugi" onclick="startNauki()">📖 Wróć do nauki</button>
+  <a class="btn glowny" style="display:flex;align-items:center;justify-content:center;text-decoration:none" href="https://julia-hub-161045418771.europe-west1.run.app/pisanie/zaproszenie?k=0TtXdXR_0rtGiDcJVw04aesd">✉️ Teraz: piszemy zaproszenie</a>
+</div>
+
+<script>
+var RESULTS_URL="https://julia-hub-161045418771.europe-west1.run.app/results",RESULTS_TOKEN="XW09DH2_fs8SdHh7B9pGMoCZuDVwAHSQ";
+function postResult(score,total){
+  if(!RESULTS_URL||!RESULTS_TOKEN)return;
+  try{fetch(RESULTS_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({token:RESULTS_TOKEN,subject:'Polski',title:'Zemsta — sprawdź się',
+      score:score,total:total})});}catch(e){}
+}
+
+var KARTY=[
+ {s:"GDZIE?", t:"Akcja „Zemsty” dzieje się w starym zamku. Zamek jest podzielony na dwie części — jedna należy do Cześnika, druga do Rejenta."},
+ {s:"SPÓR O MUR", t:"Cześnik i Rejent kłócą się o mur, który dzieli zamek na dwie części."},
+ {s:"CZEŚNIK RAPTUSIEWICZ", t:"Porywczy, szybko wpada w złość. Chciał się ożenić z Podstoliną."},
+ {s:"REJENT MILCZEK", t:"Udaje cichego, spokojnego i opanowanego. Tak naprawdę jest podstępny."},
+ {s:"PAPKIN", t:"Samochwała i tchórz. Grał na gitarze angielskiej. To on zanosi Rejentowi wyzwanie na pojedynek."},
+ {s:"WACŁAW", t:"Syn Rejenta, kocha Klarę. W młodości udawał księcia Radosława."},
+ {s:"POJEDYNEK", t:"Cześnik i Rejent mieli się pojedynkować przy trzech kopcach w Czarnym Lesie."},
+ {s:"FREDRO — ODMIANA", t:"M. Fredro · D. Fredry · C. Fredrze · B. Fredrę · N. Fredrą · Ms. o Fredrze · W. Fredro!"},
+ {s:"KOMEDIA", t:"„Zemsta” jest komedią. Dzieli się na akty i sceny. Są w niej dialogi, monologi i didaskalia, czyli tekst poboczny."},
+ {s:"TRZY RODZAJE KOMIZMU", t:"Komizm sytuacyjny — śmieszna sytuacja. Komizm postaci — śmieszny bohater. Komizm słowny — śmieszne słowa."}
+];
+
+var ZADANIA=[
+ {typ:"x", pytanie:"Gdzie rozgrywa się akcja „Zemsty”?", dobra:"W zamku", inne:["W szkole","Na statku"]},
+ {typ:"x", pytanie:"O co toczy się spór między bohaterami?", dobra:"O mur", inne:["O konia","O pieniądze"]},
+ {typ:"x", pytanie:"Z kim chciał się ożenić Cześnik?", dobra:"Z Podstoliną", inne:["Z Klarą","Z siostrą Rejenta"]},
+ {typ:"x", pytanie:"Który z bohaterów grał na gitarze angielskiej?", dobra:"Papkin", inne:["Wacław","Rejent"]},
+ {typ:"x", pytanie:"Kogo w młodości udawał Wacław?", dobra:"Księcia Radosława", inne:["Króla","Papkina"]},
+ {typ:"x", pytanie:"Gdzie mieli się pojedynkować Cześnik z Rejentem?", dobra:"Przy trzech kopcach w Czarnym Lesie", inne:["W zamku przy murze","Nad rzeką"]},
+ {typ:"x", pytanie:"Odmiana: C. komu? czemu?", dobra:"Fredrze", inne:["Fredrą","Fredrę"]},
+ {typ:"x", pytanie:"Odmiana: N. z kim? z czym?", dobra:"z Fredrą", inne:["z Fredrze","z Fredry"]},
+ {typ:"x", pytanie:"Odmiana: Ms. o kim? o czym?", dobra:"o Fredrze", inne:["o Fredrą","o Fredro"]},
+ {typ:"x", pytanie:"Kto jest porywczy i szybko wpada w złość?", dobra:"Cześnik Raptusiewicz", inne:["Rejent Milczek"]},
+ {typ:"x", pytanie:"Kto udaje cichego, opanowanego i spokojnego?", dobra:"Rejent Milczek", inne:["Cześnik Raptusiewicz"]},
+ {typ:"x", pytanie:"Prawda czy fałsz: Dramat podzielony został tylko na sceny.", dobra:"Fałsz", inne:["Prawda"]},
+ {typ:"x", pytanie:"Prawda czy fałsz: W „Zemście” jest tekst główny i tekst poboczny.", dobra:"Prawda", inne:["Fałsz"]},
+ {typ:"x", pytanie:"Prawda czy fałsz: W komedii występują wyłącznie monologi i dialogi.", dobra:"Fałsz", inne:["Prawda"]},
+ {typ:"x", pytanie:"Prawda czy fałsz: Prócz monologów i dialogów są w komedii także didaskalia.", dobra:"Prawda", inne:["Fałsz"]},
+ {typ:"x", pytanie:"Jakim gatunkiem literackim jest „Zemsta”?", dobra:"Komedią", inne:["Tragedią","Baśnią"]},
+ {typ:"x", pytanie:"Śmieszna jest SYTUACJA. To komizm…", dobra:"sytuacyjny", inne:["słowny","postaci"]},
+ {typ:"x", pytanie:"Śmieszny jest BOHATER. To komizm…", dobra:"postaci", inne:["sytuacyjny","słowny"]},
+ {typ:"x", pytanie:"Śmieszne są SŁOWA. To komizm…", dobra:"słowny", inne:["postaci","sytuacyjny"]}
+];
+
+function pokaz(id){ document.querySelectorAll('.ekran').forEach(function(e){e.classList.remove('aktywny');});
+  document.getElementById(id).classList.add('aktywny'); window.scrollTo(0,0); }
+function potasuj(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
+
+// ---------------- NAUKA
+var nk=0;
+function startNauki(){ nk=0; rysujKarte(); pokaz('nauka'); }
+function rysujKarte(){
+  document.getElementById('n-licznik').textContent='Karta '+(nk+1)+' z '+KARTY.length;
+  document.getElementById('n-slowo').textContent=KARTY[nk].s;
+  document.getElementById('n-tekst').textContent=KARTY[nk].t;
+  document.getElementById('n-dalej').textContent = nk===KARTY.length-1 ? '✏️ Teraz sprawdź się' : 'Dalej ›';
+  if(window.speechSynthesis) speechSynthesis.cancel();
+}
+function dalejNauka(){ if(nk<KARTY.length-1){nk++;rysujKarte();} else startSprawdzania(); }
+function wsteczNauka(){ if(nk>0){nk--;rysujKarte();} else pokaz('start'); }
+// Glos: jawnie polski (Chrome na Windows laduje glosy z opoznieniem, bez wyboru potrafi czytac po angielsku albo milczec)
+var glosPL=null;
+function szukajGlosu(){
+  var v=window.speechSynthesis ? speechSynthesis.getVoices() : [];
+  var pl=v.filter(function(x){ return /^pl/i.test(x.lang); });
+  glosPL = pl.filter(function(x){ return /natural|online|google/i.test(x.name); })[0] || pl[0] || null;
+}
+if(window.speechSynthesis){ szukajGlosu(); speechSynthesis.onvoiceschanged=szukajGlosu; }
+function czytaj(){
+  if(!window.speechSynthesis) return;
+  if(!glosPL) szukajGlosu();
+  var btn=document.getElementById('n-glos');
+  if(!glosPL && speechSynthesis.getVoices().length){
+    btn.textContent='🔇 Brak polskiego głosu na tym urządzeniu'; return;
+  }
+  speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(KARTY[nk].t); u.lang='pl-PL'; u.rate=0.9;
+  if(glosPL) u.voice=glosPL;
+  setTimeout(function(){ speechSynthesis.resume(); speechSynthesis.speak(u); }, 60);
+}
+if(!window.speechSynthesis) document.getElementById('n-glos').style.display='none';
+
+// ---------------- SPRAWDZANIE
+var tk=0, punkty=0, ulozone=[];
+function startSprawdzania(){ tk=0; punkty=0; rysujZadanie(); pokaz('test'); }
+
+function rysujZadanie(){
+  var z=ZADANIA[tk];
+  document.getElementById('t-licznik').textContent='Zadanie '+(tk+1)+' z '+ZADANIA.length;
+  document.getElementById('t-info').textContent=''; document.getElementById('t-info').className='info';
+  document.getElementById('t-dalej').style.display='none';
+  var odp=document.getElementById('t-odp'); odp.innerHTML='';
+  var ok=document.getElementById('t-okienka'); ok.innerHTML=''; ok.className='okienka'; ok.style.display='none';
+
+  if(z.typ==='luka'){
+    document.getElementById('t-polecenie').textContent='Uzupełnij lukę';
+    document.getElementById('t-pytanie').innerHTML=z.przed+' <span class="luka" id="luka">&nbsp;?&nbsp;</span> '+z.po;
+    potasuj([z.dobra].concat(z.inne)).forEach(function(o){ odp.appendChild(przycisk(o, z.dobra)); });
+  } else if(z.typ==='x'){
+    document.getElementById('t-polecenie').textContent='Wybierz poprawną odpowiedź';
+    document.getElementById('t-pytanie').textContent=z.pytanie;
+    potasuj([z.dobra].concat(z.inne)).forEach(function(o){ odp.appendChild(przycisk(o, z.dobra)); });
+  } else {
+    document.getElementById('t-polecenie').textContent='Ułóż słowo z liter — stukaj po kolei';
+    document.getElementById('t-pytanie').textContent=z.pytanie;
+    ulozone=[]; ok.style.display='flex';
+    for(var i=0;i<z.slowo.length;i++){ var d=document.createElement('div'); d.className='okno'; ok.appendChild(d); }
+    var kafle=document.createElement('div'); kafle.className='kafle';
+    z.litery.forEach(function(l){
+      var b=document.createElement('button'); b.className='kafel'; b.textContent=l;
+      b.onclick=function(){ if(b.disabled) return; b.disabled=true; ulozone.push({l:l,b:b}); odswiezOkienka(); };
+      kafle.appendChild(b);
+    });
+    odp.appendChild(kafle);
+    var cof=document.createElement('button'); cof.className='btn drugi'; cof.textContent='⌫ Cofnij literę'; cof.id='cofnij';
+    cof.onclick=function(){ var o=ulozone.pop(); if(o){ o.b.disabled=false; odswiezOkienka(); } };
+    odp.appendChild(cof);
+  }
+}
+
+function przycisk(tekst, dobra){
+  var b=document.createElement('button'); b.className='btn opcja'; b.textContent=tekst;
+  b.onclick=function(){
+    var wszystkie=document.querySelectorAll('#t-odp .opcja');
+    wszystkie.forEach(function(x){ x.disabled=true; if(x.textContent===dobra) x.classList.add('dobrze'); });
+    var z=ZADANIA[tk];
+    if(tekst===dobra){ punkty++; ocena(true,''); }
+    else { b.classList.add('zle'); ocena(false,'Poprawnie: '+dobra); }
+    if(z.typ==='luka') document.getElementById('luka').textContent=dobra;
+  };
+  return b;
+}
+
+function odswiezOkienka(){
+  var z=ZADANIA[tk], okna=document.querySelectorAll('#t-okienka .okno');
+  for(var i=0;i<okna.length;i++) okna[i].textContent = ulozone[i] ? ulozone[i].l : '';
+  if(ulozone.length===z.slowo.length){
+    var slowo=ulozone.map(function(o){return o.l;}).join('');
+    document.querySelectorAll('.kafel').forEach(function(k){k.disabled=true;});
+    document.getElementById('cofnij').style.display='none';
+    var ok=document.getElementById('t-okienka');
+    if(slowo===z.slowo){ punkty++; ok.classList.add('dobrze'); ocena(true,''); }
+    else { ok.classList.add('zle'); ocena(false,'Poprawnie: '+z.slowo); }
+  }
+}
+
+function ocena(dobrze, poprawka){
+  var i=document.getElementById('t-info');
+  i.className='info '+(dobrze?'dobrze':'zle');
+  i.textContent = dobrze ? '✓ Dobrze!' : '✗ '+poprawka;
+  var d=document.getElementById('t-dalej');
+  d.textContent = tk===ZADANIA.length-1 ? 'Zobacz wynik ›' : 'Dalej ›';
+  d.style.display='block';
+}
+
+function dalejTest(){
+  if(tk<ZADANIA.length-1){ tk++; rysujZadanie(); window.scrollTo(0,0); return; }
+  var t=ZADANIA.length;
+  document.getElementById('w-liczba').textContent=punkty+' / '+t;
+  document.getElementById('w-slowo').textContent =
+    punkty===t ? 'Wszystko dobrze. Jesteś gotowa na sprawdzian!' :
+    punkty>=t-2 ? 'Bardzo dobrze! Powtórz karty z błędami i spróbuj jeszcze raz.' :
+    'Wróć do nauki, a potem sprawdź się jeszcze raz.';
+  postResult(punkty,t);
+  pokaz('koniec');
+}
+</script>
+</body>
+</html>

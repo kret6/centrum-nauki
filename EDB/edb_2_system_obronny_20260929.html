@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDB 2: System obronny Polski</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#eef6ee;color:#222;
+  padding:16px 14px 50px;max-width:640px;margin:0 auto;font-size:19px;line-height:1.5}
+h1{font-size:24px;color:#2e7d32;margin-bottom:2px}
+.subject-tag{display:inline-block;background:#dcefdc;color:#2e7d32;font-size:13px;
+  padding:3px 10px;border-radius:10px;margin-bottom:16px}
+.ekran{display:none}.ekran.aktywny{display:block}
+.btn{display:block;width:100%;min-height:76px;font-size:21px;font-weight:700;border:none;
+  border-radius:16px;margin-bottom:14px;cursor:pointer;font-family:inherit;padding:10px 16px}
+.glowny{background:#2e7d32;color:#fff}
+.drugi{background:#fff;color:#2e7d32;border:3px solid #c8e0c9}
+.opcja{background:#fff;color:#222;border:3px solid #c8e0c9;text-align:left}
+.opcja.dobrze{background:#e8f5e9;border-color:#2e7d32;color:#1b5e20}
+.opcja.zle{background:#ffebee;border-color:#c62828;color:#b71c1c}
+.karta{background:#fff;border-radius:18px;padding:22px 20px;margin-bottom:16px;
+  box-shadow:0 1px 4px rgba(0,0,0,.08);border-left:8px solid #43a047;min-height:220px}
+.slowo{font-size:30px;font-weight:800;color:#2e7d32;margin-bottom:12px;line-height:1.2}
+.tekst{font-size:21px}
+.licznik{font-size:15px;color:#43a047;font-weight:700;margin-bottom:10px}
+.polecenie{font-size:15px;color:#43a047;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.pytanie{font-size:22px;font-weight:600;margin-bottom:18px}
+.luka{display:inline-block;min-width:120px;border-bottom:3px solid #2e7d32;text-align:center;color:#2e7d32}
+.okienka{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 18px}
+.okno{width:44px;height:54px;border:3px solid #2e7d32;border-radius:8px;background:#fff;
+  font-size:28px;font-weight:800;display:flex;align-items:center;justify-content:center;color:#2e7d32}
+.okienka.dobrze .okno{border-color:#2e7d32;color:#1b5e20;background:#e8f5e9}
+.okienka.zle .okno{border-color:#c62828;color:#b71c1c;background:#ffebee}
+.kafle{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kafel{min-height:76px;font-size:32px;font-weight:800;border:3px solid #c8e0c9;border-radius:14px;
+  background:#fff;color:#2e7d32;cursor:pointer;font-family:inherit}
+.kafel:disabled{opacity:.25}
+.info{font-size:19px;font-weight:700;margin:4px 0 16px;min-height:28px}
+.info.dobrze{color:#2e7d32}.info.zle{color:#c62828}
+.wynik{font-size:46px;font-weight:800;color:#2e7d32;text-align:center;margin:10px 0}
+.pod{text-align:center;font-size:19px;margin-bottom:22px}
+.glos{background:none;border:2px solid #c8e0c9;border-radius:12px;font-size:17px;padding:8px 14px;
+  color:#2e7d32;font-weight:700;margin-top:14px;cursor:pointer;min-height:48px}
+.opcja.wybrana{background:#dcefdc;border-color:#2e7d32;font-weight:700}
+</style>
+</head>
+<body>
+<h1>System obronny Polski</h1>
+<div class="subject-tag">EDB · temat 2 z 2</div>
+
+<!-- START -->
+<div class="ekran aktywny" id="start">
+  <div class="karta" style="min-height:0">
+    <div class="tekst">Edukacja dla bezpieczeństwa, podręcznik str. 63–72. Najpierw <b>ucz się</b> — 18 kart.
+    Potem <b>sprawdź się</b> — dokładnie te 4 pytania, które będą na kartkówce.</div>
+  </div>
+  <div class="karta" style="min-height:0;margin-top:14px">
+    <div class="tekst"><b>🎯 Pytania z kartkówki</b> — posłuchaj i odpowiadaj na głos, zanim padnie odpowiedź.</div>
+    <audio controls preload="none" src="edb_podcast_kartkowka.mp3" style="width:100%;margin-top:10px"></audio>
+    <div class="tekst" style="margin-top:14px"><b>🎧 Powtórka całego tematu</b> — Zofia i Marek, ok. 5 minut.</div>
+    <audio controls preload="none" src="edb_podcast_2.mp3" style="width:100%;margin-top:10px"></audio>
+  </div>
+  <button class="btn glowny" onclick="startNauki()">📖 Ucz się</button>
+  <button class="btn drugi" onclick="startSprawdzania()">✏️ Sprawdź się</button>
+</div>
+
+<!-- NAUKA -->
+<div class="ekran" id="nauka">
+  <div class="licznik" id="n-licznik"></div>
+  <div class="karta">
+    <div class="slowo" id="n-slowo"></div>
+    <div class="tekst" id="n-tekst"></div>
+    <button class="glos" id="n-glos" onclick="czytaj()">🔊 Przeczytaj na głos</button>
+  </div>
+  <button class="btn glowny" id="n-dalej" onclick="dalejNauka()">Dalej ›</button>
+  <button class="btn drugi" onclick="wsteczNauka()">‹ Wstecz</button>
+</div>
+
+<!-- SPRAWDZANIE -->
+<div class="ekran" id="test">
+  <div class="licznik" id="t-licznik"></div>
+  <div class="polecenie" id="t-polecenie"></div>
+  <div class="pytanie" id="t-pytanie"></div>
+  <div id="t-okienka" class="okienka"></div>
+  <div id="t-odp"></div>
+  <div class="info" id="t-info"></div>
+  <button class="btn glowny" id="t-dalej" style="display:none" onclick="dalejTest()">Dalej ›</button>
+</div>
+
+<!-- WYNIK -->
+<div class="ekran" id="koniec">
+  <div class="wynik" id="w-liczba"></div>
+  <div class="pod" id="w-slowo"></div>
+  <button class="btn glowny" onclick="startSprawdzania()">↻ Sprawdź się jeszcze raz</button>
+  <button class="btn drugi" onclick="startNauki()">📖 Wróć do nauki</button>
+</div>
+
+<script>
+var RESULTS_URL="https://julia-hub-161045418771.europe-west1.run.app/results",RESULTS_TOKEN="XW09DH2_fs8SdHh7B9pGMoCZuDVwAHSQ";
+function postResult(score,total){
+  if(!RESULTS_URL||!RESULTS_TOKEN)return;
+  try{fetch(RESULTS_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({token:RESULTS_TOKEN,subject:'EDB',title:'EDB 2: System obronny Polski — sprawdź się',
+      score:score,total:total})});}catch(e){}
+}
+
+var KARTY=[
+ {s:"SYSTEM OBRONNY PAŃSTWA", t:"To stała gotowość sił, środków, instytucji i planów działania, żeby zapewnić bezpieczeństwo państwa. Dzięki niemu państwo szybko reaguje na zagrożenie."},
+ {s:"TRZY PODSYSTEMY", t:"System obronny ma trzy części: podsystem militarny, podsystem niemilitarny i podsystem kierowania obronnością państwa."},
+ {s:"PODSYSTEM MILITARNY", t:"To Siły Zbrojne RP, czyli wojsko."},
+ {s:"PODSYSTEM NIEMILITARNY", t:"Policja, ABW, Agencja Wywiadu, Straż Graniczna, sądy i prokuratura, obrona cywilna, straż pożarna, Służba Więzienna, straż miejska, szpitale i służby sanitarne."},
+ {s:"KIEROWANIE OBRONNOŚCIĄ", t:"Parlament, Prezydent (z Radą Bezpieczeństwa Narodowego), premier i ministrowie, wojewodowie oraz samorządy: marszałkowie, starostowie, wójtowie, burmistrzowie, prezydenci miast."},
+ {s:"PARLAMENT", t:"Uchwala ustawy o obronności. Co roku przyjmuje ustawę budżetową — decyduje, ile pieniędzy idzie na obronę. Może podjąć uchwałę o stanie wojny."},
+ {s:"PREZYDENT", t:"Jest zwierzchnikiem Sił Zbrojnych RP (w czasie pokoju przez ministra obrony narodowej). Mianuje szefa Sztabu Generalnego i dowódców. Na wniosek Rady Ministrów może wprowadzić stan wojenny lub wyjątkowy."},
+ {s:"RADA MINISTRÓW", t:"Kieruje sprawami bezpieczeństwa przez ministrów i wojewodów. Określa liczbę poborowych. Może wprowadzić stan klęski żywiołowej."},
+ {s:"WŁADZE LOKALNE", t:"Wojewoda, starosta, burmistrz, prezydent miasta i wójt planują samoobronę ludności i wykonują zadania obronne."},
+ {s:"SIŁY ZBROJNE RP", t:"To oficjalna nazwa z Konstytucji. Mówimy też: Wojsko Polskie albo armia. Główne zadanie: obrona militarna państwa, stanie na straży niepodległości i granic."},
+ {s:"WOJSKO POMAGA TEŻ", t:"Przy klęskach żywiołowych, w działaniach antyterrorystycznych, w akcjach poszukiwawczych i ratowniczych, przy usuwaniu niewybuchów."},
+ {s:"ARMIA ZAWODOWA", t:"W Polsce jest armia zawodowa — służba jest ochotnicza. Obrona ojczyzny to obowiązek każdego obywatela (Konstytucja). Powszechna mobilizacja — powołanie całego wojska w razie wojny."},
+ {s:"PIĘĆ RODZAJÓW SIŁ ZBROJNYCH", t:"Wojska Lądowe, Siły Powietrzne, Marynarka Wojenna, Wojska Specjalne i Wojska Obrony Terytorialnej."},
+ {s:"WOJSKA LĄDOWE", t:"Prawie 2/3 całej armii. Powstrzymują ataki na lądzie. Sprzęt: czołgi, wozy bojowe, transportery (np. Rosomak), armaty i haubice, śmigłowce, drony."},
+ {s:"SIŁY POWIETRZNE", t:"Bronią kraju przed atakiem z powietrza i zdobywają przewagę w powietrzu. Sprzęt: myśliwce F-16, wyrzutnie rakiet, samoloty transportowe, stacje radiolokacyjne."},
+ {s:"MARYNARKA WOJENNA", t:"Chroni morskie granice i wybrzeże. W czasie pokoju ratuje ludzi na morzu. Sprzęt: fregaty, korwety, okręty ratownicze (np. ORP Ślązak), śmigłowce ratownicze."},
+ {s:"WOJSKA SPECJALNE", t:"Najlepiej wyszkolone, elitarne jednostki, np. GROM, Formoza, AGAT. Działają w najtrudniejszych warunkach. Mają trudną selekcję."},
+ {s:"WOT", t:"Wojska Obrony Terytorialnej — najmłodsze, od 2017 roku. Bronią i wspierają lokalne społeczności. Służba trwa od roku do 6 lat. Może wstąpić osoba pełnoletnia, z polskim obywatelstwem, niekarana i zdrowa."}
+];
+
+var ZADANIA=[
+ {typ:"test", pytanie:"Co daje Polsce bezpieczeństwo? Zaznacz poprawną odpowiedź.", opcje:["udział w sojuszach i organizacjach międzynarodowych (np. NATO)","duży udział w handlu zagranicznym","wysokie dochody obywateli","działania mające na celu powstrzymanie zmian klimatycznych"], dobre:[0], ile:1},
+ {typ:"test", pytanie:"Do jakiej organizacji wojskowej należy Polska?", opcje:["Pakt Północnoatlantycki (NATO)","Międzynarodowy Komitet Czerwonego Krzyża (PCK)","Polska Akcja Humanitarna (PAH)","UNICEF"], dobre:[0], ile:1},
+ {typ:"test", pytanie:"Czym jest bezpieczeństwo dla człowieka?", opcje:["mało ważnym warunkiem rozwoju i funkcjonowania człowieka","jedną z mniej ważnych potrzeb człowieka","podstawą wszelkiego rozwoju i funkcjonowania człowieka","stanem, który należy zapewnić wybranym grupom obywateli"], dobre:[2], ile:1},
+ {typ:"test", pytanie:"Kto dba o bezpieczeństwo naszego państwa i obywateli? Zaznacz 2 punkty.", opcje:["prezydent, parlament","instytuty naukowo-badawcze","instytucje oświatowe","premier, wojewoda"], dobre:[0,3], ile:2}
+];
+
+function pokaz(id){ document.querySelectorAll('.ekran').forEach(function(e){e.classList.remove('aktywny');});
+  document.getElementById(id).classList.add('aktywny'); window.scrollTo(0,0); }
+function potasuj(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
+
+// ---------------- NAUKA
+var nk=0;
+function startNauki(){ nk=0; rysujKarte(); pokaz('nauka'); }
+function rysujKarte(){
+  document.getElementById('n-licznik').textContent='Karta '+(nk+1)+' z '+KARTY.length;
+  document.getElementById('n-slowo').textContent=KARTY[nk].s;
+  document.getElementById('n-tekst').textContent=KARTY[nk].t;
+  document.getElementById('n-dalej').textContent = nk===KARTY.length-1 ? '✏️ Teraz sprawdź się' : 'Dalej ›';
+  if(window.speechSynthesis) speechSynthesis.cancel();
+}
+function dalejNauka(){ if(nk<KARTY.length-1){nk++;rysujKarte();} else startSprawdzania(); }
+function wsteczNauka(){ if(nk>0){nk--;rysujKarte();} else pokaz('start'); }
+// Glos: jawnie polski (Chrome na Windows laduje glosy z opoznieniem, bez wyboru potrafi czytac po angielsku albo milczec)
+var glosPL=null;
+function szukajGlosu(){
+  var v=window.speechSynthesis ? speechSynthesis.getVoices() : [];
+  var pl=v.filter(function(x){ return /^pl/i.test(x.lang); });
+  glosPL = pl.filter(function(x){ return /natural|online|google/i.test(x.name); })[0] || pl[0] || null;
+}
+if(window.speechSynthesis){ szukajGlosu(); speechSynthesis.onvoiceschanged=szukajGlosu; }
+function czytaj(){
+  if(!window.speechSynthesis) return;
+  if(!glosPL) szukajGlosu();
+  var btn=document.getElementById('n-glos');
+  if(!glosPL && speechSynthesis.getVoices().length){
+    btn.textContent='🔇 Brak polskiego głosu na tym urządzeniu'; return;
+  }
+  speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(KARTY[nk].t); u.lang='pl-PL'; u.rate=0.9;
+  if(glosPL) u.voice=glosPL;
+  setTimeout(function(){ speechSynthesis.resume(); speechSynthesis.speak(u); }, 60);
+}
+if(!window.speechSynthesis) document.getElementById('n-glos').style.display='none';
+
+// ---------------- SPRAWDZANIE
+var tk=0, punkty=0, ulozone=[];
+function startSprawdzania(){ tk=0; punkty=0; rysujZadanie(); pokaz('test'); }
+
+function rysujZadanie(){
+  var z=ZADANIA[tk];
+  document.getElementById('t-licznik').textContent='Zadanie '+(tk+1)+' z '+ZADANIA.length;
+  document.getElementById('t-info').textContent=''; document.getElementById('t-info').className='info';
+  document.getElementById('t-dalej').style.display='none';
+  var odp=document.getElementById('t-odp'); odp.innerHTML='';
+  var ok=document.getElementById('t-okienka'); ok.innerHTML=''; ok.className='okienka'; ok.style.display='none';
+
+  if(z.typ==='luka'){
+    document.getElementById('t-polecenie').textContent='Uzupełnij lukę';
+    document.getElementById('t-pytanie').innerHTML=z.przed+' <span class="luka" id="luka">&nbsp;?&nbsp;</span> '+z.po;
+    potasuj([z.dobra].concat(z.inne)).forEach(function(o){ odp.appendChild(przycisk(o, z.dobra)); });
+  } else if(z.typ==='test'){
+    rysujTest(z, odp);
+  } else if(z.typ==='x'){
+    document.getElementById('t-polecenie').textContent='Wybierz poprawną odpowiedź';
+    document.getElementById('t-pytanie').textContent=z.pytanie;
+    potasuj([z.dobra].concat(z.inne)).forEach(function(o){ odp.appendChild(przycisk(o, z.dobra)); });
+  } else {
+    document.getElementById('t-polecenie').textContent='Ułóż słowo z liter — stukaj po kolei';
+    document.getElementById('t-pytanie').textContent=z.pytanie;
+    ulozone=[]; ok.style.display='flex';
+    for(var i=0;i<z.slowo.length;i++){ var d=document.createElement('div'); d.className='okno'; ok.appendChild(d); }
+    var kafle=document.createElement('div'); kafle.className='kafle';
+    z.litery.forEach(function(l){
+      var b=document.createElement('button'); b.className='kafel'; b.textContent=l;
+      b.onclick=function(){ if(b.disabled) return; b.disabled=true; ulozone.push({l:l,b:b}); odswiezOkienka(); };
+      kafle.appendChild(b);
+    });
+    odp.appendChild(kafle);
+    var cof=document.createElement('button'); cof.className='btn drugi'; cof.textContent='⌫ Cofnij literę'; cof.id='cofnij';
+    cof.onclick=function(){ var o=ulozone.pop(); if(o){ o.b.disabled=false; odswiezOkienka(); } };
+    odp.appendChild(cof);
+  }
+}
+
+
+function rysujTest(z, odp){
+  document.getElementById('t-polecenie').textContent = z.ile>1 ? 'Zaznacz '+z.ile+' odpowiedzi, potem stuknij Sprawdź' : 'Zaznacz poprawną odpowiedź';
+  document.getElementById('t-pytanie').textContent=z.pytanie;
+  var wyb=[], spr=document.createElement('button');
+  function lit(i){ return String.fromCharCode(65+i); }
+  function zakoncz(w){
+    document.querySelectorAll('#t-odp .opcja').forEach(function(x,i){
+      x.disabled=true; x.classList.remove('wybrana');
+      if(z.dobre.indexOf(i)>-1) x.classList.add('dobrze'); else if(w.indexOf(i)>-1) x.classList.add('zle'); });
+    var ok = w.length===z.dobre.length && w.every(function(i){ return z.dobre.indexOf(i)>-1; });
+    if(ok){ punkty++; ocena(true,''); }
+    else ocena(false,'Poprawnie: '+z.dobre.map(function(i){ return lit(i)+'. '+z.opcje[i]; }).join(' oraz '));
+  }
+  z.opcje.forEach(function(o,i){
+    var b=document.createElement('button'); b.className='btn opcja'; b.textContent=lit(i)+'. '+o;
+    b.onclick=function(){
+      if(b.disabled) return;
+      if(z.ile===1){ zakoncz([i]); return; }
+      var k=wyb.indexOf(i);
+      if(k>-1){ wyb.splice(k,1); b.classList.remove('wybrana'); }
+      else if(wyb.length<z.ile){ wyb.push(i); b.classList.add('wybrana'); }
+      spr.style.display = wyb.length===z.ile ? 'block' : 'none';
+    };
+    odp.appendChild(b);
+  });
+  if(z.ile>1){
+    spr.className='btn glowny'; spr.textContent='✓ Sprawdź'; spr.style.display='none';
+    spr.onclick=function(){ spr.style.display='none'; zakoncz(wyb); };
+    odp.appendChild(spr);
+  }
+}
+
+function przycisk(tekst, dobra){
+  var b=document.createElement('button'); b.className='btn opcja'; b.textContent=tekst;
+  b.onclick=function(){
+    var wszystkie=document.querySelectorAll('#t-odp .opcja');
+    wszystkie.forEach(function(x){ x.disabled=true; if(x.textContent===dobra) x.classList.add('dobrze'); });
+    var z=ZADANIA[tk];
+    if(tekst===dobra){ punkty++; ocena(true,''); }
+    else { b.classList.add('zle'); ocena(false,'Poprawnie: '+dobra); }
+    if(z.typ==='luka') document.getElementById('luka').textContent=dobra;
+  };
+  return b;
+}
+
+function odswiezOkienka(){
+  var z=ZADANIA[tk], okna=document.querySelectorAll('#t-okienka .okno');
+  for(var i=0;i<okna.length;i++) okna[i].textContent = ulozone[i] ? ulozone[i].l : '';
+  if(ulozone.length===z.slowo.length){
+    var slowo=ulozone.map(function(o){return o.l;}).join('');
+    document.querySelectorAll('.kafel').forEach(function(k){k.disabled=true;});
+    document.getElementById('cofnij').style.display='none';
+    var ok=document.getElementById('t-okienka');
+    if(slowo===z.slowo){ punkty++; ok.classList.add('dobrze'); ocena(true,''); }
+    else { ok.classList.add('zle'); ocena(false,'Poprawnie: '+z.slowo); }
+  }
+}
+
+function ocena(dobrze, poprawka){
+  var i=document.getElementById('t-info');
+  i.className='info '+(dobrze?'dobrze':'zle');
+  i.textContent = dobrze ? '✓ Dobrze!' : '✗ '+poprawka;
+  var d=document.getElementById('t-dalej');
+  d.textContent = tk===ZADANIA.length-1 ? 'Zobacz wynik ›' : 'Dalej ›';
+  d.style.display='block';
+}
+
+function dalejTest(){
+  if(tk<ZADANIA.length-1){ tk++; rysujZadanie(); window.scrollTo(0,0); return; }
+  var t=ZADANIA.length;
+  document.getElementById('w-liczba').textContent=punkty+' / '+t;
+  document.getElementById('w-slowo').textContent =
+    punkty===t ? 'Wszystko dobrze. Jesteś gotowa na kartkówkę!' :
+    punkty>=t-2 ? 'Bardzo dobrze! Powtórz karty z błędami i spróbuj jeszcze raz.' :
+    'Wróć do nauki, a potem sprawdź się jeszcze raz.';
+  postResult(punkty,t);
+  pokaz('koniec');
+}
+</script>
+</body>
+</html>

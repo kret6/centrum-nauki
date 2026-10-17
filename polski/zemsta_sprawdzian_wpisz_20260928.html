@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zemsta — sprawdzian na komputerze</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#eef3fb;color:#222;
+  padding:16px 14px 70px;max-width:820px;margin:0 auto;font-size:18px;line-height:1.5}
+h1{font-size:25px;color:#0d47a1;margin-bottom:2px}
+.sub{color:#5c6b80;font-size:15px;margin-bottom:14px}
+.subject-tag{display:inline-block;background:#dde7f5;color:#1565c0;font-size:13px;padding:3px 10px;border-radius:10px;margin-bottom:10px}
+.czesc{font-size:14px;font-weight:700;color:#5c6b80;text-transform:uppercase;letter-spacing:.4px;margin:26px 0 8px}
+.zad{background:#fff;border-radius:16px;padding:16px 18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.08);border-left:7px solid #1565c0}
+.zad-glowa{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}
+.zad-nr{font-size:17px;font-weight:800;color:#1565c0}
+.pkt{font-size:14px;color:#5c6b80;font-weight:700;white-space:nowrap}
+.polecenie{font-weight:700;margin-bottom:12px}
+.pyt{margin:14px 0 6px}
+input[type=text],textarea{width:100%;font-size:20px;padding:10px 12px;border:3px solid #cfd8e3;border-radius:12px;
+  font-family:inherit;background:#fff}
+input[type=text]{min-height:56px}
+textarea{min-height:260px;line-height:1.55;resize:vertical}
+input:focus,textarea:focus{outline:none;border-color:#1565c0}
+input[readonly],textarea[readonly]{background:#f6f8fb;color:#333}
+.odmiana{display:grid;grid-template-columns:64px 150px 1fr;gap:8px 10px;align-items:center}
+.odmiana .p{font-weight:800;color:#1565c0}
+.odmiana .dane{font-size:20px;font-weight:700;padding-left:14px}
+.wybor{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.wybor button{min-width:84px;min-height:60px;font-size:22px;font-weight:800;border:3px solid #cfd8e3;border-radius:12px;
+  background:#fff;color:#1565c0;cursor:pointer;font-family:inherit}
+.wybor button.wybrany{background:#1565c0;color:#fff;border-color:#1565c0}
+.wybor button:disabled{cursor:default}
+.pf-wiersz{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid #e3e8ef}
+.pf-wiersz:first-of-type{border-top:none}
+.sciaga{background:#e3f2fd;border-radius:12px;padding:10px 14px;font-size:16px;margin-bottom:12px}
+.btn{display:block;width:100%;min-height:74px;font-size:21px;font-weight:700;border:none;border-radius:16px;margin-top:14px;cursor:pointer;font-family:inherit}
+.glowny{background:#1565c0;color:#fff}.drugi{background:#fff;color:#1565c0;border:3px solid #cfd8e3}
+/* ocena przez rodzica */
+.klucz{display:none;margin-top:8px;background:#f1f8e9;border-radius:10px;padding:8px 12px;font-size:16px}
+.klucz b{color:#2e7d32}
+.ocena{display:none;gap:8px;margin-top:8px;align-items:center;flex-wrap:wrap}
+.ocena button{min-width:62px;min-height:48px;font-size:20px;font-weight:800;border:3px solid #cfd8e3;border-radius:12px;background:#fff;cursor:pointer}
+.ocena button.tak.on{background:#2e7d32;color:#fff;border-color:#2e7d32}
+.ocena button.nie.on{background:#c62828;color:#fff;border-color:#c62828}
+.ocena .prop{font-size:13px;color:#5c6b80}
+.tryb-oceny .klucz{display:block}.tryb-oceny .ocena{display:flex}
+#suma{display:none;position:sticky;bottom:0;background:#0d47a1;color:#fff;border-radius:14px;padding:12px 16px;margin-top:16px;
+  font-size:20px;font-weight:700;text-align:center}
+.tryb-oceny #suma{display:block}
+.info-ocena{display:none;background:#fff8e1;border-left:6px solid #f9a825;border-radius:12px;padding:12px 14px;margin:14px 0;font-size:17px}
+.tryb-oceny .info-ocena{display:block}
+.zad7-pkt{display:none;margin-top:10px}.tryb-oceny .zad7-pkt{display:flex}
+.zad7-pkt button{min-width:62px;min-height:52px;font-size:21px;font-weight:800;border:3px solid #cfd8e3;border-radius:12px;background:#fff;cursor:pointer}
+.zad7-pkt button.on{background:#1565c0;color:#fff;border-color:#1565c0}
+a.powrot{display:inline-block;margin-top:18px;color:#1565c0;font-weight:700;font-size:17px}
+</style>
+</head>
+<body>
+<div class="subject-tag">Polski</div>
+<h1>Sprawdzian po lekturze „Zemsta”</h1>
+<div class="sub">Aleksander Fredro · napisz odpowiedzi sama · sprawdza tata albo mama</div>
+
+<div class="info-ocena">Tryb sprawdzania: przy każdej odpowiedzi jest klucz. Stuknij <b>✓</b> albo <b>✗</b>.
+Tam, gdzie strona rozpoznała dobrą odpowiedź, ✓ jest już zaznaczone jako propozycja — możesz to zmienić.</div>
+
+<div id="arkusz">
+
+<div class="czesc">Część I — treść utworu</div>
+<div class="zad">
+  <div class="zad-glowa"><span class="zad-nr">Zadanie 1.</span><span class="pkt">… / 6 p.</span></div>
+  <div class="polecenie">Odpowiedz krótko na pytania.</div>
+  <div id="z1"></div>
+</div>
+
+<div class="czesc">Część II — zagadnienia teoretycznoliterackie i interpretacja utworu</div>
+<div class="zad">
+  <div class="zad-glowa"><span class="zad-nr">Zadanie 2.</span><span class="pkt">… / 3 p.</span></div>
+  <div class="polecenie">Odmień przez przypadki nazwisko autora „Zemsty”.</div>
+  <div class="odmiana" id="z2"></div>
+</div>
+
+<div class="zad">
+  <div class="zad-glowa"><span class="zad-nr">Zadanie 3.</span><span class="pkt">… / 2 p.</span></div>
+  <div class="polecenie">Połącz nazwisko (A, B) z właściwą postacią (1, 2).</div>
+  <div><b>A.</b> Cześnik Raptusiewicz<br><b>B.</b> Rejent Milczek</div>
+  <div style="margin-top:8px"><b>1.</b> Osoba udająca cichą, opanowaną i spokojną<br><b>2.</b> Osoba porywcza, szybko wpadająca w złość</div>
+  <div id="z3"></div>
+</div>
+
+<div class="zad">
+  <div class="zad-glowa"><span class="zad-nr">Zadanie 4.</span><span class="pkt">… / 2 p.</span></div>
+  <div class="polecenie">Zdecyduj, które zdania dotyczące „Zemsty” są prawdziwe (P), a które fałszywe (F).</div>
+  <div id="z4"></div>
+</div>
+
+<div class="zad">
+  <div class="zad-glowa"><span class="zad-nr">Zadanie 5.</span><span class="pkt">… / 1 p.</span></div>
+  <div class="polecenie">Jakim gatunkiem literackim jest „Zemsta”? Dokończ zdanie.</div>
+  <div id="z5box"></div>
+</div>
+
+<div class="zad">
+  <div class="zad-glowa"><span class="zad-nr">Zadanie 6.</span><span class="pkt">… / 3 p.</span></div>
+  <div class="polecenie">Jakie trzy rodzaje komizmu można znaleźć w „Zemście”?</div>
+  <div id="z6"></div>
+</div>
+
+<div class="czesc">Część III — praca stylistyczna</div>
+<div class="zad">
+  <div class="zad-glowa"><span class="zad-nr">Zadanie 7.</span><span class="pkt">… / 3 p.</span></div>
+  <div class="polecenie">Szkolne Koło Teatralne „Aplauz” przygotowało przedstawienie na motywach „Zemsty” Aleksandra
+  Fredry. Napisz zaproszenie, w którym zachęcisz rodziców i uczniów do obejrzenia spektaklu. Użyj dwóch argumentów.</div>
+  <div class="sciaga">Ściąga: <b>KTO</b> zaprasza? · <b>KOGO</b>? · <b>NA CO</b>? · <b>GDZIE</b>? · <b>KIEDY</b>? · <b>+ 2 argumenty</b></div>
+  <textarea id="z7" data-pole="z7" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="ZAPROSZENIE"></textarea>
+  <div class="klucz">Sprawdź, czy są: kto, kogo, na co, gdzie, kiedy i 2 argumenty. Przyznaj od 0 do 3 punktów.</div>
+  <div class="zad7-pkt" style="gap:8px;align-items:center">Punkty:
+    <button data-p="0">0</button><button data-p="1">1</button><button data-p="2">2</button><button data-p="3">3</button></div>
+</div>
+
+</div>
+
+<button class="btn glowny" id="oddaj" onclick="oddaj()">📤 Oddaję do sprawdzenia</button>
+<div id="suma"></div>
+<button class="btn drugi" id="zapisz" style="display:none" onclick="zapiszWynik()">💾 Zapisz wynik w panelu rodzica</button>
+<button class="btn drugi" onclick="odNowa()">↻ Wyczyść i zacznij od nowa</button>
+<a class="powrot" href="zemsta_nauka_20260928.html">‹ Wróć do „Zemsty”</a>
+
+<script>
+var RESULTS_URL="https://julia-hub-161045418771.europe-west1.run.app/results",RESULTS_TOKEN="XW09DH2_fs8SdHh7B9pGMoCZuDVwAHSQ";
+var PAMIEC='zemsta-sprawdzian-v1';
+
+function norm(s){ return (s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ł/g,'l').trim(); }
+function zawiera(odp, slowa){ var n=norm(odp); return slowa.some(function(s){ return n.indexOf(norm(s))>-1; }); }
+
+// ---------- pozycje oceniane: id, klucz do pokazania, punkty, propozycja automatyczna
+var POZYCJE=[];
+function poz(id, klucz, prop){ POZYCJE.push({id:id, klucz:klucz, prop:prop}); }
+
+var Z1=[
+ ["Gdzie rozgrywa się akcja utworu?", "w zamku (podzielonym między Cześnika i Rejenta)", ["zamk","zamek"]],
+ ["O co toczy się spór między bohaterami?", "o mur (graniczny, dzielący zamek)", ["mur"]],
+ ["Z kim chciał się ożenić Cześnik?", "z Podstoliną", ["podstolin"]],
+ ["Który z bohaterów grał na gitarze angielskiej?", "Papkin", ["papkin"]],
+ ["Kogo w młodości udawał Wacław?", "księcia Radosława", ["radosl","ksiec"]],
+ ["Gdzie mieli się pojedynkować Cześnik z Rejentem?", "przy trzech kopcach w Czarnym Lesie", ["kopc","czarn"]]
+];
+var z1=document.getElementById('z1');
+Z1.forEach(function(q,i){
+  var id='z1_'+(i+1);
+  z1.insertAdjacentHTML('beforeend','<div class="pyt"><b>'+(i+1)+'.</b> '+q[0]+'</div>'+pole(id)+ocenaHTML(id,q[1]));
+  poz(id,q[1],function(){ return zawiera(wart(id), q[2]); });
+});
+
+var Z2=[["M.","kto? co?","Fredro"],["D.","kogo? czego?","Fredry"],["C.","komu? czemu?",null,"Fredrze"],
+        ["B.","kogo? co?","Fredrę"],["N.","z kim? z czym?",null,"(z) Fredrą"],["Ms.","o kim? o czym?",null,"(o) Fredrze"],["W.","o!","Fredro"]];
+var z2=document.getElementById('z2');
+Z2.forEach(function(r){
+  var h='<span class="p">'+r[0]+'</span><span>'+r[1]+'</span>';
+  if(r[2]) h+='<span class="dane">'+r[2]+'</span>';
+  else { var id='z2_'+r[0].replace('.',''); h+='<span>'+pole(id)+ocenaHTML(id,r[3])+'</span>';
+    (function(id,kl){ poz(id,kl,function(){ return wart(id).toLowerCase().trim().replace(/^(z|o)\s+/,'')===kl.toLowerCase().replace(/\(.*?\)\s*/,''); }); })(id,r[3]); }
+  z2.insertAdjacentHTML('beforeend',h);
+});
+
+var z3=document.getElementById('z3');
+[["A","2"],["B","1"]].forEach(function(r){
+  var id='z3_'+r[0];
+  z3.insertAdjacentHTML('beforeend','<div class="pyt"><b>'+r[0]+' →</b></div><div class="wybor" data-pole="'+id+'">'+
+    '<button data-v="1">1</button><button data-v="2">2</button></div>'+ocenaHTML(id,r[0]+' – '+r[1]));
+  poz(id,r[0]+' – '+r[1],function(){ return wart(id)===r[1]; });
+});
+
+var Z4=[["Dramat podzielony został tylko na sceny.","F"],
+        ["W „Zemście” można wyróżnić zarówno tekst główny, jak i tekst poboczny.","P"],
+        ["W komedii występują wyłącznie monologi i dialogi.","F"],
+        ["Prócz monologów i dialogów na całość komedii składają się także didaskalia.","P"]];
+var z4=document.getElementById('z4');
+Z4.forEach(function(r,i){
+  var id='z4_'+(i+1);
+  z4.insertAdjacentHTML('beforeend','<div class="pf-wiersz"><div><b>'+(i+1)+'.</b> '+r[0]+ocenaHTML(id,r[1]==='P'?'P — prawda':'F — fałsz')+'</div>'+
+    '<div class="wybor" data-pole="'+id+'"><button data-v="P">P</button><button data-v="F">F</button></div></div>');
+  poz(id,r[1],function(){ return wart(id)===r[1]; });
+});
+
+document.getElementById("z5box").innerHTML='<div class="pyt">„Zemsta” jest…</div>'+pole('z5')+ocenaHTML('z5','komedią');
+poz('z5','komedią',function(){ return zawiera(wart('z5'),['komedi']); });
+
+var z6=document.getElementById('z6');
+for(var i=1;i<=3;i++){
+  (function(i){ var id='z6_'+i;
+    z6.insertAdjacentHTML('beforeend','<div class="pyt"><b>'+i+'.</b></div>'+pole(id)+ocenaHTML(id,'komizm sytuacyjny / postaci / słowny (językowy)'));
+    poz(id,'',function(){ return zawiera(wart(id),['sytuac','postac','slown','jezyk']); }); })(i);
+}
+
+function pole(id){ return '<input type="text" data-pole="'+id+'" id="'+id+'" autocomplete="off" autocorrect="off" spellcheck="false">'; }
+function ocenaHTML(id,klucz){
+  return '<div class="klucz">Klucz: <b>'+klucz+'</b></div>'+
+    '<div class="ocena" data-oc="'+id+'"><button class="tak">✓</button><button class="nie">✗</button><span class="prop"></span></div>';
+}
+
+// ---------- wartosci + zapamietywanie
+var stan={};
+try{ stan=JSON.parse(localStorage.getItem(PAMIEC)||'{}'); }catch(e){ stan={}; }
+function zapamietaj(){ try{ localStorage.setItem(PAMIEC, JSON.stringify(stan)); }catch(e){} }
+function wart(id){ return stan[id]||''; }
+
+document.querySelectorAll('[data-pole]').forEach(function(el){
+  var id=el.getAttribute('data-pole');
+  if(el.classList.contains('wybor')){
+    el.querySelectorAll('button').forEach(function(b){
+      if(stan[id]===b.getAttribute('data-v')) b.classList.add('wybrany');
+      b.onclick=function(){ if(stan.oddane) return;
+        el.querySelectorAll('button').forEach(function(x){x.classList.remove('wybrany');});
+        b.classList.add('wybrany'); stan[id]=b.getAttribute('data-v'); zapamietaj(); };
+    });
+  } else {
+    el.value=stan[id]||'';
+    el.addEventListener('input',function(){ stan[id]=el.value; zapamietaj(); });
+  }
+});
+
+// ---------- ocena przez rodzica
+var oceny={}, pkt7=null;
+if(stan.oceny) oceny=stan.oceny;
+if(stan.pkt7!=null) pkt7=stan.pkt7;
+
+function ustawOcene(id, v, propozycja){
+  oceny[id]=v; stan.oceny=oceny; zapamietaj();
+  var d=document.querySelector('[data-oc="'+id+'"]');
+  d.querySelector('.tak').classList.toggle('on', v===true);
+  d.querySelector('.nie').classList.toggle('on', v===false);
+  d.querySelector('.prop').textContent = propozycja ? 'propozycja strony — sprawdź' : '';
+  licz();
+}
+document.querySelectorAll('.ocena').forEach(function(d){
+  var id=d.getAttribute('data-oc');
+  d.querySelector('.tak').onclick=function(){ ustawOcene(id,true,false); };
+  d.querySelector('.nie').onclick=function(){ ustawOcene(id,false,false); };
+});
+document.querySelectorAll('.zad7-pkt button').forEach(function(b){
+  b.onclick=function(){ pkt7=+b.getAttribute('data-p'); stan.pkt7=pkt7; zapamietaj();
+    document.querySelectorAll('.zad7-pkt button').forEach(function(x){x.classList.toggle('on',x===b);}); licz(); };
+});
+
+function punkty(){
+  function ile(pref){ return POZYCJE.filter(function(p){ return p.id.indexOf(pref)===0 && oceny[p.id]===true; }).length; }
+  var z4ok=ile('z4_');
+  var p = ile('z1_') + ile('z2_') + ile('z3_') + (z4ok===4?2:(z4ok===3?1:0)) + ile('z5') + ile('z6_') + (pkt7||0);
+  var ocenione = POZYCJE.every(function(x){ return oceny[x.id]!==undefined; }) && pkt7!==null;
+  return {p:p, ocenione:ocenione};
+}
+function licz(){
+  var r=punkty();
+  document.getElementById('suma').textContent = 'Punkty: '+r.p+' / 20' + (r.ocenione ? '' : '  · jeszcze nie wszystko ocenione');
+  document.getElementById('zapisz').style.display = r.ocenione ? 'block' : 'none';
+}
+
+function zablokuj(){
+  document.body.classList.add('tryb-oceny');
+  document.querySelectorAll('input[type=text],textarea').forEach(function(x){ x.readOnly=true; });
+  document.querySelectorAll('.wybor button').forEach(function(x){ x.disabled=true; });
+  document.getElementById('oddaj').style.display='none';
+  POZYCJE.forEach(function(p){
+    if(oceny[p.id]!==undefined) ustawOcene(p.id, oceny[p.id], false);
+    else if(p.prop()) ustawOcene(p.id, true, true);
+  });
+  if(pkt7!==null) document.querySelectorAll('.zad7-pkt button').forEach(function(x){ x.classList.toggle('on', +x.getAttribute('data-p')===pkt7); });
+  licz();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function oddaj(){
+  var puste = POZYCJE.filter(function(p){ return !wart(p.id); }).length + (wart('z7') ? 0 : 1);
+  if(puste && !confirm('Zostało '+puste+' pustych miejsc. Oddać do sprawdzenia mimo to?')) return;
+  stan.oddane=true; zapamietaj(); zablokuj();
+}
+function zapiszWynik(){
+  var r=punkty();
+  try{ fetch(RESULTS_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({token:RESULTS_TOKEN,subject:'Polski',title:'Zemsta — sprawdzian na komputerze',score:r.p,total:20})}); }catch(e){}
+  document.getElementById('zapisz').textContent='✓ Zapisane: '+r.p+' / 20';
+  document.getElementById('zapisz').disabled=true;
+}
+function odNowa(){
+  if(!confirm('Wyczyścić wszystkie odpowiedzi i zacząć od nowa?')) return;
+  try{ localStorage.removeItem(PAMIEC); }catch(e){}
+  location.reload();
+}
+if(stan.oddane) zablokuj();
+</script>
+</body>
+</html>

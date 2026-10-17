@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centrum Nauki</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            padding-bottom: 80px;
+        }
+
+        h1 { color: #333; margin-bottom: 5px; font-size: 26px;}
+        p.subtitle { color: #666; font-size: 14px; margin-top: 0px; margin-bottom: 30px; }
+        
+        h2 { 
+            color: #555; 
+            text-align: left; 
+            max-width: 800px; 
+            margin: 30px auto 15px auto; 
+            border-bottom: 2px solid #ddd; 
+            padding-bottom: 5px; 
+            font-size: 16px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        /* --- STREFA PRIORYTETÓW (Duże kafle) --- */
+        .grid-priority {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .grid-chat {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .tile-big {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            text-decoration: none;
+            color: #333;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center; 
+            justify-content: flex-start;
+            height: 90px;
+            border-left: 12px solid #ddd;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tile-big:active { transform: scale(0.96); }
+        .tile-big .icon { font-size: 45px; margin-right: 20px; margin-left: 5px; }
+        .tile-big .info { text-align: left; }
+        .tile-big .title { font-size: 20px; font-weight: bold; display: block; margin-bottom: 4px;}
+        .tile-big .status { font-size: 13px; color: #555; background: #f0f2f5; padding: 4px 10px; border-radius: 8px; display: inline-block;}
+        
+        /* Tag PILNE */
+        .tag-urgent { position: absolute; top: 10px; right: 10px; background: #ff5252; color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+
+        /* --- STREFA ARCHIWUM (Małe kafle) --- */
+        .grid-archive {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .tile-small {
+            background: white;
+            border-radius: 15px;
+            padding: 10px;
+            text-decoration: none;
+            color: #555;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 90px;
+            border-top: 5px solid #ddd;
+            opacity: 0.85;
+        }
+        .tile-small:hover { opacity: 1; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .tile-small .icon { font-size: 28px; margin-bottom: 5px; }
+        .tile-small .title { font-size: 13px; font-weight: bold; text-align: center;}
+
+        /* KOLORY PRZEDMIOTÓW */
+        .historia { border-color: #8d6e63; }
+        .chemia { border-color: #00acc1; }
+        .hiszpanski { border-color: #ff6f00; }
+        .angielski { border-color: #43a047; }
+        .niemiecki { border-color: #d81b60; }
+        .matma { border-color: #1976d2; }
+        .biologia { border-color: #66bb6a; }
+        .polski { border-color: #1565c0; }
+        .edb { border-color: #c62828; }
+        .matematyka { border-color: #3949ab; }
+        .fizyka { border-color: #7b1fa2; }
+        .geografia { border-color: #fbc02d; }
+
+    </style>
+</head>
+<body>
+
+    <h1>🚀 Centrum Dowodzenia</h1>
+    <p class="subtitle">Klasa 8 · rok szkolny 2026/2027</p>
+
+        <!-- chat-tile -->
+    <h2>✍️ Piszemy razem</h2>
+    <div class="grid-chat">
+        <a href="https://julia-hub-161045418771.europe-west1.run.app/chat?k=0TtXdXR_0rtGiDcJVw04aesd" class="tile-big" style="border-left-color:#e91e63">
+            <div class="icon">✍️</div>
+            <div class="info">
+                <div class="title">Piszemy razem</div>
+                <div class="status">Porozmawiaj i napisz opowiadanie 💬</div>
+            </div>
+        </a>
+    </div>
+
+<h2>🔥 Do zrobienia (Pilne)</h2>
+    <div class="grid-priority">
+        <!-- gen-tile -->
+        <a href="Historia/sprawdzian_II_wojna_20261017.html" class="tile-big historia">
+            <div class="tag-urgent">KLASÓWKA</div>
+            <div class="icon">🏛️</div>
+            <div class="info">
+                <div class="title">Historia</div>
+                <div class="status">Sprawdzian — II wojna · jak na kartce (19.10)</div>
+            </div>
+        </a>
+        <!-- gen-tile -->
+        <a href="Matematyka/kartkowka_potegi_pierwiastki_20261017.html" class="tile-big matematyka">
+            <div class="tag-urgent">KLASÓWKA</div>
+            <div class="icon">🔢</div>
+            <div class="info">
+                <div class="title">Matematyka</div>
+                <div class="status">Kartkówka — potęgi i pierwiastki · jak na kartce</div>
+            </div>
+        </a>
+        <!-- gen-tile -->
+        <a href="Chemia/kartkowka_kwasy_pierwiastki_20261017.html" class="tile-big chemia">
+            <div class="tag-urgent">KLASÓWKA</div>
+            <div class="icon">⚗️</div>
+            <div class="info">
+                <div class="title">Chemia</div>
+                <div class="status">Kartkówka — kwasy i pierwiastki · jak na kartce</div>
+            </div>
+        </a>
+        <!-- gen-tile -->
+        <a href="Fizyka/kartkowka_elektrycznosc_20261017.html" class="tile-big fizyka">
+            <div class="tag-urgent">KLASÓWKA</div>
+            <div class="icon">⚡</div>
+            <div class="info">
+                <div class="title">Fizyka</div>
+                <div class="status">Kartkówka — elektryczność · jak na kartce</div>
+            </div>
+        </a>
+        <!-- gen-tile -->
+        <a href="Matematyka/pierwiastki_karta_pracy_20261017.html" class="tile-big matematyka">
+            <div class="tag-urgent">NOWE</div>
+            <div class="icon">🔢</div>
+            <div class="info">
+                <div class="title">Matematyka</div>
+                <div class="status">Pierwiastki — karta pracy (wpisz i zapisz PDF)</div>
+            </div>
+        </a>
+    </div>
+
+    <h2>📚 Biblioteka</h2>
+    <div class="grid-archive">
+        <a href="Historia/dwie_okupacje_20261012.html" class="tile-small historia">
+            <div class="icon">📜</div>
+            <div class="title">Historia</div>
+        </a>
+        <a href="Niemiecki/karta_liczby_powitania_20261008.html" class="tile-small niemiecki">
+            <div class="icon">🇩🇪</div>
+            <div class="title">Niemiecki</div>
+        </a>
+        <a href="Matematyka/potegi_okienka_zad6-7_20260930.html" class="tile-small matematyka">
+            <div class="icon">🔢</div>
+            <div class="title">Matematyka</div>
+        </a>
+        <a href="angielski/slowka_str16_ucz_pisz_20260929.html" class="tile-small angielski">
+            <div class="icon">⌨️</div>
+            <div class="title">Angielski</div>
+        </a>
+        <a href="Biologia/genetyka_ewolucja_20261001.html" class="tile-small biologia">
+            <div class="icon">🧬</div>
+            <div class="title">Biologia</div>
+        </a>
+        <a href="Chemia/pierwiastki_kwasy_20261001.html" class="tile-small chemia">
+            <div class="icon">⚗️</div>
+            <div class="title">Chemia</div>
+        </a>
+        <a href="Fizyka/elektrycznosc_obwody_20261001.html" class="tile-small fizyka">
+            <div class="icon">⚡</div>
+            <div class="title">Fizyka</div>
+        </a>
+        <a href="EDB/edb_1_bezpieczne_panstwo_20260929.html" class="tile-small edb">
+            <div class="icon">🛡️</div>
+            <div class="title">EDB — Temat 1</div>
+        </a>
+        <a href="EDB/edb_2_system_obronny_20260929.html" class="tile-small edb">
+            <div class="icon">🛡️</div>
+            <div class="title">EDB — Temat 2</div>
+        </a>
+        <a href="Niemiecki/das_bin_ich_powitania_i_o_sobie_20260920.html" class="tile-small niemiecki">
+            <div class="icon">🇩🇪</div>
+            <div class="title">Das bin ich</div>
+        </a>
+        <a href="Niemiecki/liczebniki_1_20_20260920.html" class="tile-small niemiecki">
+            <div class="icon">🇩🇪</div>
+            <div class="title">Liczebniki 1–20</div>
+        </a>
+        <a href="polski/zemsta_nauka_20260928.html" class="tile-small polski">
+            <div class="icon">📖</div>
+            <div class="title">„Zemsta” — ucz się i sprawdź się</div>
+        </a>
+        <a href="https://julia-hub-161045418771.europe-west1.run.app/pisanie/zaproszenie?k=0TtXdXR_0rtGiDcJVw04aesd" class="tile-small polski">
+            <div class="icon">✉️</div>
+            <div class="title">Piszemy zaproszenie — z pomocnikiem</div>
+        </a>
+        <a href="Historia/kartkowka_okupacja_nauka_20260927.html" class="tile-small historia">
+            <div class="icon">📜</div>
+            <div class="title">Kartkówka — ucz się i sprawdź się</div>
+        </a>
+        <a href="Historia/polityka_okupacyjna_iii_rzeszy_20260923.html" class="tile-small historia">
+            <div class="icon">📜</div>
+            <div class="title">Polityka okupacyjna III Rzeszy</div>
+        </a>
+        <a href="angielski/czasowniki_be_bite_czesc_1_20260922.html" class="tile-small angielski">
+            <div class="icon">🇬🇧</div>
+            <div class="title">Czasowniki be-bite - część 1</div>
+        </a>
+        <a href="angielski/czasowniki_be_bite_czesc_2_20260922.html" class="tile-small angielski">
+            <div class="icon">🇬🇧</div>
+            <div class="title">Czasowniki be-bite - część 2</div>
+        </a>
+        <a href="angielski/pisanie_be_begin_20260922.html" class="tile-small angielski">
+            <div class="icon">🇬🇧</div>
+            <div class="title">PISANIE form - z klawiatury</div>
+        </a>
+    </div>
+</body>
+</html>

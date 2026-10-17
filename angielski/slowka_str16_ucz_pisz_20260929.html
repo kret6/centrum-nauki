@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Słówka str. 16 — ucz się i pisz</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f3eef8;color:#222;padding:16px 14px 40px;max-width:640px;margin:0 auto;font-size:19px;line-height:1.5}
+h1{font-size:25px;color:#6a1b9a;margin-bottom:4px}
+.subject-tag{display:inline-block;background:#e6dcf0;color:#6a1b9a;font-size:13px;padding:3px 10px;border-radius:10px;margin-bottom:10px}
+.ekran{display:none}.ekran.aktywny{display:block}
+.info{background:#fff;border-radius:16px;padding:14px 16px;margin:10px 0 6px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.btn{display:block;width:100%;min-height:76px;font-size:22px;font-weight:700;border:none;border-radius:16px;margin-top:14px;cursor:pointer;font-family:inherit}
+.glowny{background:#6a1b9a;color:#fff}.drugi{background:#fff;color:#6a1b9a;border:3px solid #d8c8e6}
+.licznik{color:#7b6a8a;font-size:16px;font-weight:700;margin:6px 0}
+.karta{background:#fff;border-radius:20px;padding:26px 18px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.08);margin-top:6px}
+.pl{font-size:24px;color:#555}
+.en{font-size:38px;font-weight:800;color:#6a1b9a;margin-top:10px;word-break:break-word}
+.glos{margin-top:16px;min-height:60px;padding:0 22px;font-size:20px;border-radius:14px;border:3px solid #d8c8e6;background:#faf7fc;color:#6a1b9a;font-weight:700;cursor:pointer;font-family:inherit}
+.rzad{display:flex;gap:10px}.rzad .btn{flex:1}
+input{width:100%;font-size:30px;padding:14px;border:4px solid #d8c8e6;border-radius:16px;margin-top:18px;text-align:center;font-family:inherit}
+input:focus{outline:none;border-color:#6a1b9a}
+.podp{font-family:Consolas,monospace;font-size:26px;letter-spacing:3px;color:#6a1b9a;margin-top:12px;min-height:34px;text-align:center}
+.komunikat{margin-top:14px;border-radius:14px;padding:14px;font-size:21px;text-align:center;display:none}
+.dobrze{display:block;background:#e8f5e9;color:#2e7d32;font-weight:700}
+.zle{display:block;background:#ffebee;color:#c62828}
+.zle b{display:block;font-size:30px;color:#222;margin-top:6px}
+.kropki{font-size:26px;letter-spacing:4px;text-align:center;margin-top:8px}
+.duza-liczba{font-size:60px;font-weight:800;color:#6a1b9a;text-align:center;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="subject-tag">Angielski</div>
+<h1>Słówka str. 16</h1>
+
+<!-- START -->
+<div class="ekran aktywny" id="e-start">
+  <div class="info">Sześć słówek na klasówkę. Najpierw <b>ucz się</b> — zobaczysz i usłyszysz każde słówko.
+  Potem <b>pisz</b> — widzisz polskie słowo i piszesz je po angielsku. Po każdym słówku od razu zobaczysz, czy dobrze. Jak się pomylisz, słówko wróci na koniec.</div>
+  <button class="btn glowny" onclick="startNauki()">📖 Ucz się</button>
+  <button class="btn drugi" onclick="startPisania()">⌨️ Pisz słówka</button>
+</div>
+
+<!-- NAUKA -->
+<div class="ekran" id="e-nauka">
+  <div class="licznik" id="n-licznik"></div>
+  <div class="karta">
+    <div class="pl" id="n-pl"></div>
+    <div class="en" id="n-en"></div>
+    <button class="glos" onclick="mow(SLOWKA[nk].pokaz)">🔊 Posłuchaj</button>
+  </div>
+  <div class="rzad">
+    <button class="btn drugi" onclick="wsteczNauka()">‹ Wstecz</button>
+    <button class="btn glowny" id="n-dalej" onclick="dalejNauka()">Dalej ›</button>
+  </div>
+</div>
+
+<!-- PISANIE -->
+<div class="ekran" id="e-pisz">
+  <div class="kropki" id="p-kropki"></div>
+  <div class="karta">
+    <div class="pl" style="font-size:16px">Napisz po angielsku:</div>
+    <div class="en" id="p-pl" style="color:#333"></div>
+  </div>
+  <input id="p-pole" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" enterkeyhint="done">
+  <div class="podp" id="p-podp"></div>
+  <div class="komunikat" id="p-kom"></div>
+  <button class="btn glowny" id="p-sprawdz" onclick="sprawdz()">✓ Sprawdź</button>
+  <button class="btn drugi" id="p-podpbtn" onclick="podpowiedz()">💡 Podpowiedź</button>
+</div>
+
+<!-- KONIEC -->
+<div class="ekran" id="e-koniec">
+  <div class="info" style="text-align:center">Za pierwszym razem dobrze:</div>
+  <div class="duza-liczba" id="k-wynik"></div>
+  <div class="info" id="k-tekst" style="text-align:center"></div>
+  <button class="btn glowny" onclick="startPisania()">↻ Pisz jeszcze raz</button>
+  <button class="btn drugi" onclick="startNauki()">📖 Wróć do nauki</button>
+</div>
+
+<script>
+var RESULTS_URL="https://julia-hub-161045418771.europe-west1.run.app/results",RESULTS_TOKEN="XW09DH2_fs8SdHh7B9pGMoCZuDVwAHSQ";
+var SLOWKA=[
+  {pl:"głośnik Bluetooth", pokaz:"Bluetooth speaker"},
+  {pl:"naładować baterię", pokaz:"charge your battery"},
+  {pl:"połączyć się z Wi-Fi", pokaz:"connect to WiFi"},
+  {pl:"zawiesić się (o komputerze)", pokaz:"crash"},
+  {pl:"słuchawki", pokaz:"earphones"},
+  {pl:"szybki internet", pokaz:"high-speed internet"}
+];
+function norm(s){ return (s||"").toLowerCase().replace(/[^a-z0-9]/g,""); }
+function pokaz(id){ document.querySelectorAll('.ekran').forEach(function(e){e.classList.remove('aktywny');});
+  document.getElementById(id).classList.add('aktywny'); window.scrollTo(0,0); }
+
+// ---- glos angielski (jawny wybor, glosy laduja sie z opoznieniem)
+var glosEN=null;
+function szukajGlosu(){
+  var v=window.speechSynthesis ? speechSynthesis.getVoices() : [];
+  var en=v.filter(function(x){ return /^en/i.test(x.lang); });
+  glosEN = en.filter(function(x){ return /^en-GB/i.test(x.lang); })[0] || en[0] || null;
+}
+if(window.speechSynthesis){ szukajGlosu(); speechSynthesis.onvoiceschanged=szukajGlosu; }
+function mow(t){
+  if(!window.speechSynthesis) return;
+  if(!glosEN) szukajGlosu();
+  speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(t); u.lang='en-GB'; u.rate=0.8; if(glosEN) u.voice=glosEN;
+  setTimeout(function(){ speechSynthesis.resume(); speechSynthesis.speak(u); }, 60);
+}
+
+// ---- nauka
+var nk=0;
+function startNauki(){ nk=0; rysujKarte(); pokaz('e-nauka'); }
+function rysujKarte(){
+  document.getElementById('n-licznik').textContent='Słówko '+(nk+1)+' z '+SLOWKA.length;
+  document.getElementById('n-pl').textContent=SLOWKA[nk].pl;
+  document.getElementById('n-en').textContent=SLOWKA[nk].pokaz;
+  document.getElementById('n-dalej').textContent = nk===SLOWKA.length-1 ? '⌨️ Teraz pisz' : 'Dalej ›';
+}
+function dalejNauka(){ if(nk<SLOWKA.length-1){ nk++; rysujKarte(); } else startPisania(); }
+function wsteczNauka(){ if(nk>0){ nk--; rysujKarte(); } else pokaz('e-start'); }
+
+// ---- pisanie
+var kolejka=[], pierwszy={}, dobrzeOdRazu=0, obecny=null, faza='pisz', posted=false;
+function potasuj(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
+function startPisania(){
+  kolejka=potasuj(SLOWKA.map(function(_,i){return i;})); pierwszy={}; dobrzeOdRazu=0; posted=false;
+  pokaz('e-pisz'); nastepne();
+}
+function kropki(){
+  var zrobione=SLOWKA.length-kolejka.length-(obecny===null?0:1);
+  var s=''; for(var i=0;i<SLOWKA.length;i++) s+= i<zrobione ? '●' : '○';
+  document.getElementById('p-kropki').textContent=s;
+}
+function nastepne(){
+  if(!kolejka.length){ koniec(); return; }
+  obecny=kolejka.shift(); faza='pisz';
+  document.getElementById('p-pl').textContent=SLOWKA[obecny].pl;
+  var pole=document.getElementById('p-pole'); pole.value=''; pole.placeholder='';
+  document.getElementById('p-podp').textContent='';
+  document.getElementById('p-kom').className='komunikat';
+  document.getElementById('p-sprawdz').textContent='✓ Sprawdź';
+  document.getElementById('p-podpbtn').style.display='block';
+  kropki(); pole.focus();
+}
+function podpowiedz(){
+  var t=SLOWKA[obecny].pokaz;
+  document.getElementById('p-podp').textContent=t.split(' ').map(function(w){
+    var l=w.replace(/[^A-Za-z0-9]/g,''); return l ? l[0]+new Array(l.length).join('_') : w; }).join('  ');
+  if(pierwszy[obecny]===undefined) pierwszy[obecny]=false;   // z podpowiedzia to juz nie "od razu"
+  document.getElementById('p-pole').focus();
+}
+function sprawdz(){
+  var pole=document.getElementById('p-pole'), kom=document.getElementById('p-kom');
+  var w=SLOWKA[obecny];
+  if(faza==='dalej'){ nastepne(); return; }
+  if(!norm(pole.value)){ pole.focus(); return; }
+  var ok = norm(pole.value)===norm(w.pokaz);
+  if(faza==='pisz'){
+    if(pierwszy[obecny]===undefined){ pierwszy[obecny]=ok; if(ok) dobrzeOdRazu++; }
+    if(ok){
+      kom.className='komunikat dobrze'; kom.textContent='✓ Dobrze! '+w.pokaz;
+      mow(w.pokaz); faza='dalej';
+      document.getElementById('p-sprawdz').textContent='Dalej ›';
+      document.getElementById('p-podpbtn').style.display='none';
+      obecny=null; kropki();
+    } else {
+      kom.className='komunikat zle'; kom.innerHTML='Jeszcze nie. Tak się pisze:<b></b>Przepisz to raz.';
+      kom.querySelector('b').textContent=w.pokaz;
+      mow(w.pokaz); pole.value=''; faza='przepisz';
+      document.getElementById('p-podpbtn').style.display='none';
+      pole.focus();
+    }
+  } else if(faza==='przepisz'){
+    if(ok){
+      kolejka.push(obecny);   // wraca na koniec — trzeba napisac jeszcze raz samej
+      kom.className='komunikat dobrze'; kom.textContent='✓ Tak! To słówko wróci jeszcze raz.';
+      faza='dalej'; document.getElementById('p-sprawdz').textContent='Dalej ›';
+    } else {
+      pole.select();
+    }
+  }
+}
+document.getElementById('p-pole').addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); sprawdz(); } });
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter' && faza==='dalej' && document.activeElement!==document.getElementById('p-pole')
+     && document.getElementById('e-pisz').classList.contains('aktywny')){ e.preventDefault(); sprawdz(); }
+});
+function koniec(){
+  obecny=null;
+  document.getElementById('k-wynik').textContent=dobrzeOdRazu+' / '+SLOWKA.length;
+  var zle=SLOWKA.filter(function(_,i){ return pierwszy[i]===false; }).map(function(s){ return s.pokaz; });
+  document.getElementById('k-tekst').textContent = zle.length
+    ? 'Poćwicz jeszcze: '+zle.join(', ')
+    : 'Wszystkie od razu dobrze! Jesteś gotowa na klasówkę!';
+  pokaz('e-koniec');
+  if(!posted){ posted=true; try{ fetch(RESULTS_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({token:RESULTS_TOKEN,subject:'Angielski',title:'Słówka str. 16 — pisanie',score:dobrzeOdRazu,total:SLOWKA.length})}); }catch(e){} }
+}
+</script>
+</body>
+</html>

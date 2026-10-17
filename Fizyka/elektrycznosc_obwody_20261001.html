@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fizyka — prąd i obwody</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#fff8e6;color:#222;
+  padding:16px 14px 50px;max-width:640px;margin:0 auto;font-size:19px;line-height:1.5}
+h1{font-size:24px;color:#e65100;margin-bottom:2px}
+.subject-tag{display:inline-block;background:#ffecc8;color:#e65100;font-size:13px;
+  padding:3px 10px;border-radius:10px;margin-bottom:16px}
+.ekran{display:none}.ekran.aktywny{display:block}
+.btn{display:block;width:100%;min-height:76px;font-size:21px;font-weight:700;border:none;
+  border-radius:16px;margin-bottom:14px;cursor:pointer;font-family:inherit;padding:10px 16px}
+.glowny{background:#e65100;color:#fff}
+.drugi{background:#fff;color:#e65100;border:3px solid #ffe0b2}
+.opcja{background:#fff;color:#222;border:3px solid #ffe0b2;text-align:left}
+.opcja.dobrze{background:#e8f5e9;border-color:#2e7d32;color:#1b5e20}
+.opcja.zle{background:#ffebee;border-color:#c62828;color:#b71c1c}
+.karta{background:#fff;border-radius:18px;padding:22px 20px;margin-bottom:16px;
+  box-shadow:0 1px 4px rgba(0,0,0,.08);border-left:8px solid #fb8c00;min-height:220px}
+.slowo{font-size:30px;font-weight:800;color:#e65100;margin-bottom:12px;line-height:1.2}
+.tekst{font-size:21px}
+.licznik{font-size:15px;color:#fb8c00;font-weight:700;margin-bottom:10px}
+.polecenie{font-size:15px;color:#fb8c00;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.pytanie{font-size:22px;font-weight:600;margin-bottom:18px}
+.luka{display:inline-block;min-width:120px;border-bottom:3px solid #e65100;text-align:center;color:#e65100}
+.okienka{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 18px}
+.okno{width:44px;height:54px;border:3px solid #e65100;border-radius:8px;background:#fff;
+  font-size:28px;font-weight:800;display:flex;align-items:center;justify-content:center;color:#e65100}
+.okienka.dobrze .okno{border-color:#2e7d32;color:#1b5e20;background:#e8f5e9}
+.okienka.zle .okno{border-color:#c62828;color:#b71c1c;background:#ffebee}
+.kafle{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kafel{min-height:76px;font-size:32px;font-weight:800;border:3px solid #ffe0b2;border-radius:14px;
+  background:#fff;color:#e65100;cursor:pointer;font-family:inherit}
+.kafel:disabled{opacity:.25}
+.info{font-size:19px;font-weight:700;margin:4px 0 16px;min-height:28px}
+.info.dobrze{color:#2e7d32}.info.zle{color:#c62828}
+.wynik{font-size:46px;font-weight:800;color:#e65100;text-align:center;margin:10px 0}
+.pod{text-align:center;font-size:19px;margin-bottom:22px}
+.glos{background:none;border:2px solid #ffe0b2;border-radius:12px;font-size:17px;padding:8px 14px;
+  color:#e65100;font-weight:700;margin-top:14px;cursor:pointer;min-height:48px}
+</style>
+</head>
+<body>
+<h1>Elektryczność: ładunki, źródła, obwody</h1>
+<div class="subject-tag">Fizyka · kartkówka czw. 8.10</div>
+
+<!-- START -->
+<div class="ekran aktywny" id="start">
+  <div class="karta" style="min-height:0">
+    <div class="tekst">1. Elektryczna budowa materii<br>2. Prąd i źródła prądu<br>3. Obwody elektryczne<br><br>Najpierw <b>ucz się</b> — 16 krótkich kart.
+    Potem <b>sprawdź się</b> — 30 pytań, stukasz w dobrą odpowiedź.</div>
+  </div>
+  <div class="karta" style="min-height:0;margin-top:14px">
+    <div class="tekst"><b>🎧 Posłuchaj powtórki</b> — Zofia i Marek. Na końcu quiz: odpowiadaj na głos.</div>
+    <audio controls preload="none" src="fiz_podcast_obwody.mp3" style="width:100%;margin-top:10px"></audio>
+  </div>
+  <button class="btn glowny" onclick="startNauki()">📖 Ucz się</button>
+  <button class="btn drugi" onclick="startSprawdzania()">✏️ Sprawdź się</button>
+</div>
+
+<!-- NAUKA -->
+<div class="ekran" id="nauka">
+  <div class="licznik" id="n-licznik"></div>
+  <div class="karta">
+    <div class="slowo" id="n-slowo"></div>
+    <div class="tekst" id="n-tekst"></div>
+    <button class="glos" id="n-glos" onclick="czytaj()">🔊 Przeczytaj na głos</button>
+  </div>
+  <button class="btn glowny" id="n-dalej" onclick="dalejNauka()">Dalej ›</button>
+  <button class="btn drugi" onclick="wsteczNauka()">‹ Wstecz</button>
+</div>
+
+<!-- SPRAWDZANIE -->
+<div class="ekran" id="test">
+  <div class="licznik" id="t-licznik"></div>
+  <div class="polecenie" id="t-polecenie"></div>
+  <div class="pytanie" id="t-pytanie"></div>
+  <div id="t-okienka" class="okienka"></div>
+  <div id="t-odp"></div>
+  <div class="info" id="t-info"></div>
+  <button class="btn glowny" id="t-dalej" style="display:none" onclick="dalejTest()">Dalej ›</button>
+</div>
+
+<!-- WYNIK -->
+<div class="ekran" id="koniec">
+  <div class="wynik" id="w-liczba"></div>
+  <div class="pod" id="w-slowo"></div>
+  <button class="btn glowny" onclick="startSprawdzania()">↻ Sprawdź się jeszcze raz</button>
+  <button class="btn drugi" onclick="startNauki()">📖 Wróć do nauki</button>
+</div>
+
+<script>
+var RESULTS_URL="https://julia-hub-161045418771.europe-west1.run.app/results",RESULTS_TOKEN="XW09DH2_fs8SdHh7B9pGMoCZuDVwAHSQ";
+function postResult(score,total){
+  if(!RESULTS_URL||!RESULTS_TOKEN)return;
+  try{fetch(RESULTS_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({token:RESULTS_TOKEN,subject:'Fizyka',title:'Fizyka — prąd i obwody — sprawdź się',
+      score:score,total:total})});}catch(e){}
+}
+
+var KARTY=[
+ {s:"1 · Z CZEGO JEST ATOM?", t:"W środku jest JĄDRO. W jądrze są protony (ładunek dodatni +) i neutrony (bez ładunku). Wokół jądra krążą ELEKTRONY (ładunek ujemny −)."},
+ {s:"1 · ATOM JEST OBOJĘTNY", t:"Zwykle atom ma tyle samo protonów co elektronów. Plusy i minusy się równoważą — atom jest elektrycznie obojętny."},
+ {s:"1 · CIAŁO NAELEKTRYZOWANE", t:"Gdy ciało ma za DUŻO elektronów — jest naelektryzowane UJEMNIE (−). Gdy ma za MAŁO elektronów — jest naelektryzowane DODATNIO (+). Przemieszczają się tylko elektrony."},
+ {s:"1 · JAK ELEKTRYZUJEMY?", t:"Przez TARCIE (np. balon o włosy), przez DOTYK (zetknięcie z naelektryzowanym ciałem) i przez INDUKCJĘ (zbliżenie bez dotykania)."},
+ {s:"1 · PRZYCIĄGANIE I ODPYCHANIE", t:"Ładunki jednoimienne (+ i +, − i −) się ODPYCHAJĄ. Ładunki różnoimienne (+ i −) się PRZYCIĄGAJĄ."},
+ {s:"1 · JEDNOSTKA ŁADUNKU", t:"Ładunek elektryczny mierzymy w kulombach — C. Najmniejszy ładunek to ładunek elementarny — tyle ma jeden elektron albo jeden proton."},
+ {s:"1 · PRZEWODNIKI I IZOLATORY", t:"Przewodniki przewodzą prąd: metale (miedź, aluminium), grafit, woda z solą, ciało człowieka. Izolatory nie przewodzą: plastik, guma, szkło, suche drewno, porcelana."},
+ {s:"2 · CO TO JEST PRĄD ELEKTRYCZNY?", t:"Prąd to uporządkowany ruch ładunków. W metalach płyną elektrony swobodne."},
+ {s:"2 · KIERUNEK PRĄDU", t:"Umowny kierunek prądu: od bieguna DODATNIEGO (+) do UJEMNEGO (−). Elektrony płyną naprawdę w przeciwną stronę: od − do +."},
+ {s:"2 · ŹRÓDŁA PRĄDU (NAPIĘCIA)", t:"Bateria (ogniwo), akumulator, prądnica (np. dynamo w rowerze), ogniwo słoneczne (fotowoltaiczne), elektrownia — prąd w gniazdku."},
+ {s:"2 · NAPIĘCIE I NATĘŻENIE", t:"NAPIĘCIE mierzymy w woltach — V, woltomierzem. NATĘŻENIE prądu mierzymy w amperach — A, amperomierzem."},
+ {s:"3 · Z CZEGO SKŁADA SIĘ OBWÓD?", t:"Źródło prądu (bateria), przewody, odbiornik (np. żarówka) i wyłącznik."},
+ {s:"3 · OBWÓD ZAMKNIĘTY I OTWARTY", t:"Obwód ZAMKNIĘTY — wyłącznik włączony, prąd płynie, żarówka świeci. Obwód OTWARTY — przerwa w obwodzie, prąd nie płynie."},
+ {s:"3 · SYMBOLE NA SCHEMACIE", t:"Ogniwo — dwie kreski: długa (+) i krótka (−). Żarówka — kółko z krzyżykiem. Wyłącznik — przerwana linia z uniesionym ramieniem. Amperomierz — kółko z literą A. Woltomierz — kółko z literą V."},
+ {s:"3 · JAK PODŁĄCZAMY MIERNIKI?", t:"Amperomierz łączymy SZEREGOWO (w jednym ciągu z żarówką). Woltomierz łączymy RÓWNOLEGLE (obok żarówki, na jej końcach)."},
+ {s:"3 · SZEREGOWO I RÓWNOLEGLE", t:"Szeregowo — jedna droga dla prądu: gdy jedna żarówka się przepali, gasną wszystkie. Równolegle — kilka dróg: gdy jedna się przepali, inne dalej świecą (tak jest w domu)."}
+];
+
+var ZADANIA=[
+ {typ:"x", pytanie:"Co jest w jądrze atomu?", dobra:"protony i neutrony", inne:["elektrony","tylko elektrony i neutrony"]},
+ {typ:"x", pytanie:"Jaki ładunek ma elektron?", dobra:"ujemny (−)", inne:["dodatni (+)","nie ma ładunku"]},
+ {typ:"x", pytanie:"Jaki ładunek ma proton?", dobra:"dodatni (+)", inne:["ujemny (−)","nie ma ładunku"]},
+ {typ:"x", pytanie:"Neutron jest:", dobra:"bez ładunku (obojętny)", inne:["dodatni","ujemny"]},
+ {typ:"x", pytanie:"Atom ma tyle samo protonów i elektronów, więc jest:", dobra:"elektrycznie obojętny", inne:["naelektryzowany dodatnio","naelektryzowany ujemnie"]},
+ {typ:"x", pytanie:"Ciało ma za dużo elektronów. Jest naelektryzowane:", dobra:"ujemnie", inne:["dodatnio","wcale"]},
+ {typ:"x", pytanie:"Ciało ma za mało elektronów. Jest naelektryzowane:", dobra:"dodatnio", inne:["ujemnie","wcale"]},
+ {typ:"x", pytanie:"Podczas elektryzowania przemieszczają się:", dobra:"elektrony", inne:["protony","neutrony"]},
+ {typ:"x", pytanie:"Pocierasz balon o włosy. To elektryzowanie przez:", dobra:"tarcie", inne:["dotyk","indukcję"]},
+ {typ:"x", pytanie:"Dwa ładunki ujemne:", dobra:"odpychają się", inne:["przyciągają się","nic się nie dzieje"]},
+ {typ:"x", pytanie:"Ładunek dodatni i ujemny:", dobra:"przyciągają się", inne:["odpychają się","nic się nie dzieje"]},
+ {typ:"x", pytanie:"Ładunek elektryczny mierzymy w:", dobra:"kulombach (C)", inne:["woltach (V)","amperach (A)"]},
+ {typ:"x", pytanie:"Który materiał jest PRZEWODNIKIEM?", dobra:"miedź", inne:["plastik","guma"]},
+ {typ:"x", pytanie:"Który materiał jest IZOLATOREM?", dobra:"guma", inne:["miedź","aluminium"]},
+ {typ:"x", pytanie:"Prąd elektryczny to:", dobra:"uporządkowany ruch ładunków", inne:["ruch powietrza","światło"]},
+ {typ:"x", pytanie:"W metalach płyną:", dobra:"elektrony", inne:["protony","jądra atomów"]},
+ {typ:"x", pytanie:"Umowny kierunek prądu jest:", dobra:"od + do −", inne:["od − do +","w kółko"]},
+ {typ:"x", pytanie:"Które z nich jest źródłem prądu?", dobra:"bateria", inne:["żarówka","wyłącznik"]},
+ {typ:"x", pytanie:"Dynamo w rowerze to:", dobra:"prądnica", inne:["izolator","amperomierz"]},
+ {typ:"x", pytanie:"Napięcie mierzymy w:", dobra:"woltach (V)", inne:["amperach (A)","kulombach (C)"]},
+ {typ:"x", pytanie:"Natężenie prądu mierzymy w:", dobra:"amperach (A)", inne:["woltach (V)","metrach"]},
+ {typ:"x", pytanie:"Napięcie mierzymy:", dobra:"woltomierzem", inne:["amperomierzem","termometrem"]},
+ {typ:"x", pytanie:"Obwód elektryczny to: źródło prądu, przewody, wyłącznik i:", dobra:"odbiornik (np. żarówka)", inne:["izolator","magnes"]},
+ {typ:"x", pytanie:"Prąd płynie, gdy obwód jest:", dobra:"zamknięty", inne:["otwarty","przerwany"]},
+ {typ:"x", pytanie:"Na schemacie dwie kreski: długa i krótka to:", dobra:"ogniwo (bateria)", inne:["żarówka","wyłącznik"]},
+ {typ:"x", pytanie:"Kółko z krzyżykiem na schemacie to:", dobra:"żarówka", inne:["amperomierz","ogniwo"]},
+ {typ:"x", pytanie:"Amperomierz podłączamy:", dobra:"szeregowo", inne:["równolegle","wcale"]},
+ {typ:"x", pytanie:"Woltomierz podłączamy:", dobra:"równolegle", inne:["szeregowo","wcale"]},
+ {typ:"x", pytanie:"Żarówki połączone szeregowo — jedna się przepala. Co z innymi?", dobra:"gasną wszystkie", inne:["dalej świecą","świecą jaśniej"]},
+ {typ:"x", pytanie:"W domu urządzenia są połączone:", dobra:"równolegle", inne:["szeregowo","wcale"]}
+];
+
+function pokaz(id){ document.querySelectorAll('.ekran').forEach(function(e){e.classList.remove('aktywny');});
+  document.getElementById(id).classList.add('aktywny'); window.scrollTo(0,0); }
+function potasuj(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
+
+// ---------------- NAUKA
+var nk=0;
+function startNauki(){ nk=0; rysujKarte(); pokaz('nauka'); }
+function rysujKarte(){
+  document.getElementById('n-licznik').textContent='Karta '+(nk+1)+' z '+KARTY.length;
+  document.getElementById('n-slowo').textContent=KARTY[nk].s;
+  document.getElementById('n-tekst').textContent=KARTY[nk].t;
+  document.getElementById('n-dalej').textContent = nk===KARTY.length-1 ? '✏️ Teraz sprawdź się' : 'Dalej ›';
+  if(window.speechSynthesis) speechSynthesis.cancel();
+}
+function dalejNauka(){ if(nk<KARTY.length-1){nk++;rysujKarte();} else startSprawdzania(); }
+function wsteczNauka(){ if(nk>0){nk--;rysujKarte();} else pokaz('start'); }
+// Glos: jawnie polski (Chrome na Windows laduje glosy z opoznieniem, bez wyboru potrafi czytac po angielsku albo milczec)
+var glosPL=null;
+function szukajGlosu(){
+  var v=window.speechSynthesis ? speechSynthesis.getVoices() : [];
+  var pl=v.filter(function(x){ return /^pl/i.test(x.lang); });
+  glosPL = pl.filter(function(x){ return /natural|online|google/i.test(x.name); })[0] || pl[0] || null;
+}
+if(window.speechSynthesis){ szukajGlosu(); speechSynthesis.onvoiceschanged=szukajGlosu; }
+function czytaj(){
+  if(!window.speechSynthesis) return;
+  if(!glosPL) szukajGlosu();
+  var btn=document.getElementById('n-glos');
+  if(!glosPL && speechSynthesis.getVoices().length){
+    btn.textContent='🔇 Brak polskiego głosu na tym urządzeniu'; return;
+  }
+  speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(KARTY[nk].t); u.lang='pl-PL'; u.rate=0.9;
+  if(glosPL) u.voice=glosPL;
+  setTimeout(function(){ speechSynthesis.resume(); speechSynthesis.speak(u); }, 60);
+}
+if(!window.speechSynthesis) document.getElementById('n-glos').style.display='none';
+
+// ---------------- SPRAWDZANIE
+var tk=0, punkty=0, ulozone=[];
+function startSprawdzania(){ tk=0; punkty=0; rysujZadanie(); pokaz('test'); }
+
+function rysujZadanie(){
+  var z=ZADANIA[tk];
+  document.getElementById('t-licznik').textContent='Zadanie '+(tk+1)+' z '+ZADANIA.length;
+  document.getElementById('t-info').textContent=''; document.getElementById('t-info').className='info';
+  document.getElementById('t-dalej').style.display='none';
+  var odp=document.getElementById('t-odp'); odp.innerHTML='';
+  var ok=document.getElementById('t-okienka'); ok.innerHTML=''; ok.className='okienka'; ok.style.display='none';
+
+  if(z.typ==='luka'){
+    document.getElementById('t-polecenie').textContent='Uzupełnij lukę';
+    document.getElementById('t-pytanie').innerHTML=z.przed+' <span class="luka" id="luka">&nbsp;?&nbsp;</span> '+z.po;
+    potasuj([z.dobra].concat(z.inne)).forEach(function(o){ odp.appendChild(przycisk(o, z.dobra)); });
+  } else if(z.typ==='x'){
+    document.getElementById('t-polecenie').textContent='Wybierz poprawną odpowiedź';
+    document.getElementById('t-pytanie').textContent=z.pytanie;
+    potasuj([z.dobra].concat(z.inne)).forEach(function(o){ odp.appendChild(przycisk(o, z.dobra)); });
+  } else {
+    document.getElementById('t-polecenie').textContent='Ułóż słowo z liter — stukaj po kolei';
+    document.getElementById('t-pytanie').textContent=z.pytanie;
+    ulozone=[]; ok.style.display='flex';
+    for(var i=0;i<z.slowo.length;i++){ var d=document.createElement('div'); d.className='okno'; ok.appendChild(d); }
+    var kafle=document.createElement('div'); kafle.className='kafle';
+    z.litery.forEach(function(l){
+      var b=document.createElement('button'); b.className='kafel'; b.textContent=l;
+      b.onclick=function(){ if(b.disabled) return; b.disabled=true; ulozone.push({l:l,b:b}); odswiezOkienka(); };
+      kafle.appendChild(b);
+    });
+    odp.appendChild(kafle);
+    var cof=document.createElement('button'); cof.className='btn drugi'; cof.textContent='⌫ Cofnij literę'; cof.id='cofnij';
+    cof.onclick=function(){ var o=ulozone.pop(); if(o){ o.b.disabled=false; odswiezOkienka(); } };
+    odp.appendChild(cof);
+  }
+}
+
+function przycisk(tekst, dobra){
+  var b=document.createElement('button'); b.className='btn opcja'; b.textContent=tekst;
+  b.onclick=function(){
+    var wszystkie=document.querySelectorAll('#t-odp .opcja');
+    wszystkie.forEach(function(x){ x.disabled=true; if(x.textContent===dobra) x.classList.add('dobrze'); });
+    var z=ZADANIA[tk];
+    if(tekst===dobra){ punkty++; ocena(true,''); }
+    else { b.classList.add('zle'); ocena(false,'Poprawnie: '+dobra); }
+    if(z.typ==='luka') document.getElementById('luka').textContent=dobra;
+  };
+  return b;
+}
+
+function odswiezOkienka(){
+  var z=ZADANIA[tk], okna=document.querySelectorAll('#t-okienka .okno');
+  for(var i=0;i<okna.length;i++) okna[i].textContent = ulozone[i] ? ulozone[i].l : '';
+  if(ulozone.length===z.slowo.length){
+    var slowo=ulozone.map(function(o){return o.l;}).join('');
+    document.querySelectorAll('.kafel').forEach(function(k){k.disabled=true;});
+    document.getElementById('cofnij').style.display='none';
+    var ok=document.getElementById('t-okienka');
+    if(slowo===z.slowo){ punkty++; ok.classList.add('dobrze'); ocena(true,''); }
+    else { ok.classList.add('zle'); ocena(false,'Poprawnie: '+z.slowo); }
+  }
+}
+
+function ocena(dobrze, poprawka){
+  var i=document.getElementById('t-info');
+  i.className='info '+(dobrze?'dobrze':'zle');
+  i.textContent = dobrze ? '✓ Dobrze!' : '✗ '+poprawka;
+  var d=document.getElementById('t-dalej');
+  d.textContent = tk===ZADANIA.length-1 ? 'Zobacz wynik ›' : 'Dalej ›';
+  d.style.display='block';
+}
+
+function dalejTest(){
+  if(tk<ZADANIA.length-1){ tk++; rysujZadanie(); window.scrollTo(0,0); return; }
+  var t=ZADANIA.length;
+  document.getElementById('w-liczba').textContent=punkty+' / '+t;
+  document.getElementById('w-slowo').textContent =
+    punkty===t ? 'Wszystko dobrze. Jesteś gotowa na kartkówkę!' :
+    punkty>=t-2 ? 'Bardzo dobrze! Powtórz karty z błędami i spróbuj jeszcze raz.' :
+    'Wróć do nauki, a potem sprawdź się jeszcze raz.';
+  postResult(punkty,t);
+  pokaz('koniec');
+}
+</script>
+</body>
+</html>

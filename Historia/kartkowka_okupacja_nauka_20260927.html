@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kartkówka z historii — nauka</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f4efe9;color:#222;
+  padding:16px 14px 50px;max-width:640px;margin:0 auto;font-size:19px;line-height:1.5}
+h1{font-size:24px;color:#6d4c41;margin-bottom:2px}
+.subject-tag{display:inline-block;background:#e9e1d8;color:#6d4c41;font-size:13px;
+  padding:3px 10px;border-radius:10px;margin-bottom:16px}
+.ekran{display:none}.ekran.aktywny{display:block}
+.btn{display:block;width:100%;min-height:76px;font-size:21px;font-weight:700;border:none;
+  border-radius:16px;margin-bottom:14px;cursor:pointer;font-family:inherit;padding:10px 16px}
+.glowny{background:#6d4c41;color:#fff}
+.drugi{background:#fff;color:#6d4c41;border:3px solid #d7ccc8}
+.opcja{background:#fff;color:#222;border:3px solid #d7ccc8;text-align:left}
+.opcja.dobrze{background:#e8f5e9;border-color:#2e7d32;color:#1b5e20}
+.opcja.zle{background:#ffebee;border-color:#c62828;color:#b71c1c}
+.karta{background:#fff;border-radius:18px;padding:22px 20px;margin-bottom:16px;
+  box-shadow:0 1px 4px rgba(0,0,0,.08);border-left:8px solid #8d6e63;min-height:220px}
+.slowo{font-size:30px;font-weight:800;color:#6d4c41;margin-bottom:12px;line-height:1.2}
+.tekst{font-size:21px}
+.licznik{font-size:15px;color:#8d6e63;font-weight:700;margin-bottom:10px}
+.polecenie{font-size:15px;color:#8d6e63;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.pytanie{font-size:22px;font-weight:600;margin-bottom:18px}
+.luka{display:inline-block;min-width:120px;border-bottom:3px solid #6d4c41;text-align:center;color:#6d4c41}
+.okienka{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 18px}
+.okno{width:44px;height:54px;border:3px solid #6d4c41;border-radius:8px;background:#fff;
+  font-size:28px;font-weight:800;display:flex;align-items:center;justify-content:center;color:#6d4c41}
+.okienka.dobrze .okno{border-color:#2e7d32;color:#1b5e20;background:#e8f5e9}
+.okienka.zle .okno{border-color:#c62828;color:#b71c1c;background:#ffebee}
+.kafle{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kafel{min-height:76px;font-size:32px;font-weight:800;border:3px solid #d7ccc8;border-radius:14px;
+  background:#fff;color:#6d4c41;cursor:pointer;font-family:inherit}
+.kafel:disabled{opacity:.25}
+.info{font-size:19px;font-weight:700;margin:4px 0 16px;min-height:28px}
+.info.dobrze{color:#2e7d32}.info.zle{color:#c62828}
+.wynik{font-size:46px;font-weight:800;color:#6d4c41;text-align:center;margin:10px 0}
+.pod{text-align:center;font-size:19px;margin-bottom:22px}
+.glos{background:none;border:2px solid #d7ccc8;border-radius:12px;font-size:17px;padding:8px 14px;
+  color:#6d4c41;font-weight:700;margin-top:14px;cursor:pointer;min-height:48px}
+</style>
+</head>
+<body>
+<h1>Kartkówka z historii</h1>
+<div class="subject-tag">Historia</div>
+
+<!-- START -->
+<div class="ekran aktywny" id="start">
+  <div class="karta" style="min-height:0">
+    <div class="tekst">Polityka okupacyjna III Rzeszy. Najpierw <b>ucz się</b> — osiem kart z najważniejszymi słowami.
+    Potem <b>sprawdź się</b> — takie same zadania jak na kartkówce.</div>
+  </div>
+  <button class="btn glowny" onclick="startNauki()">📖 Ucz się</button>
+  <button class="btn drugi" onclick="startSprawdzania()">✏️ Sprawdź się</button>
+</div>
+
+<!-- NAUKA -->
+<div class="ekran" id="nauka">
+  <div class="licznik" id="n-licznik"></div>
+  <div class="karta">
+    <div class="slowo" id="n-slowo"></div>
+    <div class="tekst" id="n-tekst"></div>
+    <button class="glos" id="n-glos" onclick="czytaj()">🔊 Przeczytaj na głos</button>
+  </div>
+  <button class="btn glowny" id="n-dalej" onclick="dalejNauka()">Dalej ›</button>
+  <button class="btn drugi" onclick="wsteczNauka()">‹ Wstecz</button>
+</div>
+
+<!-- SPRAWDZANIE -->
+<div class="ekran" id="test">
+  <div class="licznik" id="t-licznik"></div>
+  <div class="polecenie" id="t-polecenie"></div>
+  <div class="pytanie" id="t-pytanie"></div>
+  <div id="t-okienka" class="okienka"></div>
+  <div id="t-odp"></div>
+  <div class="info" id="t-info"></div>
+  <button class="btn glowny" id="t-dalej" style="display:none" onclick="dalejTest()">Dalej ›</button>
+</div>
+
+<!-- WYNIK -->
+<div class="ekran" id="koniec">
+  <div class="wynik" id="w-liczba"></div>
+  <div class="pod" id="w-slowo"></div>
+  <button class="btn glowny" onclick="startSprawdzania()">↻ Sprawdź się jeszcze raz</button>
+  <button class="btn drugi" onclick="startNauki()">📖 Wróć do nauki</button>
+</div>
+
+<script>
+var RESULTS_URL="https://julia-hub-161045418771.europe-west1.run.app/results",RESULTS_TOKEN="XW09DH2_fs8SdHh7B9pGMoCZuDVwAHSQ";
+function postResult(score,total){
+  if(!RESULTS_URL||!RESULTS_TOKEN)return;
+  try{fetch(RESULTS_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({token:RESULTS_TOKEN,subject:'Historia',title:'Kartkówka z historii — sprawdź się',
+      score:score,total:total})});}catch(e){}
+}
+
+// Kolejnosc kart: najpierw fakty, na koniec ci, ktorzy pomagali — zeby nauka nie konczyla sie na zbrodni.
+var KARTY=[
+ {s:"GETTA", t:"Getta to specjalne, zamknięte dzielnice, w których Niemcy zamykali Żydów."},
+ {s:"GWIAZDA DAWIDA", t:"Żydzi musieli nosić na ubraniu Gwiazdę Dawida — symbol narodu żydowskiego."},
+ {s:"HOLOKAUST", t:"Holokaust to masowe mordowanie Żydów przez Niemców. Zginęło około 6 milionów ludzi."},
+ {s:"AUSCHWITZ-BIRKENAU", t:"Auschwitz-Birkenau był największym niemieckim obozem zagłady."},
+ {s:"ŁAPANKA", t:"Łapanka to zatrzymywanie i aresztowanie ludzi przez Niemców na ulicach."},
+ {s:"KARA ŚMIERCI", t:"W okupowanej Polsce za pomaganie Żydom groziła kara śmierci. Mimo to wielu ludzi pomagało."},
+ {s:"IRENA SENDLEROWA", t:"Irena Sendlerowa uratowała przed śmiercią ponad 2 tysiące żydowskich dzieci."},
+ {s:"„ŻEGOTA”", t:"„Żegota” to podziemna organizacja — Rada Pomocy Żydom."}
+];
+
+// Zadania jak na kartkowce. Luki: po 3 slowa z ramki (zasada: najwyzej 3 odpowiedzi).
+var ZADANIA=[
+ {typ:"luka", przed:"Specjalne, zamknięte strefy stworzone dla Żydów to", po:".", dobra:"getta", inne:["Holokaust","Gwiazda"]},
+ {typ:"luka", przed:"Symbol, który Żydzi musieli nosić na ubraniu, to", po:"Dawida.", dobra:"Gwiazda", inne:["getta","śmierć"]},
+ {typ:"luka", przed:"Masowe mordowanie ludności żydowskiej przez Niemców to", po:".", dobra:"Holokaust", inne:["getta","Gwiazda"]},
+ {typ:"luka", przed:"W okupowanej Polsce za pomaganie Żydom groziła kara", po:".", dobra:"śmierć", inne:["Holokaust","getta"]},
+ {typ:"x", pytanie:"Polka, która uratowała przed śmiercią przeszło 2 tys. żydowskich dzieci, to:", dobra:"Irena Sendlerowa", inne:["Maria Skłodowska-Curie"]},
+ {typ:"x", pytanie:"Jak nazywał się największy niemiecki obóz zagłady?", dobra:"Auschwitz-Birkenau", inne:["Treblinka"]},
+ {typ:"litery", pytanie:"Zatrzymywanie i aresztowanie ludzi przez Niemców na ulicach to…", litery:["N","K","A","Ł","A","P","A"], slowo:"ŁAPANKA"},
+ {typ:"litery", pytanie:"Nazwa podziemnej organizacji — Rada Pomocy Żydom „…”", litery:["G","O","Ż","E","T","A"], slowo:"ŻEGOTA"}
+];
+
+function pokaz(id){ document.querySelectorAll('.ekran').forEach(function(e){e.classList.remove('aktywny');});
+  document.getElementById(id).classList.add('aktywny'); window.scrollTo(0,0); }
+function potasuj(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
+
+// ---------------- NAUKA
+var nk=0;
+function startNauki(){ nk=0; rysujKarte(); pokaz('nauka'); }
+function rysujKarte(){
+  document.getElementById('n-licznik').textContent='Karta '+(nk+1)+' z '+KARTY.length;
+  document.getElementById('n-slowo').textContent=KARTY[nk].s;
+  document.getElementById('n-tekst').textContent=KARTY[nk].t;
+  document.getElementById('n-dalej').textContent = nk===KARTY.length-1 ? '✏️ Teraz sprawdź się' : 'Dalej ›';
+  if(window.speechSynthesis) speechSynthesis.cancel();
+}
+function dalejNauka(){ if(nk<KARTY.length-1){nk++;rysujKarte();} else startSprawdzania(); }
+function wsteczNauka(){ if(nk>0){nk--;rysujKarte();} else pokaz('start'); }
+function czytaj(){
+  if(!window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(KARTY[nk].t); u.lang='pl-PL'; u.rate=0.9;
+  speechSynthesis.speak(u);
+}
+if(!window.speechSynthesis) document.getElementById('n-glos').style.display='none';
+
+// ---------------- SPRAWDZANIE
+var tk=0, punkty=0, ulozone=[];
+function startSprawdzania(){ tk=0; punkty=0; rysujZadanie(); pokaz('test'); }
+
+function rysujZadanie(){
+  var z=ZADANIA[tk];
+  document.getElementById('t-licznik').textContent='Zadanie '+(tk+1)+' z '+ZADANIA.length;
+  document.getElementById('t-info').textContent=''; document.getElementById('t-info').className='info';
+  document.getElementById('t-dalej').style.display='none';
+  var odp=document.getElementById('t-odp'); odp.innerHTML='';
+  var ok=document.getElementById('t-okienka'); ok.innerHTML=''; ok.className='okienka'; ok.style.display='none';
+
+  if(z.typ==='luka'){
+    document.getElementById('t-polecenie').textContent='Uzupełnij lukę';
+    document.getElementById('t-pytanie').innerHTML=z.przed+' <span class="luka" id="luka">&nbsp;?&nbsp;</span> '+z.po;
+    potasuj([z.dobra].concat(z.inne)).forEach(function(o){ odp.appendChild(przycisk(o, z.dobra)); });
+  } else if(z.typ==='x'){
+    document.getElementById('t-polecenie').textContent='Wybierz poprawną odpowiedź';
+    document.getElementById('t-pytanie').textContent=z.pytanie;
+    potasuj([z.dobra].concat(z.inne)).forEach(function(o){ odp.appendChild(przycisk(o, z.dobra)); });
+  } else {
+    document.getElementById('t-polecenie').textContent='Ułóż słowo z liter — stukaj po kolei';
+    document.getElementById('t-pytanie').textContent=z.pytanie;
+    ulozone=[]; ok.style.display='flex';
+    for(var i=0;i<z.slowo.length;i++){ var d=document.createElement('div'); d.className='okno'; ok.appendChild(d); }
+    var kafle=document.createElement('div'); kafle.className='kafle';
+    z.litery.forEach(function(l){
+      var b=document.createElement('button'); b.className='kafel'; b.textContent=l;
+      b.onclick=function(){ if(b.disabled) return; b.disabled=true; ulozone.push({l:l,b:b}); odswiezOkienka(); };
+      kafle.appendChild(b);
+    });
+    odp.appendChild(kafle);
+    var cof=document.createElement('button'); cof.className='btn drugi'; cof.textContent='⌫ Cofnij literę'; cof.id='cofnij';
+    cof.onclick=function(){ var o=ulozone.pop(); if(o){ o.b.disabled=false; odswiezOkienka(); } };
+    odp.appendChild(cof);
+  }
+}
+
+function przycisk(tekst, dobra){
+  var b=document.createElement('button'); b.className='btn opcja'; b.textContent=tekst;
+  b.onclick=function(){
+    var wszystkie=document.querySelectorAll('#t-odp .opcja');
+    wszystkie.forEach(function(x){ x.disabled=true; if(x.textContent===dobra) x.classList.add('dobrze'); });
+    var z=ZADANIA[tk];
+    if(tekst===dobra){ punkty++; ocena(true,''); }
+    else { b.classList.add('zle'); ocena(false,'Poprawnie: '+dobra); }
+    if(z.typ==='luka') document.getElementById('luka').textContent=dobra;
+  };
+  return b;
+}
+
+function odswiezOkienka(){
+  var z=ZADANIA[tk], okna=document.querySelectorAll('#t-okienka .okno');
+  for(var i=0;i<okna.length;i++) okna[i].textContent = ulozone[i] ? ulozone[i].l : '';
+  if(ulozone.length===z.slowo.length){
+    var slowo=ulozone.map(function(o){return o.l;}).join('');
+    document.querySelectorAll('.kafel').forEach(function(k){k.disabled=true;});
+    document.getElementById('cofnij').style.display='none';
+    var ok=document.getElementById('t-okienka');
+    if(slowo===z.slowo){ punkty++; ok.classList.add('dobrze'); ocena(true,''); }
+    else { ok.classList.add('zle'); ocena(false,'Poprawnie: '+z.slowo); }
+  }
+}
+
+function ocena(dobrze, poprawka){
+  var i=document.getElementById('t-info');
+  i.className='info '+(dobrze?'dobrze':'zle');
+  i.textContent = dobrze ? '✓ Dobrze!' : '✗ '+poprawka;
+  var d=document.getElementById('t-dalej');
+  d.textContent = tk===ZADANIA.length-1 ? 'Zobacz wynik ›' : 'Dalej ›';
+  d.style.display='block';
+}
+
+function dalejTest(){
+  if(tk<ZADANIA.length-1){ tk++; rysujZadanie(); window.scrollTo(0,0); return; }
+  var t=ZADANIA.length;
+  document.getElementById('w-liczba').textContent=punkty+' / '+t;
+  document.getElementById('w-slowo').textContent =
+    punkty===t ? 'Wszystko dobrze. Jesteś gotowa na kartkówkę!' :
+    punkty>=t-2 ? 'Bardzo dobrze! Powtórz karty z błędami i spróbuj jeszcze raz.' :
+    'Wróć do nauki, a potem sprawdź się jeszcze raz.';
+  postResult(punkty,t);
+  pokaz('koniec');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Słówka str. 16 - pisanie</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f2f5;color:#222;
+  padding:18px 14px 60px;max-width:820px;margin:0 auto;font-size:17px;line-height:1.5}
+h1{font-size:25px;color:#1b5e20;margin-bottom:4px}
+.subject-tag{display:inline-block;background:#e9ecef;color:#555;font-size:13px;
+  padding:3px 10px;border-radius:10px;margin-bottom:14px}
+.info{background:#fff8e1;border-left:6px solid #f9a825;border-radius:12px;
+  padding:14px 16px;margin-bottom:22px;font-size:16px}
+.info b{color:#8a6100}
+.karta{background:#fff;border-radius:16px;padding:16px 18px;margin-bottom:16px;
+  box-shadow:0 1px 3px rgba(0,0,0,.08);border-left:7px solid #43a047}
+.pl{font-size:28px;font-weight:700;color:#1b5e20;margin-bottom:10px}
+.pole input{width:100%;min-height:62px;font-size:24px;padding:8px 14px;
+  border:3px solid #dee2e6;border-radius:12px;background:#fff;color:#222;
+  font-family:'Segoe UI',Arial,sans-serif}
+.pole input:focus{outline:none;border-color:#1976d2;background:#f5faff}
+.pole input.ok{border-color:#2e7d32;background:#f1f8f2}
+.pole input.zle{border-color:#c62828;background:#fdf3f3}
+.dol{display:flex;gap:12px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.podp{min-height:48px;font-size:16px;font-weight:700;border:2px solid #dee2e6;border-radius:12px;
+  background:#fff;color:#555;padding:0 16px;cursor:pointer}
+.wzor{font-size:22px;font-family:Consolas,'Courier New',monospace;color:#8a6100;letter-spacing:2px}
+.poprawka{font-size:17px;color:#c62828;font-weight:700}
+.przyciski{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:24px}
+button.duzy{min-height:68px;font-size:20px;font-weight:700;border:none;border-radius:16px;
+  cursor:pointer;font-family:'Segoe UI',Arial,sans-serif}
+.sprawdz{background:#1976d2;color:#fff}
+.znowu{background:#fff;color:#555;border:3px solid #dee2e6 !important}
+#wynik{display:none;margin-top:22px;background:#fff;border-radius:16px;padding:18px;
+  text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+#wynik .liczba{font-size:34px;font-weight:700;color:#1b5e20}
+#wynik .slowo{font-size:17px;color:#555;margin-top:6px}
+</style>
+</head>
+<body>
+
+<h1>Słówka str. 16 — pisanie</h1>
+<div class="subject-tag">Angielski</div>
+
+<div class="info">
+  <b>Rób to na komputerze, nie na telefonie.</b> Na kartkówce trzeba te słówka napisać samej,
+  więc tu nic nie podpowiada ani nie poprawia.<br><br>
+  Przeczytaj polskie słowo i <b>wpisz je po angielsku</b>. Wielkie litery, spacje i kreski
+  nie mają znaczenia — liczą się litery. Jeśli utkniesz, kliknij <b>Podpowiedź</b>:
+  zobaczysz pierwszą literę i ile liter ma słowo.
+</div>
+
+<div id="lista"></div>
+
+<div class="przyciski">
+  <button class="duzy sprawdz" onclick="sprawdz()">✓ Sprawdź</button>
+  <button class="duzy znowu" onclick="odNowa()">↻ Jeszcze raz</button>
+</div>
+
+<div id="wynik">
+  <div class="liczba" id="wynik-liczba"></div>
+  <div class="slowo" id="wynik-slowo"></div>
+</div>
+
+<script>
+var RESULTS_URL="https://julia-hub-161045418771.europe-west1.run.app/results",RESULTS_TOKEN="XW09DH2_fs8SdHh7B9pGMoCZuDVwAHSQ",posted=false;
+function postResult(score,total){
+  if(posted||!RESULTS_URL||!RESULTS_TOKEN)return;posted=true;
+  try{
+    fetch(RESULTS_URL,{method:'POST',keepalive:true,
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({token:RESULTS_TOKEN,
+        subject:document.querySelector('.subject-tag').textContent,
+        title:document.querySelector('h1').textContent,
+        score:score,total:total})});
+  }catch(e){}
+}
+
+var SLOWKA=[
+  {pl:"naładować baterię", pokaz:"charge your battery", ok:["chargeyourbattery"]},
+  {pl:"połączyć się z wi-fi", pokaz:"connect to Wi-Fi", ok:["connecttowifi"]},
+  {pl:"wydrukować", pokaz:"print out", ok:["printout"]},
+  {pl:"udostępnić", pokaz:"share", ok:["share"]},
+  {pl:"kabel USB", pokaz:"USB cable", ok:["usbcable"]},
+  {pl:"słuchawki", pokaz:"earphones", ok:["earphones"]}
+];
+
+function norm(s){ return (s||"").toLowerCase().replace(/[^a-z0-9]/g,""); }
+
+// podpowiedz: pierwsza litera kazdego slowa + kreski za reszte liter
+function wzor(tekst){
+  return tekst.split(" ").map(function(w){
+    var litery=w.replace(/[^A-Za-z0-9]/g,"");
+    if(!litery.length) return w;
+    return litery[0]+new Array(litery.length).join("_");
+  }).join("   ");
+}
+
+// kolejnosc losowana przy kazdym wejsciu — zeby nie uczyc sie ukladu, tylko slowek
+function potasuj(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
+var kolejnosc;
+
+function zbuduj(){
+  kolejnosc=potasuj(SLOWKA.map(function(_,i){return i;}));
+  var lista=document.getElementById('lista'); lista.innerHTML='';
+  kolejnosc.forEach(function(idx,n){
+    var s=SLOWKA[idx];
+    var d=document.createElement('div'); d.className='karta';
+    d.innerHTML='<div class="pl">'+s.pl+'</div>'+
+      '<div class="pole"><input id="w'+n+'" type="text" autocomplete="off" autocorrect="off" '+
+      'autocapitalize="off" spellcheck="false" inputmode="text" aria-label="'+s.pl+' po angielsku"></div>'+
+      '<div class="dol"><button class="podp" onclick="podpowiedz('+n+')">💡 Podpowiedź</button>'+
+      '<span class="wzor" id="h'+n+'"></span><span class="poprawka" id="p'+n+'"></span></div>';
+    lista.appendChild(d);
+  });
+}
+function podpowiedz(n){ document.getElementById('h'+n).textContent=wzor(SLOWKA[kolejnosc[n]].pokaz); }
+
+function sprawdz(){
+  var punkty=0;
+  kolejnosc.forEach(function(idx,n){
+    var s=SLOWKA[idx], inp=document.getElementById('w'+n), pop=document.getElementById('p'+n);
+    var dobrze=s.ok.indexOf(norm(inp.value))>-1;
+    inp.classList.remove('ok','zle');
+    inp.classList.add(dobrze?'ok':'zle');
+    pop.textContent=dobrze?'':'poprawnie: '+s.pokaz;
+    if(dobrze) punkty++;
+  });
+  var total=SLOWKA.length;
+  document.getElementById('wynik-liczba').textContent=punkty+' / '+total;
+  document.getElementById('wynik-slowo').textContent=
+    punkty===total?'Wszystko dobrze. Brawo!':
+    (punkty>=total-1?'Blisko! Popraw czerwone i sprawdź jeszcze raz.':'Popraw czerwone pola i spróbuj ponownie.');
+  var w=document.getElementById('wynik'); w.style.display='block';
+  w.scrollIntoView({behavior:'smooth',block:'nearest'});
+  postResult(punkty,total);
+}
+function odNowa(){
+  posted=false; zbuduj();
+  document.getElementById('wynik').style.display='none';
+  window.scrollTo({top:0,behavior:'smooth'});
+  document.getElementById('w0').focus();
+}
+
+// Enter przechodzi do nastepnego pola, na ostatnim sprawdza
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Enter')return;
+  var inputy=Array.prototype.slice.call(document.querySelectorAll('input'));
+  var i=inputy.indexOf(document.activeElement);
+  if(i>-1){ e.preventDefault(); if(i+1<inputy.length) inputy[i+1].focus(); else sprawdz(); }
+});
+zbuduj();
+</script>
+</body>
+</html>

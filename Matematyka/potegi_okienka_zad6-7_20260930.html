@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Potęgi — zadania 6 i 7</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#eef0fa;color:#222;padding:16px 14px 40px;max-width:680px;margin:0 auto;font-size:19px;line-height:1.5}
+h1{font-size:25px;color:#283593;margin-bottom:4px}
+.subject-tag{display:inline-block;background:#dde1f5;color:#283593;font-size:13px;padding:3px 10px;border-radius:10px;margin-bottom:10px}
+.ekran{display:none}.ekran.aktywny{display:block}
+.karta{background:#fff;border-radius:18px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-top:10px}
+.licznik{color:#5c6bc0;font-weight:700;font-size:16px}
+.polecenie{font-weight:700;margin:4px 0 10px}
+.wzor{font-size:30px;text-align:center;padding:10px 0;overflow-x:auto}
+.krok-opis{color:#5c6bc0;font-weight:700;font-size:17px;margin-top:6px}
+.uwaga{background:#fff8e1;border-radius:10px;padding:8px 12px;font-size:16px;margin-top:8px}
+.btn{display:block;width:100%;min-height:74px;font-size:20px;font-weight:700;border:3px solid #c5cae9;border-radius:16px;margin-top:12px;cursor:pointer;font-family:inherit;background:#fff;color:#283593;text-align:left;padding:10px 16px}
+.btn.glowny{background:#283593;color:#fff;border-color:#283593;text-align:center}
+.btn.dobrze{background:#e8f5e9;border-color:#2e7d32;color:#1b5e20}
+.btn.zle{background:#ffebee;border-color:#c62828;color:#b71c1c}
+.btn:disabled{cursor:default}
+.linia{display:flex;align-items:flex-start;justify-content:center;flex-wrap:wrap;gap:6px;font-size:32px;padding:14px 0}
+.okno{display:inline-block;min-width:74px;height:58px;border:4px solid #283593;border-radius:10px;font-size:34px;font-weight:700;
+  text-align:center;line-height:50px;background:#f5f6ff;color:#283593;margin-top:-18px}
+.okno.dobrze{border-color:#2e7d32;background:#e8f5e9;color:#1b5e20}
+.okno.zle{border-color:#c62828;background:#ffebee;color:#b71c1c}
+.klawiatura{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.klawiatura button{min-height:68px;font-size:30px;font-weight:700;border:3px solid #c5cae9;border-radius:14px;background:#fff;color:#283593;cursor:pointer;font-family:inherit}
+.klawiatura button.spr{background:#283593;color:#fff;border-color:#283593;font-size:22px}
+.info{min-height:30px;margin-top:10px;font-weight:700;text-align:center;font-size:20px}
+.info.dobrze{color:#2e7d32}.info.zle{color:#c62828}
+.rozw{padding:12px 0;border-bottom:1px solid #e3e6f3;font-size:24px;overflow-x:auto}
+.rozw b{font-size:19px;color:#283593}
+.wynik{font-size:54px;font-weight:800;color:#283593;text-align:center}
+@media print{ body{background:#fff;max-width:none} .nie-drukuj{display:none!important} .ekran{display:none!important} #koniec{display:block!important} .karta{box-shadow:none} }
+</style>
+</head>
+<body>
+<div class="nie-drukuj"><div class="subject-tag">Matematyka</div><h1>Potęgi — zadania 6 i 7</h1></div>
+
+<div class="ekran aktywny" id="start">
+  <div class="karta">Zapisz w postaci jednej potęgi. W każdym kroku:<br>
+  <b>1.</b> stuknij regułę — co robię z wykładnikami,<br>
+  <b>2.</b> wpisz wykładnik w okienko.<br><br>
+  Po każdym kroku od razu zobaczysz, czy dobrze.</div>
+  <div class="karta" style="font-size:17px">
+    <b>Reguły:</b><br>
+    potęga potęgi → <b>mnożę</b> wykładniki<br>
+    mnożenie potęg → <b>dodaję</b> wykładniki<br>
+    dzielenie potęg → <b>odejmuję</b> wykładniki
+  </div>
+  <button class="btn glowny" onclick="start()">▶ Zaczynam</button>
+</div>
+
+<div class="ekran" id="praca">
+  <div class="karta">
+    <div class="licznik" id="p-licznik"></div>
+    <div class="polecenie">Zapisz w postaci jednej potęgi.</div>
+    <div class="wzor" id="p-caly"></div>
+  </div>
+  <div class="karta">
+    <div class="krok-opis" id="p-opis"></div>
+    <div class="wzor" id="p-krok"></div>
+    <div class="uwaga" id="p-uwaga" style="display:none"></div>
+    <div id="etap-regula">
+      <div class="polecenie" style="margin-top:10px">Co robię z wykładnikami?</div>
+      <div id="p-reguly"></div>
+    </div>
+    <div id="etap-liczba" style="display:none">
+      <div class="linia" id="p-linia"></div>
+      <div class="klawiatura" id="p-klaw"></div>
+    </div>
+    <div class="info" id="p-info"></div>
+    <button class="btn glowny" id="p-dalej" style="display:none" onclick="dalej()">Dalej ›</button>
+  </div>
+</div>
+
+<div class="ekran" id="koniec">
+  <div class="karta nie-drukuj">
+    <div style="text-align:center">Dobrze za pierwszym razem:</div>
+    <div class="wynik" id="k-wynik"></div>
+  </div>
+  <div class="karta">
+    <div class="polecenie">Rozwiązanie — potęgi, zadania 6 i 7</div>
+    <div id="k-rozw"></div>
+  </div>
+  <button class="btn glowny nie-drukuj" onclick="window.print()">🖨️ Drukuj / zapisz PDF dla pani</button>
+  <button class="btn nie-drukuj" style="text-align:center" onclick="start()">↻ Jeszcze raz</button>
+</div>
+
+<script>
+var RESULTS_URL="https://julia-hub-161045418771.europe-west1.run.app/results",RESULTS_TOKEN="XW09DH2_fs8SdHh7B9pGMoCZuDVwAHSQ";
+var REGULY={
+  mnoz:   "Potęga potęgi → MNOŻĘ wykładniki",
+  dodaj:  "Mnożenie potęg → DODAJĘ wykładniki",
+  odejmij:"Dzielenie potęg → ODEJMUJĘ wykładniki"
+};
+var PRZYKLADY=[
+ {id:"6a", tex:"\\left(2^{7}\\right)^{7}", kroki:[
+   {z:"\\left(2^{7}\\right)^{7}", r:"mnoz", dz:"7\\cdot 7", baza:"2", w:49}]},
+ {id:"6b", tex:"\\left(\\left(-3\\right)^{7}\\right)^{5}", kroki:[
+   {z:"\\left(\\left(-3\\right)^{7}\\right)^{5}", r:"mnoz", dz:"7\\cdot 5", baza:"\\left(-3\\right)", w:35,
+    uwaga:"Podstawa (−3) zostaje w nawiasie."}]},
+ {id:"6c", tex:"\\left(\\left(-0{,}1\\right)^{4}\\right)^{6}", kroki:[
+   {z:"\\left(\\left(-0{,}1\\right)^{4}\\right)^{6}", r:"mnoz", dz:"4\\cdot 6", baza:"\\left(-0{,}1\\right)", w:24,
+    uwaga:"Podstawa (−0,1) zostaje w nawiasie."}]},
+ {id:"7a", tex:"\\left(\\dfrac{5^{8}\\cdot 5^{0}\\cdot 5}{5^{7}}\\right)^{2}", kroki:[
+   {opis:"Krok 1: licznik", z:"5^{8}\\cdot 5^{0}\\cdot 5^{1}", r:"dodaj", dz:"8+0+1", baza:"5", w:9,
+    uwaga:"Samo 5 to 5¹ — wykładnik 1."},
+   {opis:"Krok 2: dzielę przez mianownik", z:"5^{9} : 5^{7}", r:"odejmij", dz:"9-7", baza:"5", w:2},
+   {opis:"Krok 3: potęga całego nawiasu", z:"\\left(5^{2}\\right)^{2}", r:"mnoz", dz:"2\\cdot 2", baza:"5", w:4}]},
+ {id:"7b", tex:"0{,}5^{5}\\cdot\\left(\\left(0{,}5\\right)^{3}\\right)^{2} : 0{,}5^{4}", kroki:[
+   {opis:"Krok 1: najpierw nawias", z:"\\left(\\left(0{,}5\\right)^{3}\\right)^{2}", r:"mnoz", dz:"3\\cdot 2", baza:"0{,}5", w:6},
+   {opis:"Krok 2: mnożenie", z:"0{,}5^{5}\\cdot 0{,}5^{6}", r:"dodaj", dz:"5+6", baza:"0{,}5", w:11},
+   {opis:"Krok 3: dzielenie", z:"0{,}5^{11} : 0{,}5^{4}", r:"odejmij", dz:"11-4", baza:"0{,}5", w:7}]}
+];
+
+function tex(el, t){
+  try{ katex.render(t, el, {throwOnError:false}); }catch(e){ el.textContent=t.replace(/\\left|\\right|\\/g,''); }
+}
+function pokaz(id){ document.querySelectorAll('.ekran').forEach(function(e){e.classList.remove('aktywny');});
+  document.getElementById(id).classList.add('aktywny'); window.scrollTo(0,0); }
+function potasuj(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
+
+var ip, ik, wpis, bledy, dobrzeOdRazu, wszystkich, posted, zrobione;
+function start(){
+  ip=0; ik=0; dobrzeOdRazu=0; posted=false;
+  wszystkich=PRZYKLADY.reduce(function(s,p){return s+p.kroki.length;},0);
+  rysuj(); pokaz('praca');
+}
+function krok(){ return PRZYKLADY[ip].kroki[ik]; }
+function rysuj(){
+  var p=PRZYKLADY[ip], k=krok();
+  bledy=0; wpis=''; zrobione=false;
+  document.getElementById('p-licznik').textContent='Zadanie '+p.id.charAt(0)+', przykład '+p.id.charAt(1)+')';
+  tex(document.getElementById('p-caly'), p.tex);
+  document.getElementById('p-opis').textContent = k.opis || (p.kroki.length>1 ? '' : '');
+  tex(document.getElementById('p-krok'), k.z);
+  var u=document.getElementById('p-uwaga'); u.style.display=k.uwaga?'block':'none'; u.textContent=k.uwaga||'';
+  document.getElementById('etap-regula').style.display='block';
+  document.getElementById('etap-liczba').style.display='none';
+  document.getElementById('p-info').textContent=''; document.getElementById('p-info').className='info';
+  document.getElementById('p-dalej').style.display='none';
+  var box=document.getElementById('p-reguly'); box.innerHTML='';
+  potasuj(Object.keys(REGULY)).forEach(function(r){
+    var b=document.createElement('button'); b.className='btn'; b.textContent=REGULY[r];
+    b.onclick=function(){ wybierzRegule(r,b); }; box.appendChild(b);
+  });
+}
+function wybierzRegule(r,b){
+  var k=krok(), info=document.getElementById('p-info');
+  if(r!==k.r){
+    bledy++; b.classList.add('zle'); b.disabled=true;
+    info.className='info zle'; info.textContent='✗ To nie ta reguła. Spróbuj jeszcze raz.';
+    return;
+  }
+  b.classList.add('dobrze');
+  document.querySelectorAll('#p-reguly .btn').forEach(function(x){ x.disabled=true; });
+  info.className='info dobrze'; info.textContent='✓ Tak! Teraz policz wykładnik.';
+  setTimeout(etapLiczby, 500);
+}
+function etapLiczby(){
+  var k=krok();
+  document.getElementById('etap-regula').style.display='none';
+  document.getElementById('etap-liczba').style.display='block';
+  document.getElementById('p-info').textContent=''; document.getElementById('p-info').className='info';
+  var l=document.getElementById('p-linia'); l.innerHTML='';
+  var a=document.createElement('span'); tex(a, k.z+" = "+k.baza+"^{"+k.dz+"} = "+k.baza); l.appendChild(a);
+  var o=document.createElement('span'); o.className='okno'; o.id='p-okno'; l.appendChild(o);
+  var kl=document.getElementById('p-klaw'); kl.innerHTML='';
+  ['1','2','3','4','5','6','7','8','9','⌫','0','✓'].forEach(function(c){
+    var b=document.createElement('button'); b.textContent = c==='✓' ? '✓ Sprawdź' : c;
+    if(c==='✓') b.className='spr';
+    b.onclick=function(){ klawisz(c); }; kl.appendChild(b);
+  });
+}
+function klawisz(c){
+  if(zrobione) { if(c==='✓') dalej(); return; }
+  var o=document.getElementById('p-okno'); if(!o) return;
+  if(c==='⌫') wpis=wpis.slice(0,-1);
+  else if(c==='✓') return sprawdz();
+  else if(wpis.length<3) wpis+=c;
+  o.textContent=wpis; o.className='okno';
+}
+function sprawdz(){
+  var k=krok(), o=document.getElementById('p-okno'), info=document.getElementById('p-info');
+  if(!wpis) return;
+  if(+wpis===k.w){
+    o.className='okno dobrze'; info.className='info dobrze'; info.textContent='✓ Dobrze!';
+    if(bledy===0) dobrzeOdRazu++;
+    zrobione=true; k.wpisane=wpis;
+    var d=document.getElementById('p-dalej'); d.style.display='block';
+    d.textContent = (ip===PRZYKLADY.length-1 && ik===PRZYKLADY[ip].kroki.length-1) ? 'Zobacz rozwiązanie ›' : 'Dalej ›';
+  } else {
+    bledy++; o.className='okno zle'; info.className='info zle';
+    info.textContent='✗ Jeszcze nie. Policz jeszcze raz: '+k.dz.replace(/\\cdot\s*/g,' · ');
+    wpis='';
+  }
+}
+function dalej(){
+  if(ik<PRZYKLADY[ip].kroki.length-1){ ik++; rysuj(); return; }
+  if(ip<PRZYKLADY.length-1){ ip++; ik=0; rysuj(); return; }
+  koniec();
+}
+document.addEventListener('keydown',function(e){
+  if(!document.getElementById('praca').classList.contains('aktywny')) return;
+  if(document.getElementById('etap-liczba').style.display==='none') return;
+  if(/^[0-9]$/.test(e.key)) klawisz(e.key);
+  else if(e.key==='Backspace'){ e.preventDefault(); klawisz('⌫'); }
+  else if(e.key==='Enter'){ e.preventDefault(); klawisz('✓'); }
+});
+function koniec(){
+  document.getElementById('k-wynik').textContent=dobrzeOdRazu+' / '+wszystkich;
+  var r=document.getElementById('k-rozw'); r.innerHTML='';
+  PRZYKLADY.forEach(function(p){
+    var d=document.createElement('div'); d.className='rozw';
+    var lab=document.createElement('b'); lab.textContent='Zad. '+p.id.charAt(0)+' '+p.id.charAt(1)+')  '; d.appendChild(lab);
+    var s=document.createElement('span'); tex(s,p.tex); d.appendChild(s);
+    p.kroki.forEach(function(k){
+      var l=document.createElement('div'); l.style.margin='6px 0 0 24px';
+      tex(l, k.z+" = "+k.baza+"^{"+k.dz+"} = "+k.baza+"^{"+k.w+"}"); d.appendChild(l);
+    });
+    var last=p.kroki[p.kroki.length-1];
+    var odp=document.createElement('div'); odp.style.margin='6px 0 0 24px'; odp.style.fontWeight='700';
+    odp.appendChild(document.createTextNode('Odpowiedź: ')); var o=document.createElement('span'); tex(o,last.baza+"^{"+last.w+"}"); odp.appendChild(o);
+    d.appendChild(odp); r.appendChild(d);
+  });
+  pokaz('koniec');
+  if(!posted){ posted=true; try{ fetch(RESULTS_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({token:RESULTS_TOKEN,subject:'Matematyka',title:'Potęgi — zadania 6 i 7 (okienka)',score:dobrzeOdRazu,total:wszystkich})}); }catch(e){} }
+}
+</script>
+</body>
+</html>

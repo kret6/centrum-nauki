@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chemia — pierwiastki i kwasy</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#e6f6f8;color:#222;
+  padding:16px 14px 50px;max-width:640px;margin:0 auto;font-size:19px;line-height:1.5}
+h1{font-size:24px;color:#00838f;margin-bottom:2px}
+.subject-tag{display:inline-block;background:#d4f1f5;color:#00838f;font-size:13px;
+  padding:3px 10px;border-radius:10px;margin-bottom:16px}
+.ekran{display:none}.ekran.aktywny{display:block}
+.btn{display:block;width:100%;min-height:76px;font-size:21px;font-weight:700;border:none;
+  border-radius:16px;margin-bottom:14px;cursor:pointer;font-family:inherit;padding:10px 16px}
+.glowny{background:#00838f;color:#fff}
+.drugi{background:#fff;color:#00838f;border:3px solid #b2ebf2}
+.opcja{background:#fff;color:#222;border:3px solid #b2ebf2;text-align:left}
+.opcja.dobrze{background:#e8f5e9;border-color:#2e7d32;color:#1b5e20}
+.opcja.zle{background:#ffebee;border-color:#c62828;color:#b71c1c}
+.karta{background:#fff;border-radius:18px;padding:22px 20px;margin-bottom:16px;
+  box-shadow:0 1px 4px rgba(0,0,0,.08);border-left:8px solid #00acc1;min-height:220px}
+.slowo{font-size:30px;font-weight:800;color:#00838f;margin-bottom:12px;line-height:1.2}
+.tekst{font-size:21px}
+.licznik{font-size:15px;color:#00acc1;font-weight:700;margin-bottom:10px}
+.polecenie{font-size:15px;color:#00acc1;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.pytanie{font-size:22px;font-weight:600;margin-bottom:18px}
+.luka{display:inline-block;min-width:120px;border-bottom:3px solid #00838f;text-align:center;color:#00838f}
+.okienka{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 18px}
+.okno{width:44px;height:54px;border:3px solid #00838f;border-radius:8px;background:#fff;
+  font-size:28px;font-weight:800;display:flex;align-items:center;justify-content:center;color:#00838f}
+.okienka.dobrze .okno{border-color:#2e7d32;color:#1b5e20;background:#e8f5e9}
+.okienka.zle .okno{border-color:#c62828;color:#b71c1c;background:#ffebee}
+.kafle{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kafel{min-height:76px;font-size:32px;font-weight:800;border:3px solid #b2ebf2;border-radius:14px;
+  background:#fff;color:#00838f;cursor:pointer;font-family:inherit}
+.kafel:disabled{opacity:.25}
+.info{font-size:19px;font-weight:700;margin:4px 0 16px;min-height:28px}
+.info.dobrze{color:#2e7d32}.info.zle{color:#c62828}
+.wynik{font-size:46px;font-weight:800;color:#00838f;text-align:center;margin:10px 0}
+.pod{text-align:center;font-size:19px;margin-bottom:22px}
+.glos{background:none;border:2px solid #b2ebf2;border-radius:12px;font-size:17px;padding:8px 14px;
+  color:#00838f;font-weight:700;margin-top:14px;cursor:pointer;min-height:48px}
+</style>
+</head>
+<body>
+<h1>Pierwiastki i kwasy</h1>
+<div class="subject-tag">Chemia · kartkówka czw. 8.10</div>
+
+<!-- START -->
+<div class="ekran aktywny" id="start">
+  <div class="karta" style="min-height:0">
+    <div class="tekst">1. Symbole i nazwy pierwiastków<br>2. Wzory i nazwy kwasów<br>3. Kwas siarkowy(VI) — H₂SO₄<br>4. Kwas siarkowy(IV) — H₂SO₃<br><br>Najpierw <b>ucz się</b> — 19 krótkich kart.
+    Potem <b>sprawdź się</b> — 36 pytań, stukasz w dobrą odpowiedź.</div>
+  </div>
+  <div class="karta" style="min-height:0;margin-top:14px">
+    <div class="tekst"><b>🎧 Posłuchaj powtórki</b> — Zofia i Marek. Na końcu quiz: odpowiadaj na głos.</div>
+    <audio controls preload="none" src="chem_podcast_kwasy.mp3" style="width:100%;margin-top:10px"></audio>
+  </div>
+  <button class="btn glowny" onclick="startNauki()">📖 Ucz się</button>
+  <button class="btn drugi" onclick="startSprawdzania()">✏️ Sprawdź się</button>
+</div>
+
+<!-- NAUKA -->
+<div class="ekran" id="nauka">
+  <div class="licznik" id="n-licznik"></div>
+  <div class="karta">
+    <div class="slowo" id="n-slowo"></div>
+    <div class="tekst" id="n-tekst"></div>
+    <button class="glos" id="n-glos" onclick="czytaj()">🔊 Przeczytaj na głos</button>
+  </div>
+  <button class="btn glowny" id="n-dalej" onclick="dalejNauka()">Dalej ›</button>
+  <button class="btn drugi" onclick="wsteczNauka()">‹ Wstecz</button>
+</div>
+
+<!-- SPRAWDZANIE -->
+<div class="ekran" id="test">
+  <div class="licznik" id="t-licznik"></div>
+  <div class="polecenie" id="t-polecenie"></div>
+  <div class="pytanie" id="t-pytanie"></div>
+  <div id="t-okienka" class="okienka"></div>
+  <div id="t-odp"></div>
+  <div class="info" id="t-info"></div>
+  <button class="btn glowny" id="t-dalej" style="display:none" onclick="dalejTest()">Dalej ›</button>
+</div>
+
+<!-- WYNIK -->
+<div class="ekran" id="koniec">
+  <div class="wynik" id="w-liczba"></div>
+  <div class="pod" id="w-slowo"></div>
+  <button class="btn glowny" onclick="startSprawdzania()">↻ Sprawdź się jeszcze raz</button>
+  <button class="btn drugi" onclick="startNauki()">📖 Wróć do nauki</button>
+</div>
+
+<script>
+var RESULTS_URL="https://julia-hub-161045418771.europe-west1.run.app/results",RESULTS_TOKEN="XW09DH2_fs8SdHh7B9pGMoCZuDVwAHSQ";
+function postResult(score,total){
+  if(!RESULTS_URL||!RESULTS_TOKEN)return;
+  try{fetch(RESULTS_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({token:RESULTS_TOKEN,subject:'Chemia',title:'Chemia — pierwiastki i kwasy — sprawdź się',
+      score:score,total:total})});}catch(e){}
+}
+
+var KARTY=[
+ {s:"1 · JAK ZAPISUJEMY SYMBOL?", t:"Symbol to jedna albo dwie litery. Pierwsza litera zawsze WIELKA, druga zawsze mała: Fe, Cu, Na. Symbole pochodzą często od nazw łacińskich — dlatego sód to Na, a żelazo to Fe."},
+ {s:"1 · ŁATWE — PIERWSZA LITERA", t:"H — wodór, C — węgiel, N — azot, O — tlen, F — fluor, P — fosfor, S — siarka, K — potas, I — jod."},
+ {s:"1 · GAZY SZLACHETNE I INNE", t:"He — hel, Ne — neon, Ar — argon, Cl — chlor, Br — brom, Si — krzem, Li — lit, Mg — magnez, Ba — bar."},
+ {s:"1 · PUŁAPKI — TRZEBA ZAPAMIĘTAĆ", t:"Na — sód, Al — glin, Ca — wapń, Fe — żelazo, Cu — miedź, Zn — cynk, Ag — srebro, Sn — cyna, Au — złoto, Hg — rtęć, Pb — ołów."},
+ {s:"2 · CO TO JEST KWAS?", t:"Kwas składa się z atomów WODORU i RESZTY KWASOWEJ. Wzór ogólny: HₙR. H — wodór, R — reszta kwasowa, n — ile jest atomów wodoru."},
+ {s:"2 · KWASY BEZTLENOWE", t:"Nie mają tlenu w cząsteczce. Nazwa kończy się na „-wodorowy”. HCl — kwas chlorowodorowy. H₂S — kwas siarkowodorowy."},
+ {s:"2 · KWASY TLENOWE", t:"Mają tlen w cząsteczce. H₂SO₄ — kwas siarkowy(VI). H₂SO₃ — kwas siarkowy(IV). HNO₃ — kwas azotowy(V). H₂CO₃ — kwas węglowy. H₃PO₄ — kwas fosforowy(V)."},
+ {s:"2 · RZYMSKA CYFRA W NAZWIE", t:"Liczba w nawiasie to wartościowość siarki, azotu albo fosforu w kwasie. Siarka w H₂SO₄ ma wartościowość VI, a w H₂SO₃ — IV."},
+ {s:"2 · WARTOŚCIOWOŚĆ RESZTY KWASOWEJ", t:"Ile atomów wodoru ma kwas — taką wartościowość ma reszta kwasowa. HCl → Cl ma I. H₂SO₄ → SO₄ ma II. H₃PO₄ → PO₄ ma III."},
+ {s:"3 · JAK GO OTRZYMAĆ?", t:"Tlenek siarki(VI) reaguje z wodą: SO₃ + H₂O → H₂SO₄."},
+ {s:"3 · WŁAŚCIWOŚCI", t:"Bezbarwna, oleista ciecz, cięższa od wody. Bardzo żrący. Higroskopijny — pochłania wodę z otoczenia. Zwęgla cukier, papier i drewno."},
+ {s:"3 · RÓB TAK: KWAS DO WODY!", t:"„Pamiętaj, chemiku młody, wlewaj zawsze kwas do wody!”. Odwrotnie jest niebezpiecznie — roztwór się gotuje i pryska."},
+ {s:"3 · ROZPAD W WODZIE (DYSOCJACJA)", t:"H₂SO₄ → 2H⁺ + SO₄²⁻. Powstają kationy wodoru i aniony siarczanowe(VI)."},
+ {s:"3 · ZASTOSOWANIA", t:"Akumulatory w samochodach, produkcja nawozów sztucznych, barwników, leków i detergentów."},
+ {s:"4 · JAK GO OTRZYMAĆ?", t:"Najpierw spalamy siarkę: S + O₂ → SO₂. Potem tlenek siarki(IV) reaguje z wodą: SO₂ + H₂O → H₂SO₃."},
+ {s:"4 · WŁAŚCIWOŚCI", t:"Istnieje tylko w roztworze wodnym. Bezbarwny, ma ostry, duszący zapach. Jest NIETRWAŁY — łatwo się rozkłada: H₂SO₃ → SO₂ + H₂O. To słaby kwas."},
+ {s:"4 · ROZPAD W WODZIE (DYSOCJACJA)", t:"H₂SO₃ → 2H⁺ + SO₃²⁻. Powstają kationy wodoru i aniony siarczanowe(IV)."},
+ {s:"4 · ZASTOSOWANIA", t:"Wybielanie papieru i tkanin, konserwowanie żywności (np. owoców, wina), odkażanie."},
+ {s:"4 · KWAŚNE DESZCZE", t:"Przy spalaniu węgla powstaje SO₂. W powietrzu łączy się z wodą w kwas siarkowy(IV) — to jedna z przyczyn kwaśnych deszczy, które niszczą lasy i budynki."}
+];
+
+var ZADANIA=[
+ {typ:"x", pytanie:"Symbol Fe oznacza:", dobra:"żelazo", inne:["fluor","fosfor"]},
+ {typ:"x", pytanie:"Symbol Na oznacza:", dobra:"sód", inne:["azot","neon"]},
+ {typ:"x", pytanie:"Symbol Cu oznacza:", dobra:"miedź", inne:["węgiel","wapń"]},
+ {typ:"x", pytanie:"Symbol Ca oznacza:", dobra:"wapń", inne:["węgiel","chlor"]},
+ {typ:"x", pytanie:"Symbol Ag oznacza:", dobra:"srebro", inne:["złoto","glin"]},
+ {typ:"x", pytanie:"Symbol Au oznacza:", dobra:"złoto", inne:["srebro","glin"]},
+ {typ:"x", pytanie:"Symbol Hg oznacza:", dobra:"rtęć", inne:["wodór","hel"]},
+ {typ:"x", pytanie:"Symbol Pb oznacza:", dobra:"ołów", inne:["fosfor","potas"]},
+ {typ:"x", pytanie:"Symbol K oznacza:", dobra:"potas", inne:["wapń","krzem"]},
+ {typ:"x", pytanie:"Glin ma symbol:", dobra:"Al", inne:["Gl","Ag"]},
+ {typ:"x", pytanie:"Cynk ma symbol:", dobra:"Zn", inne:["C","Cy"]},
+ {typ:"x", pytanie:"Siarka ma symbol:", dobra:"S", inne:["Si","Sr"]},
+ {typ:"x", pytanie:"Krzem ma symbol:", dobra:"Si", inne:["K","Kr"]},
+ {typ:"x", pytanie:"Azot ma symbol:", dobra:"N", inne:["Az","Au"]},
+ {typ:"x", pytanie:"Który symbol jest zapisany POPRAWNIE?", dobra:"Cl", inne:["CL","cl"]},
+ {typ:"x", pytanie:"Kwas składa się z:", dobra:"wodoru i reszty kwasowej", inne:["tlenu i metalu","samego tlenu"]},
+ {typ:"x", pytanie:"HCl to:", dobra:"kwas chlorowodorowy", inne:["kwas siarkowy(VI)","kwas węglowy"]},
+ {typ:"x", pytanie:"H₂S to:", dobra:"kwas siarkowodorowy", inne:["kwas siarkowy(IV)","kwas azotowy(V)"]},
+ {typ:"x", pytanie:"H₂SO₄ to:", dobra:"kwas siarkowy(VI)", inne:["kwas siarkowy(IV)","kwas siarkowodorowy"]},
+ {typ:"x", pytanie:"H₂SO₃ to:", dobra:"kwas siarkowy(IV)", inne:["kwas siarkowy(VI)","kwas węglowy"]},
+ {typ:"x", pytanie:"HNO₃ to:", dobra:"kwas azotowy(V)", inne:["kwas chlorowodorowy","kwas fosforowy(V)"]},
+ {typ:"x", pytanie:"H₂CO₃ to:", dobra:"kwas węglowy", inne:["kwas chlorowodorowy","kwas siarkowy(IV)"]},
+ {typ:"x", pytanie:"H₃PO₄ to:", dobra:"kwas fosforowy(V)", inne:["kwas azotowy(V)","kwas węglowy"]},
+ {typ:"x", pytanie:"Który kwas jest BEZTLENOWY?", dobra:"HCl", inne:["H₂SO₄","HNO₃"]},
+ {typ:"x", pytanie:"Nazwa kwasu beztlenowego kończy się na:", dobra:"-wodorowy", inne:["-owy(VI)","-tlenowy"]},
+ {typ:"x", pytanie:"Jaką wartościowość ma reszta kwasowa w H₂SO₄?", dobra:"II", inne:["I","IV"]},
+ {typ:"x", pytanie:"Kwas siarkowy(VI) otrzymujemy z wody i:", dobra:"SO₃", inne:["SO₂","H₂S"]},
+ {typ:"x", pytanie:"Kwas siarkowy(IV) otrzymujemy z wody i:", dobra:"SO₂", inne:["SO₃","CO₂"]},
+ {typ:"x", pytanie:"Jak bezpiecznie rozcieńczać kwas?", dobra:"wlewać kwas do wody", inne:["wlewać wodę do kwasu","wsypać sól"]},
+ {typ:"x", pytanie:"Stężony H₂SO₄ pochłania wodę — jest:", dobra:"higroskopijny", inne:["nietrwały","lotny"]},
+ {typ:"x", pytanie:"Co robi stężony H₂SO₄ z cukrem i papierem?", dobra:"zwęgla je", inne:["rozpuszcza je bez śladu","nic"]},
+ {typ:"x", pytanie:"Kwas siarkowy(VI) jest w:", dobra:"akumulatorach samochodowych", inne:["soku z cytryny","wodzie mineralnej"]},
+ {typ:"x", pytanie:"Kwas siarkowy(IV) jest nietrwały, bo rozkłada się na:", dobra:"SO₂ i H₂O", inne:["SO₃ i H₂","S i O₂"]},
+ {typ:"x", pytanie:"Kwas siarkowy(IV) stosuje się do:", dobra:"wybielania i konserwowania", inne:["akumulatorów","nawożenia pól"]},
+ {typ:"x", pytanie:"Przy spalaniu węgla powstaje SO₂, który powoduje:", dobra:"kwaśne deszcze", inne:["dziurę ozonową","trzęsienia ziemi"]},
+ {typ:"x", pytanie:"Dysocjacja H₂SO₄ daje:", dobra:"2H⁺ i SO₄²⁻", inne:["H⁺ i SO₄⁻","2H⁺ i SO₃²⁻"]}
+];
+
+function pokaz(id){ document.querySelectorAll('.ekran').forEach(function(e){e.classList.remove('aktywny');});
+  document.getElementById(id).classList.add('aktywny'); window.scrollTo(0,0); }
+function potasuj(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
+
+// ---------------- NAUKA
+var nk=0;
+function startNauki(){ nk=0; rysujKarte(); pokaz('nauka'); }
+function rysujKarte(){
+  document.getElementById('n-licznik').textContent='Karta '+(nk+1)+' z '+KARTY.length;
+  document.getElementById('n-slowo').textContent=KARTY[nk].s;
+  document.getElementById('n-tekst').textContent=KARTY[nk].t;
+  document.getElementById('n-dalej').textContent = nk===KARTY.length-1 ? '✏️ Teraz sprawdź się' : 'Dalej ›';
+  if(window.speechSynthesis) speechSynthesis.cancel();
+}
+function dalejNauka(){ if(nk<KARTY.length-1){nk++;rysujKarte();} else startSprawdzania(); }
+function wsteczNauka(){ if(nk>0){nk--;rysujKarte();} else pokaz('start'); }
+// Glos: jawnie polski (Chrome na Windows laduje glosy z opoznieniem, bez wyboru potrafi czytac po angielsku albo milczec)
+var glosPL=null;
+function szukajGlosu(){
+  var v=window.speechSynthesis ? speechSynthesis.getVoices() : [];
+  var pl=v.filter(function(x){ return /^pl/i.test(x.lang); });
+  glosPL = pl.filter(function(x){ return /natural|online|google/i.test(x.name); })[0] || pl[0] || null;
+}
+if(window.speechSynthesis){ szukajGlosu(); speechSynthesis.onvoiceschanged=szukajGlosu; }
+function czytaj(){
+  if(!window.speechSynthesis) return;
+  if(!glosPL) szukajGlosu();
+  var btn=document.getElementById('n-glos');
+  if(!glosPL && speechSynthesis.getVoices().length){
+    btn.textContent='🔇 Brak polskiego głosu na tym urządzeniu'; return;
+  }
+  speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(KARTY[nk].t); u.lang='pl-PL'; u.rate=0.9;
+  if(glosPL) u.voice=glosPL;
+  setTimeout(function(){ speechSynthesis.resume(); speechSynthesis.speak(u); }, 60);
+}
+if(!window.speechSynthesis) document.getElementById('n-glos').style.display='none';
+
+// ---------------- SPRAWDZANIE
+var tk=0, punkty=0, ulozone=[];
+function startSprawdzania(){ tk=0; punkty=0; rysujZadanie(); pokaz('test'); }
+
+function rysujZadanie(){
+  var z=ZADANIA[tk];
+  document.getElementById('t-licznik').textContent='Zadanie '+(tk+1)+' z '+ZADANIA.length;
+  document.getElementById('t-info').textContent=''; document.getElementById('t-info').className='info';
+  document.getElementById('t-dalej').style.display='none';
+  var odp=document.getElementById('t-odp'); odp.innerHTML='';
+  var ok=document.getElementById('t-okienka'); ok.innerHTML=''; ok.className='okienka'; ok.style.display='none';
+
+  if(z.typ==='luka'){
+    document.getElementById('t-polecenie').textContent='Uzupełnij lukę';
+    document.getElementById('t-pytanie').innerHTML=z.przed+' <span class="luka" id="luka">&nbsp;?&nbsp;</span> '+z.po;
+    potasuj([z.dobra].concat(z.inne)).forEach(function(o){ odp.appendChild(przycisk(o, z.dobra)); });
+  } else if(z.typ==='x'){
+    document.getElementById('t-polecenie').textContent='Wybierz poprawną odpowiedź';
+    document.getElementById('t-pytanie').textContent=z.pytanie;
+    potasuj([z.dobra].concat(z.inne)).forEach(function(o){ odp.appendChild(przycisk(o, z.dobra)); });
+  } else {
+    document.getElementById('t-polecenie').textContent='Ułóż słowo z liter — stukaj po kolei';
+    document.getElementById('t-pytanie').textContent=z.pytanie;
+    ulozone=[]; ok.style.display='flex';
+    for(var i=0;i<z.slowo.length;i++){ var d=document.createElement('div'); d.className='okno'; ok.appendChild(d); }
+    var kafle=document.createElement('div'); kafle.className='kafle';
+    z.litery.forEach(function(l){
+      var b=document.createElement('button'); b.className='kafel'; b.textContent=l;
+      b.onclick=function(){ if(b.disabled) return; b.disabled=true; ulozone.push({l:l,b:b}); odswiezOkienka(); };
+      kafle.appendChild(b);
+    });
+    odp.appendChild(kafle);
+    var cof=document.createElement('button'); cof.className='btn drugi'; cof.textContent='⌫ Cofnij literę'; cof.id='cofnij';
+    cof.onclick=function(){ var o=ulozone.pop(); if(o){ o.b.disabled=false; odswiezOkienka(); } };
+    odp.appendChild(cof);
+  }
+}
+
+function przycisk(tekst, dobra){
+  var b=document.createElement('button'); b.className='btn opcja'; b.textContent=tekst;
+  b.onclick=function(){
+    var wszystkie=document.querySelectorAll('#t-odp .opcja');
+    wszystkie.forEach(function(x){ x.disabled=true; if(x.textContent===dobra) x.classList.add('dobrze'); });
+    var z=ZADANIA[tk];
+    if(tekst===dobra){ punkty++; ocena(true,''); }
+    else { b.classList.add('zle'); ocena(false,'Poprawnie: '+dobra); }
+    if(z.typ==='luka') document.getElementById('luka').textContent=dobra;
+  };
+  return b;
+}
+
+function odswiezOkienka(){
+  var z=ZADANIA[tk], okna=document.querySelectorAll('#t-okienka .okno');
+  for(var i=0;i<okna.length;i++) okna[i].textContent = ulozone[i] ? ulozone[i].l : '';
+  if(ulozone.length===z.slowo.length){
+    var slowo=ulozone.map(function(o){return o.l;}).join('');
+    document.querySelectorAll('.kafel').forEach(function(k){k.disabled=true;});
+    document.getElementById('cofnij').style.display='none';
+    var ok=document.getElementById('t-okienka');
+    if(slowo===z.slowo){ punkty++; ok.classList.add('dobrze'); ocena(true,''); }
+    else { ok.classList.add('zle'); ocena(false,'Poprawnie: '+z.slowo); }
+  }
+}
+
+function ocena(dobrze, poprawka){
+  var i=document.getElementById('t-info');
+  i.className='info '+(dobrze?'dobrze':'zle');
+  i.textContent = dobrze ? '✓ Dobrze!' : '✗ '+poprawka;
+  var d=document.getElementById('t-dalej');
+  d.textContent = tk===ZADANIA.length-1 ? 'Zobacz wynik ›' : 'Dalej ›';
+  d.style.display='block';
+}
+
+function dalejTest(){
+  if(tk<ZADANIA.length-1){ tk++; rysujZadanie(); window.scrollTo(0,0); return; }
+  var t=ZADANIA.length;
+  document.getElementById('w-liczba').textContent=punkty+' / '+t;
+  document.getElementById('w-slowo').textContent =
+    punkty===t ? 'Wszystko dobrze. Jesteś gotowa na kartkówkę!' :
+    punkty>=t-2 ? 'Bardzo dobrze! Powtórz karty z błędami i spróbuj jeszcze raz.' :
+    'Wróć do nauki, a potem sprawdź się jeszcze raz.';
+  postResult(punkty,t);
+  pokaz('koniec');
+}
+</script>
+</body>
+</html>

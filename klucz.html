@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>Klucz do klasówek</title>
+<style>
+body{font-family:'Segoe UI',Arial,sans-serif;background:#e7e4dc;color:#3e2f1c;padding:40px 16px;margin:0}
+.k{max-width:560px;margin:0 auto;background:#fff;border-radius:16px;padding:28px;font-size:21px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+a.b{display:block;margin-top:22px;min-height:64px;line-height:64px;border-radius:14px;background:#3e2f1c;color:#fff;font-weight:700;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="k" id="k">⏳ Sprawdzam klucz…</div>
+<script>
+// Klucz przychodzi w czesci adresu po "#": przegladarka nie wysyla jej nigdzie (ani do GitHuba, ani w logach).
+var API='https://julia-hub-161045418771.europe-west1.run.app', HUB='./';
+function pokaz(t,link){ document.getElementById('k').innerHTML=t+(link?'<a class="b" href="'+HUB+'">Przejdź do huba</a>':''); }
+var z=decodeURIComponent((location.hash||'').slice(1)).trim();
+if(z){ try{ localStorage.setItem('klucz_klasowki',z); }catch(e){} history.replaceState(null,'',location.pathname); }
+var k=''; try{ k=localStorage.getItem('klucz_klasowki')||''; }catch(e){}
+if(!k) pokaz('🔒 Brak klucza. Otwórz link z kluczem od rodzica.');
+else fetch(API+'/k/klucz',{headers:{'X-Klucz':k},cache:'no-store'})
+  .then(function(r){
+    if(r.status===204) pokaz('✅ Gotowe! Ten komputer może już otwierać klasówki.',true);
+    else { try{ localStorage.removeItem('klucz_klasowki'); }catch(e){} pokaz('❌ Ten klucz nie działa. Poproś rodzica o aktualny link.'); }
+  })
+  .catch(function(){ pokaz('⚠️ Nie mogę sprawdzić klucza — brak internetu? Klucz jest zapisany, spróbuj otworzyć klasówkę.',true); });
+</script>
+</body>
+</html>

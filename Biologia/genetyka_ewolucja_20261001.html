@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biologia — genetyka i ewolucja</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#e8f5f3;color:#222;
+  padding:16px 14px 50px;max-width:640px;margin:0 auto;font-size:19px;line-height:1.5}
+h1{font-size:24px;color:#00796b;margin-bottom:2px}
+.subject-tag{display:inline-block;background:#d5eeea;color:#00796b;font-size:13px;
+  padding:3px 10px;border-radius:10px;margin-bottom:16px}
+.ekran{display:none}.ekran.aktywny{display:block}
+.btn{display:block;width:100%;min-height:76px;font-size:21px;font-weight:700;border:none;
+  border-radius:16px;margin-bottom:14px;cursor:pointer;font-family:inherit;padding:10px 16px}
+.glowny{background:#00796b;color:#fff}
+.drugi{background:#fff;color:#00796b;border:3px solid #b2dfdb}
+.opcja{background:#fff;color:#222;border:3px solid #b2dfdb;text-align:left}
+.opcja.dobrze{background:#e8f5e9;border-color:#2e7d32;color:#1b5e20}
+.opcja.zle{background:#ffebee;border-color:#c62828;color:#b71c1c}
+.karta{background:#fff;border-radius:18px;padding:22px 20px;margin-bottom:16px;
+  box-shadow:0 1px 4px rgba(0,0,0,.08);border-left:8px solid #26a69a;min-height:220px}
+.slowo{font-size:30px;font-weight:800;color:#00796b;margin-bottom:12px;line-height:1.2}
+.tekst{font-size:21px}
+.licznik{font-size:15px;color:#26a69a;font-weight:700;margin-bottom:10px}
+.polecenie{font-size:15px;color:#26a69a;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.pytanie{font-size:22px;font-weight:600;margin-bottom:18px}
+.luka{display:inline-block;min-width:120px;border-bottom:3px solid #00796b;text-align:center;color:#00796b}
+.okienka{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 18px}
+.okno{width:44px;height:54px;border:3px solid #00796b;border-radius:8px;background:#fff;
+  font-size:28px;font-weight:800;display:flex;align-items:center;justify-content:center;color:#00796b}
+.okienka.dobrze .okno{border-color:#2e7d32;color:#1b5e20;background:#e8f5e9}
+.okienka.zle .okno{border-color:#c62828;color:#b71c1c;background:#ffebee}
+.kafle{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kafel{min-height:76px;font-size:32px;font-weight:800;border:3px solid #b2dfdb;border-radius:14px;
+  background:#fff;color:#00796b;cursor:pointer;font-family:inherit}
+.kafel:disabled{opacity:.25}
+.info{font-size:19px;font-weight:700;margin:4px 0 16px;min-height:28px}
+.info.dobrze{color:#2e7d32}.info.zle{color:#c62828}
+.wynik{font-size:46px;font-weight:800;color:#00796b;text-align:center;margin:10px 0}
+.pod{text-align:center;font-size:19px;margin-bottom:22px}
+.glos{background:none;border:2px solid #b2dfdb;border-radius:12px;font-size:17px;padding:8px 14px;
+  color:#00796b;font-weight:700;margin-top:14px;cursor:pointer;min-height:48px}
+</style>
+</head>
+<body>
+<h1>Genetyka i ewolucja</h1>
+<div class="subject-tag">Biologia · sprawdzian</div>
+
+<!-- START -->
+<div class="ekran aktywny" id="start">
+  <div class="karta" style="min-height:0">
+    <div class="tekst">1. Grzegorz Mendel — ojciec genetyki<br>2. Dziedziczenie płci u człowieka<br>3. Hemofilia i daltonizm<br>4. Karol Darwin i ewolucja<br>5. Pochodzenie człowieka<br><br>Najpierw <b>ucz się</b> — 23 krótkich kart.
+    Potem <b>sprawdź się</b> — 29 pytań, stukasz w dobrą odpowiedź.</div>
+  </div>
+  <div class="karta" style="min-height:0;margin-top:14px">
+    <div class="tekst"><b>🎧 Posłuchaj powtórki</b> — Zofia i Marek, wszystkie 5 tematów. Na końcu quiz: odpowiadaj na głos.</div>
+    <audio controls preload="none" src="bio_podcast_genetyka.mp3" style="width:100%;margin-top:10px"></audio>
+  </div>
+  <button class="btn glowny" onclick="startNauki()">📖 Ucz się</button>
+  <button class="btn drugi" onclick="startSprawdzania()">✏️ Sprawdź się</button>
+</div>
+
+<!-- NAUKA -->
+<div class="ekran" id="nauka">
+  <div class="licznik" id="n-licznik"></div>
+  <div class="karta">
+    <div class="slowo" id="n-slowo"></div>
+    <div class="tekst" id="n-tekst"></div>
+    <button class="glos" id="n-glos" onclick="czytaj()">🔊 Przeczytaj na głos</button>
+  </div>
+  <button class="btn glowny" id="n-dalej" onclick="dalejNauka()">Dalej ›</button>
+  <button class="btn drugi" onclick="wsteczNauka()">‹ Wstecz</button>
+</div>
+
+<!-- SPRAWDZANIE -->
+<div class="ekran" id="test">
+  <div class="licznik" id="t-licznik"></div>
+  <div class="polecenie" id="t-polecenie"></div>
+  <div class="pytanie" id="t-pytanie"></div>
+  <div id="t-okienka" class="okienka"></div>
+  <div id="t-odp"></div>
+  <div class="info" id="t-info"></div>
+  <button class="btn glowny" id="t-dalej" style="display:none" onclick="dalejTest()">Dalej ›</button>
+</div>
+
+<!-- WYNIK -->
+<div class="ekran" id="koniec">
+  <div class="wynik" id="w-liczba"></div>
+  <div class="pod" id="w-slowo"></div>
+  <button class="btn glowny" onclick="startSprawdzania()">↻ Sprawdź się jeszcze raz</button>
+  <button class="btn drugi" onclick="startNauki()">📖 Wróć do nauki</button>
+</div>
+
+<script>
+var RESULTS_URL="https://julia-hub-161045418771.europe-west1.run.app/results",RESULTS_TOKEN="XW09DH2_fs8SdHh7B9pGMoCZuDVwAHSQ";
+function postResult(score,total){
+  if(!RESULTS_URL||!RESULTS_TOKEN)return;
+  try{fetch(RESULTS_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({token:RESULTS_TOKEN,subject:'Biologia',title:'Genetyka i ewolucja — sprawdź się',
+      score:score,total:total})});}catch(e){}
+}
+
+var KARTY=[
+ {s:"1 · KIM BYŁ MENDEL?", t:"Grzegorz Mendel (1822–1884) był zakonnikiem i przyrodnikiem. Żył w klasztorze w Brnie (dziś Czechy). Nazywamy go OJCEM GENETYKI."},
+ {s:"1 · CZYM SIĘ ZAJMOWAŁ?", t:"Badał GROCH w ogrodzie klasztornym. Krzyżował rośliny i liczył, jakie cechy mają potomkowie, np. kolor nasion (żółty lub zielony) i kształt (gładki lub pomarszczony)."},
+ {s:"1 · I PRAWO MENDLA", t:"Prawo czystości gamet: każda gameta (komórka rozrodcza) ma tylko JEDEN allel danego genu z pary."},
+ {s:"1 · II PRAWO MENDLA", t:"Prawo niezależnego dziedziczenia cech: różne cechy (np. kolor i kształt nasion) dziedziczą się NIEZALEŻNIE od siebie."},
+ {s:"1 · GEN I ALLEL", t:"Gen to fragment DNA, który decyduje o cesze. Allel to wersja genu. Allel DOMINUJĄCY (A — wielka litera) ujawnia się zawsze. Allel RECESYWNY (a — mała litera) ujawnia się tylko w parze aa."},
+ {s:"1 · GENOTYP I FENOTYP", t:"Genotyp to zestaw alleli, np. AA, Aa, aa. Fenotyp to wygląd i cechy, które widać. Homozygota: AA albo aa. Heterozygota: Aa."},
+ {s:"1 · KRZYŻÓWKA Aa × Aa", t:"Dzieci: AA, Aa, Aa, aa. Wygląd: 3 z cechą dominującą, 1 z recesywną — stosunek 3 : 1."},
+ {s:"2 · CHROMOSOMY CZŁOWIEKA", t:"Człowiek ma 46 chromosomów, czyli 23 pary. 22 pary to autosomy, 1 para to chromosomy płci."},
+ {s:"2 · KOBIETA I MĘŻCZYZNA", t:"Kobieta ma chromosomy płci XX. Mężczyzna ma XY."},
+ {s:"2 · KTO DECYDUJE O PŁCI DZIECKA?", t:"Komórka jajowa ma zawsze X. Plemnik ma X albo Y. Plemnik z X — dziewczynka (XX). Plemnik z Y — chłopiec (XY). O płci decyduje plemnik, czyli ojciec. Szansa: 50%."},
+ {s:"2 · CHOROBY ZWIĄZANE Z CHROMOSOMAMI PŁCI", t:"1) Choroby sprzężone z płcią — zły gen leży na chromosomie X: hemofilia i daltonizm. 2) Zła liczba chromosomów płci: zespół Turnera (X0, kobieta) i zespół Klinefeltera (XXY, mężczyzna)."},
+ {s:"3 · HEMOFILIA", t:"Krew nie krzepnie prawidłowo. Nawet małe skaleczenie może dawać duży krwotok. Leczenie: podawanie brakującego czynnika krzepnięcia. Nazywana „chorobą królewską”."},
+ {s:"3 · DALTONIZM", t:"Osoba nie rozróżnia niektórych kolorów, najczęściej czerwonego i zielonego."},
+ {s:"3 · DLACZEGO CZĘŚCIEJ CHORUJĄ MĘŻCZYŹNI?", t:"Gen choroby jest recesywny i leży na chromosomie X. Mężczyzna ma tylko jeden X — jeśli jest na nim zły gen, choruje. Kobieta ma dwa X — zdrowy X ją chroni."},
+ {s:"3 · NOSICIELKA", t:"Kobieta z jednym złym X jest NOSICIELKĄ: jest zdrowa, ale może przekazać chorobę synowi."},
+ {s:"4 · KIM BYŁ DARWIN?", t:"Karol Darwin (1809–1882) był angielskim przyrodnikiem. Stworzył teorię ewolucji. W 1859 roku wydał książkę „O powstawaniu gatunków”."},
+ {s:"4 · PODRÓŻ NA STATKU BEAGLE", t:"Przez 5 lat płynął statkiem Beagle dookoła świata. Na Wyspach Galapagos obserwował zięby — ptaki z różnymi dziobami, dopasowanymi do pokarmu."},
+ {s:"4 · CIEKAWOSTKI O DARWINIE", t:"Najpierw studiował medycynę, ale nie lubił widoku operacji. Podczas rejsu miał chorobę morską. Wiele lat badał dżdżownice. Jest pochowany w Opactwie Westminsterskim w Londynie."},
+ {s:"4 · MECHANIZMY EWOLUCJI", t:"1) Zmienność — osobniki różnią się od siebie (np. przez mutacje). 2) Dobór naturalny — przeżywają i mają potomstwo najlepiej przystosowani. 3) Izolacja — rozdzielone grupy zmieniają się w nowe gatunki."},
+ {s:"4 · DOBÓR NATURALNY I SZTUCZNY", t:"Dobór naturalny robi przyroda. Dobór sztuczny robi człowiek — tak powstały rasy psów i odmiany roślin."},
+ {s:"5 · SKĄD POCHODZI CZŁOWIEK?", t:"Człowiek jest ssakiem z grupy naczelnych. Ma wspólnego przodka z małpami człekokształtnymi. Najbliższy krewny to szympans — ale człowiek NIE pochodzi od szympansa. Kolebka ludzkości to AFRYKA."},
+ {s:"5 · PRZODKOWIE CZŁOWIEKA", t:"Australopitek (np. „Lucy”, ok. 3 mln lat temu) — chodził na dwóch nogach. Człowiek zręczny — robił pierwsze narzędzia. Człowiek wyprostowany — używał ognia. Neandertalczyk — żył w Europie, wymarł. Człowiek rozumny (Homo sapiens) — to my."},
+ {s:"5 · CECHY CZŁOWIEKA", t:"Postawa wyprostowana, duży mózg, chwytna dłoń z kciukiem, mowa."}
+];
+
+var ZADANIA=[
+ {typ:"x", pytanie:"Kogo nazywamy ojcem genetyki?", dobra:"Grzegorza Mendla", inne:["Karola Darwina","Marię Skłodowską-Curie"]},
+ {typ:"x", pytanie:"Jaką roślinę badał Mendel?", dobra:"groch", inne:["fasolę","pszenicę"]},
+ {typ:"x", pytanie:"Kim był Mendel?", dobra:"zakonnikiem i przyrodnikiem", inne:["królem","lekarzem"]},
+ {typ:"x", pytanie:"I prawo Mendla mówi, że gameta ma:", dobra:"tylko jeden allel danego genu", inne:["dwa allele danego genu","wszystkie chromosomy"]},
+ {typ:"x", pytanie:"II prawo Mendla mówi, że różne cechy dziedziczą się:", dobra:"niezależnie od siebie", inne:["zawsze razem","tylko od matki"]},
+ {typ:"x", pytanie:"Allel dominujący oznaczamy:", dobra:"wielką literą (A)", inne:["małą literą (a)"]},
+ {typ:"x", pytanie:"Cecha recesywna ujawnia się tylko w parze:", dobra:"aa", inne:["Aa","AA"]},
+ {typ:"x", pytanie:"Heterozygota to:", dobra:"Aa", inne:["AA","aa"]},
+ {typ:"x", pytanie:"Wygląd i cechy, które widać, to:", dobra:"fenotyp", inne:["genotyp","allel"]},
+ {typ:"x", pytanie:"Ile chromosomów ma człowiek?", dobra:"46", inne:["23","48"]},
+ {typ:"x", pytanie:"Chromosomy płci kobiety to:", dobra:"XX", inne:["XY","YY"]},
+ {typ:"x", pytanie:"Chromosomy płci mężczyzny to:", dobra:"XY", inne:["XX","YY"]},
+ {typ:"x", pytanie:"O płci dziecka decyduje:", dobra:"plemnik (ojciec)", inne:["komórka jajowa (matka)","przypadek bez przyczyny"]},
+ {typ:"x", pytanie:"Zespół Turnera dotyczy:", dobra:"kobiet (X0)", inne:["mężczyzn (XXY)"]},
+ {typ:"x", pytanie:"Przy hemofilii:", dobra:"krew nie krzepnie prawidłowo", inne:["nie widzi się kolorów","boli głowa"]},
+ {typ:"x", pytanie:"Przy daltonizmie:", dobra:"nie rozróżnia się niektórych kolorów", inne:["krew nie krzepnie","nie słyszy się"]},
+ {typ:"x", pytanie:"Na którym chromosomie leży gen hemofilii i daltonizmu?", dobra:"X", inne:["Y","na każdym"]},
+ {typ:"x", pytanie:"Kto częściej choruje na hemofilię i daltonizm?", dobra:"mężczyźni", inne:["kobiety"]},
+ {typ:"x", pytanie:"Kobieta z jednym złym chromosomem X to:", dobra:"nosicielka (zdrowa)", inne:["chora","daltonistka"]},
+ {typ:"x", pytanie:"Karol Darwin stworzył:", dobra:"teorię ewolucji", inne:["prawa dziedziczenia","szczepionkę"]},
+ {typ:"x", pytanie:"Darwin płynął dookoła świata statkiem:", dobra:"Beagle", inne:["Titanic","Dar Pomorza"]},
+ {typ:"x", pytanie:"Na Wyspach Galapagos Darwin obserwował:", dobra:"zięby z różnymi dziobami", inne:["pingwiny cesarskie","groch"]},
+ {typ:"x", pytanie:"Przeżywają i mają potomstwo najlepiej przystosowani — to:", dobra:"dobór naturalny", inne:["dobór sztuczny","mutacja"]},
+ {typ:"x", pytanie:"Rasy psów powstały dzięki:", dobra:"doborowi sztucznemu", inne:["doborowi naturalnemu"]},
+ {typ:"x", pytanie:"Kolebką ludzkości jest:", dobra:"Afryka", inne:["Europa","Azja"]},
+ {typ:"x", pytanie:"Najbliższy krewny człowieka to:", dobra:"szympans", inne:["goryl górski","orangutan"]},
+ {typ:"x", pytanie:"Czy człowiek pochodzi od szympansa?", dobra:"nie — mają wspólnego przodka", inne:["tak"]},
+ {typ:"x", pytanie:"„Lucy” to:", dobra:"australopitek", inne:["neandertalczyk","człowiek rozumny"]},
+ {typ:"x", pytanie:"My należymy do gatunku:", dobra:"człowiek rozumny (Homo sapiens)", inne:["neandertalczyk","człowiek zręczny"]}
+];
+
+function pokaz(id){ document.querySelectorAll('.ekran').forEach(function(e){e.classList.remove('aktywny');});
+  document.getElementById(id).classList.add('aktywny'); window.scrollTo(0,0); }
+function potasuj(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
+
+// ---------------- NAUKA
+var nk=0;
+function startNauki(){ nk=0; rysujKarte(); pokaz('nauka'); }
+function rysujKarte(){
+  document.getElementById('n-licznik').textContent='Karta '+(nk+1)+' z '+KARTY.length;
+  document.getElementById('n-slowo').textContent=KARTY[nk].s;
+  document.getElementById('n-tekst').textContent=KARTY[nk].t;
+  document.getElementById('n-dalej').textContent = nk===KARTY.length-1 ? '✏️ Teraz sprawdź się' : 'Dalej ›';
+  if(window.speechSynthesis) speechSynthesis.cancel();
+}
+function dalejNauka(){ if(nk<KARTY.length-1){nk++;rysujKarte();} else startSprawdzania(); }
+function wsteczNauka(){ if(nk>0){nk--;rysujKarte();} else pokaz('start'); }
+// Glos: jawnie polski (Chrome na Windows laduje glosy z opoznieniem, bez wyboru potrafi czytac po angielsku albo milczec)
+var glosPL=null;
+function szukajGlosu(){
+  var v=window.speechSynthesis ? speechSynthesis.getVoices() : [];
+  var pl=v.filter(function(x){ return /^pl/i.test(x.lang); });
+  glosPL = pl.filter(function(x){ return /natural|online|google/i.test(x.name); })[0] || pl[0] || null;
+}
+if(window.speechSynthesis){ szukajGlosu(); speechSynthesis.onvoiceschanged=szukajGlosu; }
+function czytaj(){
+  if(!window.speechSynthesis) return;
+  if(!glosPL) szukajGlosu();
+  var btn=document.getElementById('n-glos');
+  if(!glosPL && speechSynthesis.getVoices().length){
+    btn.textContent='🔇 Brak polskiego głosu na tym urządzeniu'; return;
+  }
+  speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(KARTY[nk].t); u.lang='pl-PL'; u.rate=0.9;
+  if(glosPL) u.voice=glosPL;
+  setTimeout(function(){ speechSynthesis.resume(); speechSynthesis.speak(u); }, 60);
+}
+if(!window.speechSynthesis) document.getElementById('n-glos').style.display='none';
+
+// ---------------- SPRAWDZANIE
+var tk=0, punkty=0, ulozone=[];
+function startSprawdzania(){ tk=0; punkty=0; rysujZadanie(); pokaz('test'); }
+
+function rysujZadanie(){
+  var z=ZADANIA[tk];
+  document.getElementById('t-licznik').textContent='Zadanie '+(tk+1)+' z '+ZADANIA.length;
+  document.getElementById('t-info').textContent=''; document.getElementById('t-info').className='info';
+  document.getElementById('t-dalej').style.display='none';
+  var odp=document.getElementById('t-odp'); odp.innerHTML='';
+  var ok=document.getElementById('t-okienka'); ok.innerHTML=''; ok.className='okienka'; ok.style.display='none';
+
+  if(z.typ==='luka'){
+    document.getElementById('t-polecenie').textContent='Uzupełnij lukę';
+    document.getElementById('t-pytanie').innerHTML=z.przed+' <span class="luka" id="luka">&nbsp;?&nbsp;</span> '+z.po;
+    potasuj([z.dobra].concat(z.inne)).forEach(function(o){ odp.appendChild(przycisk(o, z.dobra)); });
+  } else if(z.typ==='x'){
+    document.getElementById('t-polecenie').textContent='Wybierz poprawną odpowiedź';
+    document.getElementById('t-pytanie').textContent=z.pytanie;
+    potasuj([z.dobra].concat(z.inne)).forEach(function(o){ odp.appendChild(przycisk(o, z.dobra)); });
+  } else {
+    document.getElementById('t-polecenie').textContent='Ułóż słowo z liter — stukaj po kolei';
+    document.getElementById('t-pytanie').textContent=z.pytanie;
+    ulozone=[]; ok.style.display='flex';
+    for(var i=0;i<z.slowo.length;i++){ var d=document.createElement('div'); d.className='okno'; ok.appendChild(d); }
+    var kafle=document.createElement('div'); kafle.className='kafle';
+    z.litery.forEach(function(l){
+      var b=document.createElement('button'); b.className='kafel'; b.textContent=l;
+      b.onclick=function(){ if(b.disabled) return; b.disabled=true; ulozone.push({l:l,b:b}); odswiezOkienka(); };
+      kafle.appendChild(b);
+    });
+    odp.appendChild(kafle);
+    var cof=document.createElement('button'); cof.className='btn drugi'; cof.textContent='⌫ Cofnij literę'; cof.id='cofnij';
+    cof.onclick=function(){ var o=ulozone.pop(); if(o){ o.b.disabled=false; odswiezOkienka(); } };
+    odp.appendChild(cof);
+  }
+}
+
+function przycisk(tekst, dobra){
+  var b=document.createElement('button'); b.className='btn opcja'; b.textContent=tekst;
+  b.onclick=function(){
+    var wszystkie=document.querySelectorAll('#t-odp .opcja');
+    wszystkie.forEach(function(x){ x.disabled=true; if(x.textContent===dobra) x.classList.add('dobrze'); });
+    var z=ZADANIA[tk];
+    if(tekst===dobra){ punkty++; ocena(true,''); }
+    else { b.classList.add('zle'); ocena(false,'Poprawnie: '+dobra); }
+    if(z.typ==='luka') document.getElementById('luka').textContent=dobra;
+  };
+  return b;
+}
+
+function odswiezOkienka(){
+  var z=ZADANIA[tk], okna=document.querySelectorAll('#t-okienka .okno');
+  for(var i=0;i<okna.length;i++) okna[i].textContent = ulozone[i] ? ulozone[i].l : '';
+  if(ulozone.length===z.slowo.length){
+    var slowo=ulozone.map(function(o){return o.l;}).join('');
+    document.querySelectorAll('.kafel').forEach(function(k){k.disabled=true;});
+    document.getElementById('cofnij').style.display='none';
+    var ok=document.getElementById('t-okienka');
+    if(slowo===z.slowo){ punkty++; ok.classList.add('dobrze'); ocena(true,''); }
+    else { ok.classList.add('zle'); ocena(false,'Poprawnie: '+z.slowo); }
+  }
+}
+
+function ocena(dobrze, poprawka){
+  var i=document.getElementById('t-info');
+  i.className='info '+(dobrze?'dobrze':'zle');
+  i.textContent = dobrze ? '✓ Dobrze!' : '✗ '+poprawka;
+  var d=document.getElementById('t-dalej');
+  d.textContent = tk===ZADANIA.length-1 ? 'Zobacz wynik ›' : 'Dalej ›';
+  d.style.display='block';
+}
+
+function dalejTest(){
+  if(tk<ZADANIA.length-1){ tk++; rysujZadanie(); window.scrollTo(0,0); return; }
+  var t=ZADANIA.length;
+  document.getElementById('w-liczba').textContent=punkty+' / '+t;
+  document.getElementById('w-slowo').textContent =
+    punkty===t ? 'Wszystko dobrze. Jesteś gotowa na sprawdzian!' :
+    punkty>=t-2 ? 'Bardzo dobrze! Powtórz karty z błędami i spróbuj jeszcze raz.' :
+    'Wróć do nauki, a potem sprawdź się jeszcze raz.';
+  postResult(punkty,t);
+  pokaz('koniec');
+}
+</script>
+</body>
+</html>
