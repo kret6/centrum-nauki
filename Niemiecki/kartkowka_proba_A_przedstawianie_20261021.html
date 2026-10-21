@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Klasówka</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#e7e4dc;color:#111;padding:12px 12px 60px;font-family:'Segoe UI',Arial,sans-serif}
+.pasek{max-width:900px;margin:0 auto 12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.seria{font-size:17px;color:#3e2f1c;font-weight:600;margin-left:auto}
+.seria b{font-size:22px;letter-spacing:2px}
+.info{max-width:900px;margin:0 auto 12px;background:#fff8e1;border-radius:12px;padding:10px 14px;font-size:17px;color:#5d4037}
+
+.kartka{max-width:900px;margin:0 auto;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.18);padding:40px 48px 48px;
+  font-family:'Times New Roman',Times,serif;font-size:22px;line-height:1.45}
+.zad{margin-bottom:34px}
+.zad:last-child{margin-bottom:0}
+.nag{font-weight:700;display:flex;gap:16px;align-items:baseline}
+.nag .tr{flex:1}
+.nag .pk{white-space:nowrap}
+.pk .ocena{color:#c62828;font-family:'Segoe Print','Comic Sans MS',cursive;font-size:22px}
+u{text-decoration-thickness:1px;text-underline-offset:3px}
+.kurs{font-style:italic}
+.b{font-weight:700}
+.sans{font-family:Arial,Helvetica,sans-serif;font-size:20px}
+.opis{display:flex;gap:14px;padding-left:22px;margin:4px 0}
+.opis .l{font-weight:700;min-width:26px}
+.czesc{font-size:20px;margin:0 0 10px}
+.katex{font-size:1.08em}
+
+table.tab{border-collapse:collapse}
+table.tab td,table.tab th{border:1.5px solid #222;position:relative;vertical-align:middle}
+td .popr{position:absolute;right:4px;bottom:1px;padding:0}
+td.pole{padding:0;text-align:center}
+
+/* pola do wpisywania */
+input,textarea{font-family:'Segoe Print','Comic Sans MS',cursive;color:#0d2a8a;background:#fffde7}
+input.kom{width:100%;height:100%;min-height:58px;border:none;text-align:center;font-size:28px}
+input.kom:focus,textarea:focus{outline:3px solid #1565c0;outline-offset:-3px;background:#e3f2fd}
+input.linia,input.luka{border:none;border-bottom:2px dotted #444;font-size:22px;padding:2px 6px;min-width:0}
+input.linia{flex:1;max-width:420px}
+input.luka{width:230px;max-width:100%}
+input.linia:focus,input.luka:focus,input.wyk:focus{outline:none;border-bottom:3px solid #1565c0;background:#e3f2fd}
+input.wyk{width:58px;height:38px;font-size:20px;text-align:center;border:2px dashed #8d8d8d;border-radius:6px;vertical-align:super;margin:0 2px}
+input.wyk:focus{border:2px solid #1565c0}
+input.duzy{width:110px}
+textarea{width:100%;min-height:170px;border:none;border-bottom:2px dotted #444;font-size:21px;line-height:1.5;padding:8px;margin-top:8px;resize:vertical}
+.odp{display:flex;align-items:baseline;gap:12px;margin-top:12px;flex-wrap:wrap}
+.dobrze{background:#e8f5e9 !important;color:#1b5e20 !important}
+.zle{background:#ffebee !important;color:#b71c1c !important;text-decoration:line-through}
+textarea.zle{text-decoration:none}
+input[readonly],textarea[readonly]{cursor:default}
+.popr{font-family:'Segoe UI',Arial,sans-serif;font-size:15px;font-weight:700;color:#1b5e20;line-height:1.2;padding:2px 4px;font-style:normal}
+.popr:empty{display:none}
+.popr.pis{color:#e65100}
+.blok{display:block}
+.odp .blok{flex-basis:100%}
+.wzorzec{display:block;font-family:'Segoe UI',Arial,sans-serif;font-size:16px;font-weight:400;background:#e8f5e9;border-radius:8px;padding:8px 12px;margin-top:8px;color:#1b5e20}
+.uznaj{font-family:'Segoe UI',Arial,sans-serif;font-size:15px;margin-top:8px;min-height:44px;padding:4px 14px;border:2px solid #2e7d32;border-radius:10px;background:#fff;color:#1b5e20;cursor:pointer;font-weight:700}
+
+/* zaznaczanie klikiem (podkresl / zakresl) */
+.opc{display:flex;gap:14px;padding:6px 8px 6px 22px;margin:2px 0;border-radius:8px;cursor:pointer;min-height:44px;align-items:center}
+.opc:hover{background:#f3f0e6}
+.opc:focus{outline:3px solid #1565c0}
+.opc .l{font-weight:700;min-width:26px}
+.opc .t{border:3px solid transparent;border-radius:50%;padding:4px 14px}
+.opc.pod .t{border-color:#0d2a8a}
+.opc.ok .t{border-color:#2e7d32}
+.opc.blad .t{border-color:#c62828}
+.opc.blad{background:#ffebee}
+.opc.brak .t{border-color:#2e7d32;border-style:dashed}
+.opc.brak{background:#f1f8e9}
+.zablok .opc{cursor:default}
+.zablok .opc:hover{background:none}
+.zablok .opc.blad:hover{background:#ffebee}
+.zablok .opc.brak:hover{background:#f1f8e9}
+
+.wyj{font-family:'Segoe UI',Arial,sans-serif;font-size:16px;line-height:1.4;background:#fff8e1;border-left:4px solid #ffb300;border-radius:6px;padding:8px 12px;margin-top:10px;color:#4e342e}
+.wyj .katex{font-size:1em}
+
+.dol{max-width:900px;margin:16px auto 0}
+.dol button{display:block;width:100%;min-height:70px;font-size:22px;font-weight:700;border:3px solid #3e2f1c;border-radius:16px;background:#3e2f1c;color:#fff;cursor:pointer;margin-top:10px;font-family:inherit}
+.dol button.drugi{background:#fff;color:#3e2f1c}
+.wynik{background:#fff;border-radius:16px;padding:18px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.wynik .duzy{font-size:54px;font-weight:800;color:#3e2f1c}
+.wynik .kom2{font-size:19px;margin-top:6px}
+@media (max-width:640px){.kartka{padding:22px 16px;font-size:19px}}
+/* podkreslanie (historia) zamiast zakreslania */
+.grupa.podkr .opc .t{border:none;border-radius:0;padding:0;text-decoration-line:none}
+.grupa.podkr .opc.pod .t{text-decoration-line:underline;text-decoration-thickness:3px;text-underline-offset:5px;text-decoration-color:#0d2a8a}
+.grupa.podkr .opc.ok .t{text-decoration-color:#2e7d32}
+.grupa.podkr .opc.blad .t{text-decoration-color:#c62828}
+.grupa.podkr .opc.brak .t{text-decoration-line:underline;text-decoration-style:dashed;text-decoration-thickness:3px;text-underline-offset:5px;text-decoration-color:#2e7d32}
+.zamek{font-family:'Segoe UI',Arial,sans-serif;font-size:21px;text-align:center;color:#3e2f1c;padding:30px 10px}
+.ponow{font-family:inherit;font-size:20px;font-weight:700;min-height:60px;padding:6px 24px;border:3px solid #3e2f1c;border-radius:14px;background:#fff;color:#3e2f1c;cursor:pointer}
+</style>
+<style id="cssDane"></style>
+</head>
+<body>
+
+<div class="pasek"><div class="seria" id="seria"></div></div>
+<div class="info" id="info"></div>
+
+<div class="kartka" id="kartka"></div>
+
+<div class="dol" id="dol"></div>
+
+<script>
+var RESULTS_URL="",RESULTS_TOKEN="";
+function $$(s,el){ return Array.prototype.slice.call((el||document).querySelectorAll(s)); }
+
+// ---- sprawdzanie: kazda funkcja zwraca 2 = dobrze, 1 = dobrze ale bez polskich liter, 0 = zle ----
+var PL={'ą':'a','ć':'c','ę':'e','ł':'l','ń':'n','ó':'o','ś':'s','ź':'z','ż':'z'};
+function norm(s){ return String(s||'').toLowerCase().replace(/\s+/g,' ').trim(); }
+function bezpl(s){ return norm(s).replace(/[ąćęłńóśźż]/g,function(c){ return PL[c]; }); }
+// jedna z dopuszczalnych odpowiedzi (cala tresc)
+function jedno(lista){ return function(v){ var n=norm(v).replace(/[.]$/,''), b=bezpl(n);
+  if(lista.some(function(x){ return norm(x)===n; })) return 2;
+  return lista.some(function(x){ return bezpl(x)===b; })?1:0; }; }
+// tresc zawiera ktores ze slow
+function zawiera(lista,zle){ return function(v){ var n=norm(v), b=bezpl(v);
+  if(!n||(zle&&zle.some(function(x){ return b.indexOf(bezpl(x))>=0; }))) return 0;
+  if(lista.some(function(x){ return n.indexOf(norm(x))>=0; })) return 2;
+  return lista.some(function(x){ return b.indexOf(bezpl(x))>=0; })?1:0; }; }
+// odpowiedz literami (np. "A, C, E" albo "ace"); opcjonalnie slowami: slowa = wszystkie musza byc, zle = zadne nie moze
+function litery(ok,o){ o=o||{}; var cel=ok.toUpperCase().split('').sort().join('');
+  return function(v){
+    var b=bezpl(v);
+    if(o.slowa&&o.slowa.every(function(r){ return r.test(b); })&&!(o.zle||[]).some(function(r){ return r.test(b); })) return 2;
+    var s=String(v||'').toUpperCase().replace(/ODPOWIED[ŹZ]|ODP/g,' '), lit=[];
+    s.split(/[^A-ZĄĆĘŁŃÓŚŹŻ]+/).forEach(function(t){ if(/^[A-H]+$/.test(t)&&t.length<=5) lit=lit.concat(t.split('')); });
+    lit=lit.filter(function(x,i){ return lit.indexOf(x)===i; }).sort().join('');
+    return lit===cel?2:0; }; }
+// liczba (przecinek albo kropka, bez spacji)
+function liczba(ok){ return function(v){ return String(v||'').replace(/\s/g,'').replace('.',',')===ok?2:0; }; }
+// symbol pierwiastka: wielkosc liter ma znaczenie
+function symbol(ok){ return function(v){ return String(v||'').trim()===ok?2:0; }; }
+// zaznaczenie klikiem: lista indeksow
+function wybor(ok){ var cel=ok.slice().sort().join(','); return function(v){ return (v||[]).slice().sort().join(',')===cel?2:0; }; }
+
+</script>
+<script type="text/plain" id="silnik">
+
+var stan;
+try{ stan=JSON.parse(localStorage.getItem(KARTA.pamiec)||'null'); }catch(e){ stan=null; }
+if(!stan||!stan.odp) stan={odp:{},uznane:{},spr:false,czysta:true,seria:0,proby:0};
+if(!stan.uznane) stan.uznane={};
+function zapamietaj(){ try{ localStorage.setItem(KARTA.pamiec,JSON.stringify(stan)); }catch(e){} }
+
+var GRUPY={}; $$('.grupa[data-k]').forEach(function(g){ GRUPY[g.getAttribute('data-k')]=g; });
+var OPCJ=KARTA.opcj||[];
+function wart(id){ var v=stan.odp[id]; return GRUPY[id]?(v||[]):(v||''); }
+function pusta(id){ var v=wart(id); return GRUPY[id]?!v.length:!String(v).trim(); }
+var MAXSUMA=KARTA.zadania.reduce(function(a,z){ return a+z.grupy.length; },0);
+
+function ocen(){
+  var w={},p={},suma=0;
+  for(var id in KARTA.pola){
+    if(OPCJ.indexOf(id)>=0&&pusta(id)) continue;
+    w[id]=stan.uznane[id]?2:KARTA.pola[id].f(wart(id));
+  }
+  KARTA.zadania.forEach(function(z){
+    p[z.z]=z.grupy.filter(function(g){ return g.every(function(id){ return w[id]>0; }); }).length; suma+=p[z.z];
+  });
+  return {w:w,p:p,suma:suma};
+}
+
+// pola: podpisy poprawek dokladamy za kazdym polem
+$$('input[data-k],textarea[data-k]').forEach(function(el){
+  if(document.querySelector('[data-popr="'+el.getAttribute('data-k')+'"]')) return;
+  var s=document.createElement('span'); s.className='popr'+(el.tagName==='TEXTAREA'||el.classList.contains('linia')?' blok':''); s.setAttribute('data-popr',el.getAttribute('data-k'));
+  el.parentNode.insertBefore(s,el.nextSibling);
+});
+$$('.pk').forEach(function(el){ if(!el.hasAttribute('data-pusty')) el.setAttribute('data-pusty',el.innerHTML); });
+
+function rysuj(){
+  var oc=stan.spr?ocen():null, blok=stan.spr;
+  document.getElementById('info').innerHTML=stan.spr
+    ? '✍️ Kartka sprawdzona. Zielone = dobrze, czerwone = źle (obok poprawna odpowiedź)'+(GRUPY&&Object.keys(GRUPY).length?', zielona przerywana ramka = to trzeba było zaznaczyć':'')+'.'
+    : '✍️ '+KARTA.instrukcja+' Na końcu kliknij <b>„Oddaję kartkę”</b>.';
+  $$('input[data-k],textarea[data-k]').forEach(function(el){
+    var id=el.getAttribute('data-k'), v=wart(id);
+    if(el!==document.activeElement||blok) el.value=v;
+    el.readOnly=blok;
+    el.classList.remove('dobrze','zle');
+    if(oc&&id in oc.w) el.classList.add(oc.w[id]?'dobrze':'zle');
+  });
+  $$('[data-popr]').forEach(function(el){
+    var id=el.getAttribute('data-popr'), pole=KARTA.pola[id], t='', pis=false;
+    if(oc&&pole&&id in oc.w){
+      if(oc.w[id]===0) t='✔ '+(pole.pokaz||'');
+      if(oc.w[id]===1){ t='pisownia: '+pole.pokaz; pis=true; }
+    }
+    el.className=el.className.replace(/ ?pis/,'')+(pis?' pis':'');
+    el.innerHTML=t;
+    if(oc&&pole&&pole.wzor&&id in oc.w){
+      el.innerHTML=(oc.w[id]?'':'✘ ')+'<span class="wzorzec">Wzorcowa odpowiedź: '+pole.wzor+'</span>';
+      if(oc.w[id]===0&&pole.uznaj) el.innerHTML+='<button class="uznaj" onclick="uznaj(\''+id+'\')">✓ Moja odpowiedź znaczy to samo — uznaj</button>';
+    }
+  });
+  for(var id in GRUPY){
+    var g=GRUPY[id], v=wart(id), dob=oc&&id in oc.w&&oc.w[id]>0, spr=oc&&id in oc.w;
+    var klucz=KARTA.pola[id].ok||[];
+    g.classList.toggle('zablok',blok);
+    $$('.opc',g).forEach(function(op){
+      var i=+op.getAttribute('data-i'), wyb=v.indexOf(i)>=0, wl=klucz.indexOf(i)>=0;
+      op.className='opc'+(wyb?' pod':'');
+      if(spr){ if(wyb&&wl) op.className+=' ok'; if(wyb&&!wl) op.className+=' blad'; if(!wyb&&wl&&!dob) op.className+=' brak'; }
+      op.setAttribute('aria-pressed',wyb?'true':'false');
+      op.tabIndex=blok?-1:0;
+    });
+  }
+  KARTA.zadania.forEach(function(z){
+    var el=document.querySelector('.pk[data-z="'+z.z+'"]'); if(!el) return;
+    el.innerHTML=oc?'(<span class="ocena">'+oc.p[z.z]+'</span>/'+z.grupy.length+' p.)':el.getAttribute('data-pusty');
+  });
+  $$('[data-wyj]').forEach(function(el){
+    var z=el.getAttribute('data-wyj'), zad=KARTA.zadania.filter(function(x){ return x.z===z; })[0];
+    el.style.display=(oc&&zad&&oc.p[z]<zad.grupy.length)?'':'none';
+  });
+  var kropki=''; for(var k=0;k<3;k++) kropki+=k<Math.min(stan.seria,3)?'●':'○';
+  document.getElementById('seria').innerHTML=MAXSUMA+'/'+MAXSUMA+' na czystej kartce: <b>'+kropki+'</b>'+(stan.seria>3?' ×'+stan.seria:'')+'<br><span style="font-size:14px;font-weight:400">cel: 3 razy z rzędu</span>';
+  var dol=document.getElementById('dol'), h='';
+  if(!stan.spr) h='<button onclick="sprawdz()">✅ Oddaję kartkę — sprawdź</button>';
+  else {
+    var s=oc.suma, M=MAXSUMA, kom=s===M?(stan.czysta?'🎉 Bezbłędnie!':'🎉 Wszystko poprawione!'):(s>=M-2?'Prawie! Popraw błędy i zrób jeszcze raz od nowa.':'Zajrzyj do wyjaśnień 💡 przy błędach, potem popraw.');
+    if(s===M&&stan.czysta&&stan.seria>=3) kom='🏆 Trzy razy z rzędu bezbłędnie — umiesz tę kartkówkę!';
+    h='<div class="wynik"><div class="duzy">'+s+' / '+M+' pkt</div><div class="kom2">'+kom+'</div><div class="kom2" id="wysylka">'+napisWysylki()+'</div></div>';
+    if(s<M) h+='<button onclick="poprawBledy()">✏️ Popraw tylko błędy</button>';
+    h+='<button class="'+(s<M?'drugi':'')+'" onclick="odNowa()">🔄 Od nowa — czysta kartka</button>';
+  }
+  dol.innerHTML=h;
+}
+
+function sprawdz(){
+  var puste=0; for(var id in KARTA.pola) if(OPCJ.indexOf(id)<0&&pusta(id)) puste++;
+  if(puste&&!confirm('Nie wszystko jest uzupełnione (puste miejsca: '+puste+'). Oddać kartkę mimo to?')) return;
+  stan.spr=true; stan.proby++;
+  var w=ocen();
+  if(stan.czysta){ if(w.suma===MAXSUMA) stan.seria++; else stan.seria=0; }
+  stan.wyslana=false; rysuj();
+  stan.doWyslania={token:RESULTS_TOKEN,przedmiot:KARTA.przedmiot,tytul:KARTA.tytul,score:w.suma,total:MAXSUMA,czysta:stan.czysta,html:zdjecieKartki()};
+  zapamietaj(); rysuj(); wyslijKartke();
+  document.getElementById('dol').scrollIntoView({behavior:'smooth',block:'start'});
+  try{ fetch(RESULTS_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({token:RESULTS_TOKEN,subject:KARTA.przedmiot,title:KARTA.tytul+' — jak na kartce'+(stan.czysta?'':' (poprawa błędów)'),score:w.suma,total:MAXSUMA})}); }catch(e){}
+}
+
+function uznaj(id){ stan.uznane[id]=true; zapamietaj(); rysuj(); }
+
+function poprawBledy(){
+  var w=ocen().w;
+  for(var id in w) if(!w[id]) stan.odp[id]=GRUPY[id]?[]:'';
+  stan.spr=false; stan.czysta=false; zapamietaj(); rysuj(); window.scrollTo(0,0);
+}
+
+function odNowa(){ stan.odp={}; stan.uznane={}; stan.spr=false; stan.czysta=true; zapamietaj(); rysuj(); window.scrollTo(0,0); }
+
+// wpisywanie
+var POLA=$$('input[data-k],textarea[data-k]');
+POLA.forEach(function(el,idx){
+  el.setAttribute('autocomplete','off'); el.setAttribute('spellcheck','false');
+  el.addEventListener('input',function(){
+    if(stan.spr) return;
+    var id=el.getAttribute('data-k'), f=el.getAttribute('data-filtr');
+    if(f){
+      var v=(el.value.toUpperCase().match(new RegExp('['+f+']','g'))||['']).pop();
+      el.value=v; stan.odp[id]=v; zapamietaj();
+      if(v&&POLA[idx+1]) POLA[idx+1].focus();
+      return;
+    }
+    stan.odp[id]=el.value; zapamietaj();
+  });
+  if(el.tagName!=='TEXTAREA') el.addEventListener('keydown',function(e){
+    if(e.key==='Enter'){ e.preventDefault(); if(POLA[idx+1]) POLA[idx+1].focus(); }
+  });
+});
+
+// zaznaczanie klikiem (lub Enter / spacja)
+function zaznacz(op){
+  if(stan.spr) return;
+  var g=op.parentNode, id=g.getAttribute('data-k'), i=+op.getAttribute('data-i'), v=wart(id).slice(), j=v.indexOf(i);
+  if(g.hasAttribute('data-wiele')){ if(j>=0) v.splice(j,1); else v.push(i); }
+  else v=j>=0?[]:[i];
+  stan.odp[id]=v; zapamietaj(); rysuj();
+}
+$$('.opc').forEach(function(op){
+  op.addEventListener('click',function(){ zaznacz(op); });
+  op.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); zaznacz(op); } });
+});
+
+// wzory matematyczne
+$$('.m').forEach(function(el){ try{ katex.render(el.textContent,el,{throwOnError:false}); }catch(e){} });
+
+// zdjecie oddanej kartki (z wpisami i sprawdzeniem) -> panel rodzica, prywatny magazyn w UE
+function zdjecieKartki(){
+  Array.prototype.forEach.call(document.querySelectorAll('input'),function(e){ e.setAttribute('value',e.value); });
+  Array.prototype.forEach.call(document.querySelectorAll('textarea'),function(e){ e.textContent=e.value; });
+  Array.prototype.forEach.call(document.querySelectorAll('img'),function(e){ e.setAttribute('src',e.src); });
+  var d=document.documentElement.cloneNode(true);
+  Array.prototype.forEach.call(d.querySelectorAll('script,button,.pasek,.info,#wysylka'),function(e){ e.parentNode.removeChild(e); });
+  var n=document.createElement('div');
+  n.setAttribute('style','max-width:900px;margin:0 auto 12px;font:600 17px Segoe UI,Arial,sans-serif;color:#3e2f1c');
+  n.textContent='Oddano: '+new Date().toLocaleString('pl-PL')+(stan.czysta?'':' · poprawa błędów');
+  var body=d.querySelector('body'); body.insertBefore(n,body.firstChild);
+  return '<!DOCTYPE html>\n'+d.outerHTML;
+}
+function napisWysylki(){
+  return stan.doWyslania?'⏳ Wysyłam kartkę do rodzica…':(stan.wyslana?'📨 Kartka wysłana do rodzica.':'');
+}
+function wyslijKartke(){
+  if(!stan.doWyslania) return;
+  fetch(RESULTS_URL.replace(/\/results$/,'/kartka'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(stan.doWyslania)})
+    .then(function(r){ if(!r.ok) throw r.status; stan.doWyslania=null; stan.wyslana=true; zapamietaj(); var e=document.getElementById('wysylka'); if(e) e.textContent=napisWysylki(); })
+    .catch(function(){ var e=document.getElementById('wysylka'); if(e) e.textContent='⚠️ Nie udało się wysłać kartki — spróbuję jeszcze raz przy następnym otwarciu strony.'; });
+}
+
+rysuj();
+wyslijKartke();
+</script>
+<script>
+// ---- ladowanie kartki: tresc i klucz odpowiedzi NIE leza w tej stronie ----
+// Strona publiczna to sam silnik; dane przychodza z serwera huba tylko dla przegladarki z kluczem.
+var ZRODLO=/*__ZRODLO__*/null, ID_KARTKI='niemiecki_przedstawianie', API='https://julia-hub-161045418771.europe-west1.run.app';
+var ZAMEK='🔒 Ta klasówka otwiera się tylko na zaufanym komputerze.<br><br>Poproś rodzica, żeby raz otworzył tu link z kluczem.';
+function komunikat(t){ document.getElementById('kartka').innerHTML='<div class="zamek">'+t+'</div>'; }
+function uruchomKartke(D){
+  document.title=D.tytul;
+  document.getElementById('cssDane').textContent=D.css||'';
+  document.getElementById('kartka').innerHTML=D.tresc;
+  RESULTS_URL=D.wyniki_url; RESULTS_TOKEN=D.wyniki_token;
+  (0,eval)(D.dane);
+  (0,eval)(document.getElementById('silnik').textContent);
+}
+function pobierz(){
+  var k=''; try{ k=localStorage.getItem('klucz_klasowki')||''; }catch(e){}
+  if(!k){ komunikat(ZAMEK); return; }
+  komunikat('⏳ Wczytuję kartkę…');
+  fetch(API+'/k/dane/'+ID_KARTKI,{headers:{'X-Klucz':k},cache:'no-store'})
+    .then(function(r){ if(r.status===403) throw 'klucz'; if(!r.ok) throw 'blad'; return r.json(); })
+    .then(uruchomKartke)
+    .catch(function(e){ komunikat(e==='klucz'?ZAMEK:'⚠️ Nie mogę wczytać kartki. Sprawdź internet.<br><br><button class="ponow" onclick="pobierz()">Spróbuj ponownie</button>'); });
+}
+if(ZRODLO) uruchomKartke(ZRODLO); else pobierz();
+</script>
+</body>
+</html>
