@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geografia — Japonia i Chiny</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#fdf8e7;color:#222;
+  padding:16px 14px 50px;max-width:640px;margin:0 auto;font-size:19px;line-height:1.5}
+h1{font-size:24px;color:#9a6400;margin-bottom:2px}
+.subject-tag{display:inline-block;background:#f6edcf;color:#9a6400;font-size:13px;
+  padding:3px 10px;border-radius:10px;margin-bottom:16px}
+.ekran{display:none}.ekran.aktywny{display:block}
+.btn{display:block;width:100%;min-height:76px;font-size:21px;font-weight:700;border:none;
+  border-radius:16px;margin-bottom:14px;cursor:pointer;font-family:inherit;padding:10px 16px}
+.glowny{background:#9a6400;color:#fff}
+.drugi{background:#fff;color:#9a6400;border:3px solid #f5e3a3}
+.opcja{background:#fff;color:#222;border:3px solid #f5e3a3;text-align:left}
+.opcja.dobrze{background:#e8f5e9;border-color:#2e7d32;color:#1b5e20}
+.opcja.zle{background:#ffebee;border-color:#c62828;color:#b71c1c}
+.karta{background:#fff;border-radius:18px;padding:22px 20px;margin-bottom:16px;
+  box-shadow:0 1px 4px rgba(0,0,0,.08);border-left:8px solid #c99a06;min-height:220px}
+.slowo{font-size:30px;font-weight:800;color:#9a6400;margin-bottom:12px;line-height:1.2}
+.tekst{font-size:21px}
+.licznik{font-size:15px;color:#c99a06;font-weight:700;margin-bottom:10px}
+.polecenie{font-size:15px;color:#c99a06;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.pytanie{font-size:22px;font-weight:600;margin-bottom:18px}
+.luka{display:inline-block;min-width:120px;border-bottom:3px solid #9a6400;text-align:center;color:#9a6400}
+.okienka{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 18px}
+.okno{width:44px;height:54px;border:3px solid #9a6400;border-radius:8px;background:#fff;
+  font-size:28px;font-weight:800;display:flex;align-items:center;justify-content:center;color:#9a6400}
+.okienka.dobrze .okno{border-color:#2e7d32;color:#1b5e20;background:#e8f5e9}
+.okienka.zle .okno{border-color:#c62828;color:#b71c1c;background:#ffebee}
+.kafle{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kafel{min-height:76px;font-size:32px;font-weight:800;border:3px solid #f5e3a3;border-radius:14px;
+  background:#fff;color:#9a6400;cursor:pointer;font-family:inherit}
+.kafel:disabled{opacity:.25}
+.info{font-size:19px;font-weight:700;margin:4px 0 16px;min-height:28px}
+.info.dobrze{color:#2e7d32}.info.zle{color:#c62828}
+.wynik{font-size:46px;font-weight:800;color:#9a6400;text-align:center;margin:10px 0}
+.pod{text-align:center;font-size:19px;margin-bottom:22px}
+.glos{background:none;border:2px solid #f5e3a3;border-radius:12px;font-size:17px;padding:8px 14px;
+  color:#9a6400;font-weight:700;margin-top:14px;cursor:pointer;min-height:48px}
+</style>
+</head>
+<body>
+<h1>Japonia i Chiny</h1>
+<div class="subject-tag">Geografia · nauka 25.10</div>
+
+<!-- START -->
+<div class="ekran aktywny" id="start">
+  <div class="karta" style="min-height:0">
+    <div class="tekst">1. Japonia — skąd jej sukces?<br>2. Chiny — położenie i przyroda<br>3. Chiny — ludność<br>4. Polityka „jednego dziecka”<br>5. Chiny — gospodarka<br>6. Chiny — rolnictwo<br><br>Najpierw <b>ucz się</b> — 35 krótkich kart.
+    Potem <b>sprawdź się</b> — 31 pytań, stukasz w dobrą odpowiedź.</div>
+  </div>
+  <div class="karta" style="min-height:0;margin-top:14px">
+    <div class="tekst"><b>🎧 Posłuchaj powtórki</b> — Zofia i Marek. Na końcu quiz: odpowiadaj na głos.</div>
+    <audio controls preload="none" src="geo_podcast_japonia_chiny.mp3" style="width:100%;margin-top:10px"></audio>
+  </div>
+  <button class="btn glowny" onclick="startNauki()">📖 Ucz się</button>
+  <button class="btn drugi" onclick="startSprawdzania()">✏️ Sprawdź się</button>
+</div>
+
+<!-- NAUKA -->
+<div class="ekran" id="nauka">
+  <div class="licznik" id="n-licznik"></div>
+  <div class="karta">
+    <div class="slowo" id="n-slowo"></div>
+    <div class="tekst" id="n-tekst"></div>
+    <button class="glos" id="n-glos" onclick="czytaj()">🔊 Przeczytaj na głos</button>
+  </div>
+  <button class="btn glowny" id="n-dalej" onclick="dalejNauka()">Dalej ›</button>
+  <button class="btn drugi" onclick="wsteczNauka()">‹ Wstecz</button>
+</div>
+
+<!-- SPRAWDZANIE -->
+<div class="ekran" id="test">
+  <div class="licznik" id="t-licznik"></div>
+  <div class="polecenie" id="t-polecenie"></div>
+  <div class="pytanie" id="t-pytanie"></div>
+  <div id="t-okienka" class="okienka"></div>
+  <div id="t-odp"></div>
+  <div class="info" id="t-info"></div>
+  <button class="btn glowny" id="t-dalej" style="display:none" onclick="dalejTest()">Dalej ›</button>
+</div>
+
+<!-- WYNIK -->
+<div class="ekran" id="koniec">
+  <div class="wynik" id="w-liczba"></div>
+  <div class="pod" id="w-slowo"></div>
+  <button class="btn glowny" onclick="startSprawdzania()">↻ Sprawdź się jeszcze raz</button>
+  <button class="btn drugi" onclick="startNauki()">📖 Wróć do nauki</button>
+</div>
+
+<script>
+var RESULTS_URL="",RESULTS_TOKEN="";
+function postResult(score,total){
+  if(!RESULTS_URL||!RESULTS_TOKEN)return;
+  try{fetch(RESULTS_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({token:RESULTS_TOKEN,subject:'Geografia',title:'Geografia — Japonia i Chiny — sprawdź się',
+      score:score,total:total})});}catch(e){}
+}
+
+var KARTY=[
+ {s:"1 · JAPONIA PO WOJNIE", t:"Po II wojnie światowej Japonia była zniszczona. W kilkadziesiąt lat stała się jedną z największych gospodarek świata. Pomogło jej siedem czynników."},
+ {s:"1 · PRACOWITOŚĆ I DYSCYPLINA", t:"Wysoka jakość pracy, dbałość o szczegóły i lojalność wobec firmy."},
+ {s:"1 · EDUKACJA I TECHNOLOGIA", t:"Długofalowe inwestycje w naukę i technologie. Obywatele są bardzo dobrze wykształceni."},
+ {s:"1 · WSPARCIE RZĄDU", t:"Państwo pomagało przemysłowi i planowało gospodarkę. Kraj szybko się modernizował."},
+ {s:"1 · FIRMY I BANKI RAZEM", t:"Przedsiębiorstwa współpracowały z bankami. Dzięki temu powstały silne koncerny, np. Toyota, Sony, Mitsubishi."},
+ {s:"1 · POMOC USA", t:"Po II wojnie światowej USA dały Japonii kapitał (pieniądze) i technologie. To przyspieszyło odbudowę."},
+ {s:"1 · EKSPORT", t:"Japonia ma mało surowców, więc je sprowadza. Sprzedaje za to nowoczesne produkty na cały świat."},
+ {s:"1 · POKOJOWA KONSTYTUCJA", t:"Japonia prawie nie wydawała pieniędzy na wojsko. Więcej pieniędzy szło na rozwój cywilny."},
+ {s:"2 · POWIERZCHNIA", t:"Chiny to TRZECIE największe państwo świata, po Rosji i Kanadzie. Mają ok. 9,6 mln km²."},
+ {s:"2 · GÓRY I WYŻYNY", t:"Na zachodzie są najwyższe góry świata: Himalaje z Mount Everestem. Wyżyna Tybetańska to „dach świata”. Ponad 3/4 Chin leży wyżej niż 500 m n.p.m."},
+ {s:"2 · RZEKI", t:"Najważniejsze rzeki to Jangcy i Huang He (Żółta Rzeka). Obie zaczynają się w Tybecie. Na Jangcy stoi wielka Zapora Trzech Przełomów."},
+ {s:"2 · PUSTYNIE I NIZINY", t:"Na północy leży pustynia Gobi. Na wschodzie są żyzne niziny. Najważniejsza to Nizina Chińska, kolebka chińskiej cywilizacji."},
+ {s:"2 · KLIMAT", t:"Na południowym wschodzie wieje monsun i pada dużo deszczu, ponad 1000 mm rocznie. Wnętrze kraju jest suche."},
+ {s:"3 · ILU JEST CHIŃCZYKÓW?", t:"Ok. 1,4 mld ludzi. Przez wiele lat Chiny były najludniejszym krajem świata. W 2023 r. wyprzedziły je INDIE, więc dziś Chiny są na 2. miejscu."},
+ {s:"3 · GDZIE MIESZKAJĄ?", t:"Ludność jest rozmieszczona bardzo nierównomiernie. Ok. 95% mieszkańców żyje na WSCHODZIE kraju."},
+ {s:"3 · DLACZEGO NA WSCHODZIE?", t:"Są tam żyzne niziny, dostęp do wody i korzystniejszy klimat. Jest też rozwinięte rolnictwo, przemysł i transport."},
+ {s:"3 · GĘSTOŚĆ ZALUDNIENIA", t:"Na Nizinie Chińskiej mieszka ok. 800 osób na km². Na zachodzie i północy mieszka poniżej 10 osób na km²."},
+ {s:"3 · DLACZEGO ZACHÓD JEST PUSTY?", t:"Są tam wysokie góry i wyżyny, pustynie i surowy, kontynentalny klimat."},
+ {s:"3 · NARODY CHIN", t:"Ok. 92% mieszkańców to Chińczycy Han. W Chinach żyje też 55 mniejszości, np. Tybetańczycy."},
+ {s:"3 · MIASTA", t:"Największe miasta to Szanghaj (ok. 24 mln) i stolica, Pekin (ok. 21 mln). Ok. 80 miast ma ponad milion mieszkańców."},
+ {s:"4 · CO TO BYŁO?", t:"Przez wiele lat, od lat 70. XX wieku do 2015 r., państwo ograniczało urodzenia. Obowiązywała zasada „jednego dziecka”."},
+ {s:"4 · SKUTEK 1: STARZENIE SIĘ", t:"Rodzi się mało dzieci, a ludzi starszych przybywa. Społeczeństwo szybko się starzeje."},
+ {s:"4 · SKUTEK 2: WIĘCEJ CHŁOPCÓW", t:"Zachwiała się równowaga płci. W Chinach jest więcej mężczyzn niż kobiet."},
+ {s:"5 · REFORMA", t:"W latach 70. XX wieku komunistyczne Chiny zaczęły reformę gospodarki. W 1978 r. ruszyła polityka „otwartych drzwi”."},
+ {s:"5 · STREFY EKONOMICZNE", t:"Utworzono specjalne strefy ekonomiczne dla INWESTORÓW ZAGRANICZNYCH. Z małego miasteczka wyrosło tak wielkie miasto Shenzhen."},
+ {s:"5 · WSPIERANIE PRZEMYSŁU", t:"Państwo długo wspierało chiński przemysł: „kopiowanie” za bezcen zachodnich technologii, dopłaty do eksportu, tania energia."},
+ {s:"5 · FABRYKA ŚWIATA", t:"Chiny są największym eksporterem wielu towarów. Dlatego nazywa się je „fabryką świata”. Obok USA to największa gospodarka świata."},
+ {s:"5 · CO SIĘ ROZWIJA?", t:"Przemysł, usługi, transport i nowoczesne technologie. Aż 8 z 10 największych portów świata leży w Chinach."},
+ {s:"5 · CIEMNA STRONA", t:"Ogromne zanieczyszczenie środowiska: smog, zatrute wody, gleby i żywność."},
+ {s:"5 · CHIŃSKIE FIRMY NA ŚWIECIE", t:"Chińskie firmy przejmują ważne firmy i złoża surowców na całym świecie."},
+ {s:"6 · ROLNICY", t:"Mimo rozwoju przemysłu aż 25% pracujących pracuje w rolnictwie. To co czwarta osoba."},
+ {s:"6 · ROŚLINY ŻYWIENIOWE", t:"Ryż (ok. 25% światowych zbiorów), pszenica, kukurydza, soja, bataty, ziemniaki."},
+ {s:"6 · ROŚLINY PRZEMYSŁOWE", t:"Bawełna, rzepak, trzcina cukrowa, herbata, tytoń."},
+ {s:"6 · HODOWLA", t:"Trzoda chlewna (świnie): ok. 50% światowej produkcji. Drób: ok. 20%."},
+ {s:"6 · GDZIE CO ROŚNIE?", t:"Na ciepłym i wilgotnym południu: ryż, herbata, trzcina cukrowa. W dorzeczu Huang He: pszenica i kukurydza. Na Nizinie Mandżurskiej: soja."}
+];
+
+var ZADANIA=[
+ {typ:"x", pytanie:"Co pomogło Japonii w odbudowie po II wojnie światowej?", dobra:"pomoc USA: kapitał i technologie", inne:["bogate złoża ropy naftowej","wielka armia"]},
+ {typ:"x", pytanie:"Pokojowa konstytucja Japonii sprawiła, że:", dobra:"więcej pieniędzy szło na rozwój cywilny", inne:["Japonia miała największą armię w Azji","Japonia przestała eksportować"]},
+ {typ:"x", pytanie:"Przykład wielkiego japońskiego koncernu to:", dobra:"Toyota", inne:["Samsung","Volkswagen"]},
+ {typ:"x", pytanie:"Japońscy pracownicy słyną z:", dobra:"dbałości o szczegóły i lojalności wobec firmy", inne:["częstej zmiany pracy","krótkiego dnia pracy"]},
+ {typ:"x", pytanie:"Japonia sprowadza surowce, a sprzedaje:", dobra:"nowoczesne produkty na cały świat", inne:["ropę naftową","węgiel"]},
+ {typ:"x", pytanie:"Które miejsce na świecie pod względem powierzchni zajmują Chiny?", dobra:"trzecie, po Rosji i Kanadzie", inne:["pierwsze","dziesiąte"]},
+ {typ:"x", pytanie:"„Dach świata” to:", dobra:"Wyżyna Tybetańska", inne:["Nizina Chińska","pustynia Gobi"]},
+ {typ:"x", pytanie:"Najważniejsze rzeki Chin to:", dobra:"Jangcy i Huang He", inne:["Nil i Kongo","Wisła i Odra"]},
+ {typ:"x", pytanie:"Zapora Trzech Przełomów stoi na rzece:", dobra:"Jangcy", inne:["Ganges","Amazonka"]},
+ {typ:"x", pytanie:"Ilu mieszkańców mają Chiny?", dobra:"ok. 1,4 mld", inne:["ok. 140 mln","ok. 14 mld"]},
+ {typ:"x", pytanie:"Kto w 2023 r. wyprzedził Chiny pod względem liczby ludności?", dobra:"Indie", inne:["USA","Japonia"]},
+ {typ:"x", pytanie:"Jaka część Chińczyków mieszka na wschodzie kraju?", dobra:"ok. 95%", inne:["ok. 50%","ok. 10%"]},
+ {typ:"x", pytanie:"Gęstość zaludnienia na Nizinie Chińskiej to ok.:", dobra:"800 os./km²", inne:["80 os./km²","8 os./km²"]},
+ {typ:"x", pytanie:"Na zachodzie i północy Chin mieszka:", dobra:"poniżej 10 os./km²", inne:["ok. 800 os./km²","ok. 500 os./km²"]},
+ {typ:"x", pytanie:"Co NIE jest przyczyną gęstego zaludnienia wschodu Chin?", dobra:"pustynie i wysokie góry", inne:["żyzne niziny","dostęp do wody"]},
+ {typ:"x", pytanie:"Dlaczego zachód Chin jest słabo zaludniony?", dobra:"góry, wyżyny, pustynie i surowy klimat", inne:["żyzne niziny i dużo wody","wielkie porty morskie"]},
+ {typ:"x", pytanie:"Najliczniejszy naród w Chinach to:", dobra:"Chińczycy Han", inne:["Tybetańczycy","Mandżurowie"]},
+ {typ:"x", pytanie:"Dwa największe miasta Chin to:", dobra:"Szanghaj i Pekin", inne:["Tokio i Osaka","Delhi i Bombaj"]},
+ {typ:"x", pytanie:"Zasada „jednego dziecka” obowiązywała:", dobra:"od lat 70. XX w. do 2015 r.", inne:["od 1990 r. do dziś","tylko przez 2 lata"]},
+ {typ:"x", pytanie:"Skutkiem polityki „jednego dziecka” jest:", dobra:"szybkie starzenie się społeczeństwa", inne:["bardzo dużo dzieci w szkołach","więcej kobiet niż mężczyzn"]},
+ {typ:"x", pytanie:"Zachwianie równowagi płci w Chinach oznacza, że:", dobra:"jest więcej mężczyzn niż kobiet", inne:["jest więcej kobiet niż mężczyzn"]},
+ {typ:"x", pytanie:"Specjalne strefy ekonomiczne powstały dla:", dobra:"inwestorów zagranicznych", inne:["rolników","turystów"]},
+ {typ:"x", pytanie:"Polityka „otwartych drzwi” ruszyła w roku:", dobra:"1978", inne:["1949","2015"]},
+ {typ:"x", pytanie:"Chiny nazywa się „fabryką świata”, bo:", dobra:"są największym eksporterem wielu towarów", inne:["mają najwięcej fabryk czekolady","nic nie sprowadzają"]},
+ {typ:"x", pytanie:"Obok USA Chiny są:", dobra:"największą gospodarką świata", inne:["najmniejszą gospodarką Azji","najbiedniejszym krajem świata"]},
+ {typ:"x", pytanie:"Ciemna strona rozwoju Chin to:", dobra:"smog i zatrute wody, gleby i żywność", inne:["brak fabryk","za mało ludzi do pracy"]},
+ {typ:"x", pytanie:"Jaka część pracujących Chińczyków pracuje w rolnictwie?", dobra:"ok. 25%", inne:["ok. 2%","ok. 75%"]},
+ {typ:"x", pytanie:"Roślina ŻYWIENIOWA to:", dobra:"ryż", inne:["bawełna","tytoń"]},
+ {typ:"x", pytanie:"Roślina PRZEMYSŁOWA to:", dobra:"herbata", inne:["ryż","pszenica"]},
+ {typ:"x", pytanie:"Ile światowej produkcji trzody chlewnej dają Chiny?", dobra:"ok. 50%", inne:["ok. 5%","ok. 90%"]},
+ {typ:"x", pytanie:"Ryż, herbatę i trzcinę cukrową uprawia się głównie:", dobra:"na ciepłym i wilgotnym południu", inne:["na Wyżynie Tybetańskiej","na pustyni Gobi"]}
+];
+
+function pokaz(id){ document.querySelectorAll('.ekran').forEach(function(e){e.classList.remove('aktywny');});
+  document.getElementById(id).classList.add('aktywny'); window.scrollTo(0,0); }
+function potasuj(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
+
+// ---------------- NAUKA
+var nk=0;
+function startNauki(){ nk=0; rysujKarte(); pokaz('nauka'); }
+function rysujKarte(){
+  document.getElementById('n-licznik').textContent='Karta '+(nk+1)+' z '+KARTY.length;
+  document.getElementById('n-slowo').textContent=KARTY[nk].s;
+  document.getElementById('n-tekst').textContent=KARTY[nk].t;
+  document.getElementById('n-dalej').textContent = nk===KARTY.length-1 ? '✏️ Teraz sprawdź się' : 'Dalej ›';
+  if(window.speechSynthesis) speechSynthesis.cancel();
+}
+function dalejNauka(){ if(nk<KARTY.length-1){nk++;rysujKarte();} else startSprawdzania(); }
+function wsteczNauka(){ if(nk>0){nk--;rysujKarte();} else pokaz('start'); }
+// Glos: jawnie polski (Chrome na Windows laduje glosy z opoznieniem, bez wyboru potrafi czytac po angielsku albo milczec)
+var glosPL=null;
+function szukajGlosu(){
+  var v=window.speechSynthesis ? speechSynthesis.getVoices() : [];
+  var pl=v.filter(function(x){ return /^pl/i.test(x.lang); });
+  glosPL = pl.filter(function(x){ return /natural|online|google/i.test(x.name); })[0] || pl[0] || null;
+}
+if(window.speechSynthesis){ szukajGlosu(); speechSynthesis.onvoiceschanged=szukajGlosu; }
+function czytaj(){
+  if(!window.speechSynthesis) return;
+  if(!glosPL) szukajGlosu();
+  var btn=document.getElementById('n-glos');
+  if(!glosPL && speechSynthesis.getVoices().length){
+    btn.textContent='🔇 Brak polskiego głosu na tym urządzeniu'; return;
+  }
+  speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(KARTY[nk].t); u.lang='pl-PL'; u.rate=0.9;
+  if(glosPL) u.voice=glosPL;
+  setTimeout(function(){ speechSynthesis.resume(); speechSynthesis.speak(u); }, 60);
+}
+if(!window.speechSynthesis) document.getElementById('n-glos').style.display='none';
+
+// ---------------- SPRAWDZANIE
+var tk=0, punkty=0, ulozone=[];
+function startSprawdzania(){ tk=0; punkty=0; rysujZadanie(); pokaz('test'); }
+
+function rysujZadanie(){
+  var z=ZADANIA[tk];
+  document.getElementById('t-licznik').textContent='Zadanie '+(tk+1)+' z '+ZADANIA.length;
+  document.getElementById('t-info').textContent=''; document.getElementById('t-info').className='info';
+  document.getElementById('t-dalej').style.display='none';
+  var odp=document.getElementById('t-odp'); odp.innerHTML='';
+  var ok=document.getElementById('t-okienka'); ok.innerHTML=''; ok.className='okienka'; ok.style.display='none';
+
+  if(z.typ==='luka'){
+    document.getElementById('t-polecenie').textContent='Uzupełnij lukę';
+    document.getElementById('t-pytanie').innerHTML=z.przed+' <span class="luka" id="luka">&nbsp;?&nbsp;</span> '+z.po;
+    potasuj([z.dobra].concat(z.inne)).forEach(function(o){ odp.appendChild(przycisk(o, z.dobra)); });
+  } else if(z.typ==='x'){
+    document.getElementById('t-polecenie').textContent='Wybierz poprawną odpowiedź';
+    document.getElementById('t-pytanie').textContent=z.pytanie;
+    potasuj([z.dobra].concat(z.inne)).forEach(function(o){ odp.appendChild(przycisk(o, z.dobra)); });
+  } else {
+    document.getElementById('t-polecenie').textContent='Ułóż słowo z liter — stukaj po kolei';
+    document.getElementById('t-pytanie').textContent=z.pytanie;
+    ulozone=[]; ok.style.display='flex';
+    for(var i=0;i<z.slowo.length;i++){ var d=document.createElement('div'); d.className='okno'; ok.appendChild(d); }
+    var kafle=document.createElement('div'); kafle.className='kafle';
+    z.litery.forEach(function(l){
+      var b=document.createElement('button'); b.className='kafel'; b.textContent=l;
+      b.onclick=function(){ if(b.disabled) return; b.disabled=true; ulozone.push({l:l,b:b}); odswiezOkienka(); };
+      kafle.appendChild(b);
+    });
+    odp.appendChild(kafle);
+    var cof=document.createElement('button'); cof.className='btn drugi'; cof.textContent='⌫ Cofnij literę'; cof.id='cofnij';
+    cof.onclick=function(){ var o=ulozone.pop(); if(o){ o.b.disabled=false; odswiezOkienka(); } };
+    odp.appendChild(cof);
+  }
+}
+
+function przycisk(tekst, dobra){
+  var b=document.createElement('button'); b.className='btn opcja'; b.textContent=tekst;
+  b.onclick=function(){
+    var wszystkie=document.querySelectorAll('#t-odp .opcja');
+    wszystkie.forEach(function(x){ x.disabled=true; if(x.textContent===dobra) x.classList.add('dobrze'); });
+    var z=ZADANIA[tk];
+    if(tekst===dobra){ punkty++; ocena(true,''); }
+    else { b.classList.add('zle'); ocena(false,'Poprawnie: '+dobra); }
+    if(z.typ==='luka') document.getElementById('luka').textContent=dobra;
+  };
+  return b;
+}
+
+function odswiezOkienka(){
+  var z=ZADANIA[tk], okna=document.querySelectorAll('#t-okienka .okno');
+  for(var i=0;i<okna.length;i++) okna[i].textContent = ulozone[i] ? ulozone[i].l : '';
+  if(ulozone.length===z.slowo.length){
+    var slowo=ulozone.map(function(o){return o.l;}).join('');
+    document.querySelectorAll('.kafel').forEach(function(k){k.disabled=true;});
+    document.getElementById('cofnij').style.display='none';
+    var ok=document.getElementById('t-okienka');
+    if(slowo===z.slowo){ punkty++; ok.classList.add('dobrze'); ocena(true,''); }
+    else { ok.classList.add('zle'); ocena(false,'Poprawnie: '+z.slowo); }
+  }
+}
+
+function ocena(dobrze, poprawka){
+  var i=document.getElementById('t-info');
+  i.className='info '+(dobrze?'dobrze':'zle');
+  i.textContent = dobrze ? '✓ Dobrze!' : '✗ '+poprawka;
+  var d=document.getElementById('t-dalej');
+  d.textContent = tk===ZADANIA.length-1 ? 'Zobacz wynik ›' : 'Dalej ›';
+  d.style.display='block';
+}
+
+function dalejTest(){
+  if(tk<ZADANIA.length-1){ tk++; rysujZadanie(); window.scrollTo(0,0); return; }
+  var t=ZADANIA.length;
+  document.getElementById('w-liczba').textContent=punkty+' / '+t;
+  document.getElementById('w-slowo').textContent =
+    punkty===t ? 'Wszystko dobrze. Jesteś gotowa na kartkówkę!' :
+    punkty>=t-2 ? 'Bardzo dobrze! Powtórz karty z błędami i spróbuj jeszcze raz.' :
+    'Wróć do nauki, a potem sprawdź się jeszcze raz.';
+  postResult(punkty,t);
+  pokaz('koniec');
+}
+</script>
+</body>
+</html>
