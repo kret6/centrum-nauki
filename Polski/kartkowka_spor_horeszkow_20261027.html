@@ -104,8 +104,15 @@ body.druk .pasek,body.druk .info,body.druk .dol,body.druk .wyj,body.druk .popr,b
 body.druk .kartka{box-shadow:none;width:700px;max-width:none;margin:0;padding:0 6px;font-size:17px !important}
 body.druk input,body.druk textarea{background:transparent !important}
 body.druk .opc:hover{background:none}
+.papier{display:none}
+body.druk .papier{display:inline}
+body.druk .ekran{display:none !important}
+/* luki z wyborem w tekscie: na wydruku tylko wybrane slowo, wpisane jak reka */
+body.druk .grupa.inl .opc:not(.pod){display:none !important}
+body.druk .grupa.inl .opc.pod{border:none !important;border-bottom:2px dotted #444 !important;border-radius:0 !important;min-height:0;padding:0 4px;font-family:'Segoe Print','Comic Sans MS',cursive;color:#0d2a8a;background:none}
+body.druk .grupa.inl .opc.pod .t{border:none;padding:0}
+body.druk .grupa.inl.pusta::after{content:'………………'}
 .ta-druk{font-family:'Segoe Print','Comic Sans MS',cursive;color:#0d2a8a;font-size:21px;line-height:1.5;white-space:pre-wrap;border-bottom:2px dotted #444;padding:8px;margin-top:8px;min-height:60px}
-#druk-nag{font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#555;border-bottom:1px solid #bbb;padding-bottom:6px;margin-bottom:22px;display:flex;justify-content:space-between;gap:12px}
 @media print{
   @page{size:A4;margin:12mm}
   body{background:#fff;padding:0}
@@ -346,24 +353,25 @@ function wyslijKartke(){
 function dataOddania(){ return new Date(stan.oddano||Date.now()).toLocaleDateString('pl-PL'); }
 function przygotujDruk(on){
   DRUK=on; document.body.classList.toggle('druk',on);
-  $$('.ta-druk,#druk-nag').forEach(function(e){ e.parentNode.removeChild(e); });
+  $$('.ta-druk').forEach(function(e){ e.parentNode.removeChild(e); });
+  $$('.grupa.pusta').forEach(function(e){ e.classList.remove('pusta'); });
   $$('.nie-dziel').forEach(function(e){ e.classList.remove('nie-dziel'); });
   $$('img.svg-druk').forEach(function(e){ if(e.nextSibling) e.nextSibling.style.display=''; e.parentNode.removeChild(e); });
   rysuj();
   if(!on) return;
   $$('textarea[data-k]').forEach(function(t){ var d=document.createElement('div'); d.className='ta-druk'; d.textContent=t.value; t.parentNode.insertBefore(d,t.nextSibling); });
-  var n=document.createElement('div'); n.id='druk-nag';
-  var a=document.createElement('span'); a.textContent=KARTA.przedmiot+' · '+KARTA.tytul;
-  var b=document.createElement('span'); b.textContent=dataOddania(); n.appendChild(a); n.appendChild(b);
-  var k=document.getElementById('kartka'); k.insertBefore(n,k.firstChild);
+  $$('.grupa.inl').forEach(function(g){ if(!g.querySelector('.opc.pod')) g.classList.add('pusta'); });
+  // tytul strony = domyslna nazwa pliku przy „Zapisz jako PDF” — bez dopiskow z huba
+  if(!TYTUL_STRONY) TYTUL_STRONY=document.title;
+  document.title=nazwaDruku();
 }
+var TYTUL_STRONY='';
+function koniecDruku(){ przygotujDruk(false); if(TYTUL_STRONY){ document.title=TYTUL_STRONY; TYTUL_STRONY=''; } }
 function drukuj(){ przygotujDruk(true); window.print(); }
 window.addEventListener('beforeprint',function(){ if(stan.spr&&!DRUK) przygotujDruk(true); });
-window.addEventListener('afterprint',function(){ if(DRUK) przygotujDruk(false); });
-function nazwaPliku(){
-  var d=new Date(stan.oddano||Date.now()), dd=('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+d.getFullYear();
-  return (KARTA.przedmiot+' - '+KARTA.tytul).replace(/[\/:*?"<>|]+/g,' ').replace(/\s+/g,' ').slice(0,90).trim()+' '+dd+'.pdf';
-}
+window.addEventListener('afterprint',function(){ if(DRUK) koniecDruku(); });
+function nazwaDruku(){ return KARTA.przedmiot+' '+dataOddania(); }
+function nazwaPliku(){ return nazwaDruku()+'.pdf'; }
 function zaladujPdf(){
   return new Promise(function(ok,nie){
     if(window.html2pdf) return ok();
@@ -389,14 +397,15 @@ function zrobPdf(){
     return {w:html2pdf().set({margin:[10,10,12,10],filename:nazwaPliku(),image:{type:'jpeg',quality:0.95},
       html2canvas:{scale:2,windowWidth:760,scrollX:0,scrollY:0,backgroundColor:'#ffffff'},
       jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
-      pagebreak:{mode:['css','legacy'],avoid:['.nie-dziel','.ta-druk']}}).from(document.getElementById('kartka'))};
+      pagebreak:{mode:['css','legacy'],avoid:['.nie-dziel','.ta-druk']}}).from(document.getElementById('kartka')).toPdf().get('pdf').then(function(pdf){
+        pdf.setProperties({title:nazwaDruku(),subject:'',author:'',keywords:'',creator:''}); })};
   });
 }
 function pobierzPdf(){
   var b=document.getElementById('btnPdf'); if(b){ b.disabled=true; b.textContent='⏳ Robię PDF…'; }
   zrobPdf().then(function(r){ return r.w.save(); })
-    .then(function(){ przygotujDruk(false); },
-          function(){ przygotujDruk(false); alert('Nie udało się zrobić PDF. Kliknij „Drukuj” i wybierz „Zapisz jako PDF”.'); });
+    .then(function(){ koniecDruku(); },
+          function(){ koniecDruku(); alert('Nie udało się zrobić PDF. Kliknij „Drukuj” i wybierz „Zapisz jako PDF”.'); });
 }
 
 rysuj();
