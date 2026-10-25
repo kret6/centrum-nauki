@@ -392,10 +392,12 @@ function zrobPdf(){
     });
     // niskie bloki (pytanie, odpowiedz, wiersz tabeli) nie moga sie rozcinac na dwie strony
     $$('#kartka *').forEach(function(e){ var st=getComputedStyle(e);
+      // srodek wzoru KaTeX pomijamy: odstep wstawiony miedzy jego czesci gubi wykladniki
+      if(e.closest('.katex')&&!e.classList.contains('katex')) return;
       if(st.display!=='inline'&&e.offsetHeight>0&&e.offsetHeight<160) e.classList.add('nie-dziel'); });
     // worker html2pdf jest „thenable”, wiec opakowany — inaczej Promise by go rozwinal
     return {w:html2pdf().set({margin:[10,10,12,10],filename:nazwaPliku(),image:{type:'jpeg',quality:0.95},
-      html2canvas:{scale:2,windowWidth:760,scrollX:0,scrollY:0,backgroundColor:'#ffffff'},
+      html2canvas:{scale:2,scrollX:0,scrollY:0,backgroundColor:'#ffffff'},
       jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
       pagebreak:{mode:['css','legacy'],avoid:['.nie-dziel','.ta-druk']}}).from(document.getElementById('kartka')).toPdf().get('pdf').then(function(pdf){
         pdf.setProperties({title:nazwaDruku(),subject:'',author:'',keywords:'',creator:''}); })};
