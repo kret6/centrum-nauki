@@ -88,11 +88,11 @@ h1{font-size:24px;color:#1565c0;margin-bottom:2px}
   <div class="pod" id="w-slowo"></div>
   <button class="btn glowny" onclick="startSprawdzania()">↻ Sprawdź się jeszcze raz</button>
   <button class="btn drugi" onclick="startNauki()">📖 Wróć do nauki</button>
-  <a class="btn glowny" style="display:flex;align-items:center;justify-content:center;text-decoration:none" href="https://julia-hub-161045418771.europe-west1.run.app/pisanie/zaproszenie?k=0TtXdXR_0rtGiDcJVw04aesd">✉️ Teraz: piszemy zaproszenie</a>
+  <a class="btn glowny" style="display:flex;align-items:center;justify-content:center;text-decoration:none" data-hub href="https://julia-hub-161045418771.europe-west1.run.app/pisanie/zaproszenie">✉️ Teraz: piszemy zaproszenie</a>
 </div>
 
 <script>
-var RESULTS_URL="https://julia-hub-161045418771.europe-west1.run.app/results",RESULTS_TOKEN="XW09DH2_fs8SdHh7B9pGMoCZuDVwAHSQ";
+var RESULTS_URL="https://julia-hub-161045418771.europe-west1.run.app/results",/* token wynikow: z pamieci przegladarki (link od rodzica albo otwarta klasowka), nie z publicznej strony */RESULTS_TOKEN=(function(){ try{ return localStorage.getItem('token_wynikow')||''; }catch(e){ return ''; } })();
 function postResult(score,total){
   if(!RESULTS_URL||!RESULTS_TOKEN)return;
   try{fetch(RESULTS_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
@@ -257,6 +257,17 @@ function dalejTest(){
   postResult(punkty,t);
   pokaz('koniec');
 }
+</script>
+<script>
+// Linki do huba: klucz huba NIE lezy w tej publicznej stronie. Dopisujemy go z pamieci przegladarki,
+// a zapisuje go tam link od rodzica: klucz.html#klucz=...&hub=...
+(function(){
+  var k=''; try{ k=localStorage.getItem('klucz_huba')||''; }catch(e){}
+  Array.prototype.forEach.call(document.querySelectorAll('a[data-hub]'),function(a){
+    if(k){ var u=new URL(a.href); u.searchParams.set('k',k); a.href=u.toString(); }
+    else a.addEventListener('click',function(e){ e.preventDefault(); alert('🔒 Ten komputer nie ma jeszcze klucza do pomocnika pisania. Poproś rodzica o link z kluczem.'); });
+  });
+})();
 </script>
 </body>
 </html>

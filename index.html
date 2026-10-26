@@ -125,7 +125,7 @@
         <!-- chat-tile -->
     <h2>✍️ Piszemy razem</h2>
     <div class="grid-chat">
-        <a href="https://julia-hub-161045418771.europe-west1.run.app/chat?k=0TtXdXR_0rtGiDcJVw04aesd" class="tile-big" style="border-left-color:#e91e63">
+        <a data-hub href="https://julia-hub-161045418771.europe-west1.run.app/chat" class="tile-big" style="border-left-color:#e91e63">
             <div class="icon">✍️</div>
             <div class="info">
                 <div class="title">Piszemy razem</div>
@@ -191,7 +191,7 @@
             </div>
         </a>
         <!-- gen-tile -->
-        <a href="https://julia-hub-161045418771.europe-west1.run.app/pisanie/zaproszenie?k=0TtXdXR_0rtGiDcJVw04aesd&amp;temat=tadeusz" class="tile-big polski">
+        <a data-hub href="https://julia-hub-161045418771.europe-west1.run.app/pisanie/zaproszenie?temat=tadeusz" class="tile-big polski">
             <div class="tag-urgent">PISANIE</div>
             <div class="icon">✉️</div>
             <div class="info">
@@ -312,7 +312,7 @@
             <div class="icon">📖</div>
             <div class="title">„Zemsta” — ucz się i sprawdź się</div>
         </a>
-        <a href="https://julia-hub-161045418771.europe-west1.run.app/pisanie/zaproszenie?k=0TtXdXR_0rtGiDcJVw04aesd" class="tile-small polski">
+        <a data-hub href="https://julia-hub-161045418771.europe-west1.run.app/pisanie/zaproszenie" class="tile-small polski">
             <div class="icon">✉️</div>
             <div class="title">Piszemy zaproszenie — z pomocnikiem</div>
         </a>
@@ -337,5 +337,16 @@
             <div class="title">PISANIE form - z klawiatury</div>
         </a>
     </div>
+<script>
+// Linki do huba: klucz huba NIE lezy w tej publicznej stronie. Dopisujemy go z pamieci przegladarki,
+// a zapisuje go tam link od rodzica: klucz.html#klucz=...&hub=...
+(function(){
+  var k=''; try{ k=localStorage.getItem('klucz_huba')||''; }catch(e){}
+  Array.prototype.forEach.call(document.querySelectorAll('a[data-hub]'),function(a){
+    if(k){ var u=new URL(a.href); u.searchParams.set('k',k); a.href=u.toString(); }
+    else a.addEventListener('click',function(e){ e.preventDefault(); alert('🔒 Ten komputer nie ma jeszcze klucza do pomocnika pisania. Poproś rodzica o link z kluczem.'); });
+  });
+})();
+</script>
 </body>
 </html>

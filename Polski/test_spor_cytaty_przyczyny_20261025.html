@@ -172,7 +172,18 @@ var stan;
 try{ stan=JSON.parse(localStorage.getItem(KARTA.pamiec)||'null'); }catch(e){ stan=null; }
 if(!stan||!stan.odp) stan={odp:{},uznane:{},spr:false,czysta:true,seria:0,proby:0};
 if(!stan.uznane) stan.uznane={};
-function zapamietaj(){ try{ localStorage.setItem(KARTA.pamiec,JSON.stringify(stan)); }catch(e){} }
+// kolejka kartek do wyslania: kazda oddana kartka czeka tu, az serwer ja przyjmie (stary zapis: jedno pole doWyslania)
+if(!stan.kolejka) stan.kolejka=[];
+if(stan.doWyslania){ stan.kolejka.push(stan.doWyslania); delete stan.doWyslania; }
+function zapamietaj(){
+  try{ localStorage.setItem(KARTA.pamiec,JSON.stringify(stan)); return; }catch(e){}
+  // brak miejsca w przegladarce: zapisujemy bez zdjec kartek, zeby odpowiedzi i wyniki nie przepadly
+  try{
+    var lekki=JSON.parse(JSON.stringify(stan));
+    lekki.kolejka.forEach(function(p){ p.html='<p>Zdjęcie kartki nie zmieściło się w pamięci przeglądarki. Wynik: '+p.score+' / '+p.total+'.</p>'; });
+    localStorage.setItem(KARTA.pamiec,JSON.stringify(lekki));
+  }catch(e){}
+}
 
 var GRUPY={}; $$('.grupa[data-k]').forEach(function(g){ GRUPY[g.getAttribute('data-k')]=g; });
 var OPCJ=KARTA.opcj||[];
@@ -188,7 +199,11 @@ function ocen(){
     w[id]=stan.uznane[id]?2:KARTA.pola[id].f(wart(id));
   }
   KARTA.zadania.forEach(function(z){
-    p[z.z]=z.grupy.filter(function(g){ return g.every(function(id){ return w[id]>0; }); }).length; suma+=p[z.z];
+    p[z.z]=z.grupy.filter(function(g){
+      // puste pole opcjonalne nie jest oceniane, wiec nie psuje grupy
+      var oc=g.filter(function(id){ return id in w; });
+      return oc.length>0&&oc.every(function(id){ return w[id]>0; });
+    }).length; suma+=p[z.z];
   });
   return {w:w,p:p,suma:suma};
 }
@@ -273,7 +288,7 @@ function sprawdz(){
   var w=ocen();
   if(stan.czysta){ if(w.suma===MAXSUMA) stan.seria++; else stan.seria=0; }
   stan.wyslana=false; rysuj();
-  stan.doWyslania={token:RESULTS_TOKEN,przedmiot:KARTA.przedmiot,tytul:KARTA.tytul,score:w.suma,total:MAXSUMA,czysta:stan.czysta,html:zdjecieKartki()};
+  stan.kolejka.push({token:RESULTS_TOKEN,przedmiot:KARTA.przedmiot,tytul:KARTA.tytul,score:w.suma,total:MAXSUMA,czysta:stan.czysta,html:zdjecieKartki()});
   zapamietaj(); rysuj(); wyslijKartke();
   document.getElementById('dol').scrollIntoView({behavior:'smooth',block:'start'});
   try{ fetch(RESULTS_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
@@ -340,13 +355,24 @@ function zdjecieKartki(){
   return '<!DOCTYPE html>\n'+d.outerHTML;
 }
 function napisWysylki(){
-  return stan.doWyslania?'⏳ Wysyłam kartkę do rodzica…':(stan.wyslana?'📨 Kartka wysłana do rodzica.':'');
+  return stan.kolejka.length?'⏳ Wysyłam kartkę do rodzica…':(stan.wyslana?'📨 Kartka wysłana do rodzica.':'');
 }
+var WYSYLAM=false;
 function wyslijKartke(){
-  if(!stan.doWyslania) return;
-  fetch(RESULTS_URL.replace(/\/results$/,'/kartka'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(stan.doWyslania)})
-    .then(function(r){ if(!r.ok) throw r.status; stan.doWyslania=null; stan.wyslana=true; zapamietaj(); var e=document.getElementById('wysylka'); if(e) e.textContent=napisWysylki(); })
-    .catch(function(){ var e=document.getElementById('wysylka'); if(e) e.textContent='⚠️ Nie udało się wysłać kartki — spróbuję jeszcze raz przy następnym otwarciu strony.'; });
+  if(WYSYLAM||!stan.kolejka.length) return;
+  WYSYLAM=true;
+  var p=stan.kolejka[0];
+  p.token=RESULTS_TOKEN||p.token;   // po zmianie tokenu stara kartka z kolejki idzie z aktualnym
+  fetch(RESULTS_URL.replace(/\/results$/,'/kartka'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)})
+    .then(function(r){
+      if(!r.ok) throw r.status;
+      WYSYLAM=false;
+      var i=stan.kolejka.indexOf(p); if(i>=0) stan.kolejka.splice(i,1);
+      if(!stan.kolejka.length) stan.wyslana=true;
+      zapamietaj(); var e=document.getElementById('wysylka'); if(e) e.textContent=napisWysylki();
+      wyslijKartke();
+    })
+    .catch(function(){ WYSYLAM=false; var e=document.getElementById('wysylka'); if(e) e.textContent='⚠️ Nie udało się wysłać kartki — spróbuję jeszcze raz przy następnym otwarciu strony.'; });
 }
 
 // wydruk i PDF oddanej kartki (np. do zalaczenia w dzienniku): odpowiedzi bez sprawdzenia
@@ -424,6 +450,7 @@ function uruchomKartke(D){
   document.getElementById('cssDane').textContent=D.css||'';
   document.getElementById('kartka').innerHTML=D.tresc;
   RESULTS_URL=D.wyniki_url; RESULTS_TOKEN=D.wyniki_token;
+  try{ if(D.wyniki_token) localStorage.setItem('token_wynikow',D.wyniki_token); }catch(e){}
   (0,eval)(D.dane);
   (0,eval)(document.getElementById('silnik').textContent);
 }

@@ -16,16 +16,33 @@ a.b{display:block;margin-top:22px;min-height:64px;line-height:64px;border-radius
 <div class="k" id="k">⏳ Sprawdzam klucz…</div>
 <script>
 // Klucz przychodzi w czesci adresu po "#": przegladarka nie wysyla jej nigdzie (ani do GitHuba, ani w logach).
+// Formaty linku: klucz.html#KLUCZ  albo  klucz.html#klucz=KLUCZ&hub=KLUCZ_HUBA&wyniki=TOKEN_WYNIKOW
 var API='https://julia-hub-161045418771.europe-west1.run.app', HUB='./';
 function pokaz(t,link){ document.getElementById('k').innerHTML=t+(link?'<a class="b" href="'+HUB+'">Przejdź do huba</a>':''); }
-var z=decodeURIComponent((location.hash||'').slice(1)).trim();
-if(z){ try{ localStorage.setItem('klucz_klasowki',z); }catch(e){} history.replaceState(null,'',location.pathname); }
+function dekoduj(t){ try{ return decodeURIComponent(t); }catch(e){ return null; } }
+function zapisz(nazwa,w){ try{ localStorage.setItem(nazwa,w); }catch(e){} }
+var surowy=(location.hash||'').slice(1), zly=false, z='';
+if(surowy){
+  if(/(^|&)(klucz|hub|wyniki)=/.test(surowy)){
+    surowy.split('&').forEach(function(para){
+      var i=para.indexOf('='), n=para.slice(0,i), w=dekoduj(para.slice(i+1));
+      if(w===null){ zly=true; return; }
+      w=w.trim(); if(!w) return;
+      if(n==='klucz') z=w; else if(n==='hub') zapisz('klucz_huba',w); else if(n==='wyniki') zapisz('token_wynikow',w);
+    });
+  } else { z=dekoduj(surowy); if(z===null){ zly=true; z=''; } z=z.trim(); }
+  if(z) zapisz('klucz_klasowki',z);
+  history.replaceState(null,'',location.pathname);
+}
 var k=''; try{ k=localStorage.getItem('klucz_klasowki')||''; }catch(e){}
-if(!k) pokaz('🔒 Brak klucza. Otwórz link z kluczem od rodzica.');
+if(zly&&!k) pokaz('❌ Ten link jest uszkodzony (może ucięty przy kopiowaniu). Poproś rodzica o link jeszcze raz.');
+else if(!k) pokaz('🔒 Brak klucza. Otwórz link z kluczem od rodzica.');
 else fetch(API+'/k/klucz',{headers:{'X-Klucz':k},cache:'no-store'})
   .then(function(r){
     if(r.status===204) pokaz('✅ Gotowe! Ten komputer może już otwierać klasówki.',true);
-    else { try{ localStorage.removeItem('klucz_klasowki'); }catch(e){} pokaz('❌ Ten klucz nie działa. Poproś rodzica o aktualny link.'); }
+    // tylko odmowa serwera znaczy zly klucz; bledy serwera (5xx, 429) nie kasuja dobrego klucza
+    else if(r.status===401||r.status===403){ try{ localStorage.removeItem('klucz_klasowki'); }catch(e){} pokaz('❌ Ten klucz nie działa. Poproś rodzica o aktualny link.'); }
+    else pokaz('⚠️ Serwer chwilowo nie odpowiada (błąd '+r.status+'). Klucz jest zapisany — spróbuj otworzyć klasówkę za chwilę.',true);
   })
   .catch(function(){ pokaz('⚠️ Nie mogę sprawdzić klucza — brak internetu? Klucz jest zapisany, spróbuj otworzyć klasówkę.',true); });
 </script>

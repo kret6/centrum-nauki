@@ -119,7 +119,7 @@ body.z-klaw{padding-bottom:300px}
 <div id="klaw" class="nie-drukuj"><div class="siatka" id="klaw-siatka"></div></div>
 
 <script>
-var RESULTS_URL="https://julia-hub-161045418771.europe-west1.run.app/results",RESULTS_TOKEN="XW09DH2_fs8SdHh7B9pGMoCZuDVwAHSQ";
+var RESULTS_URL="https://julia-hub-161045418771.europe-west1.run.app/results",/* token wynikow: z pamieci przegladarki (link od rodzica albo otwarta klasowka), nie z publicznej strony */RESULTS_TOKEN=(function(){ try{ return localStorage.getItem('token_wynikow')||''; }catch(e){ return ''; } })();
 var PAMIEC='mat_pierwiastki_gwo_v1';
 var R=String.raw;
 
@@ -320,7 +320,7 @@ function linieA(k){ return pelneLinie(k).map(function(l){ return '<div class="un
 function arkuszHTML(){
   var km=kmA,tm=tmA;
   var h='<div class="unit a-glowa"><div class="a-tytul">Pierwiastki — karta odpowiedzi</div>'
-    +'<div>Imię i nazwisko: <b>'+(stan.imie?esc(stan.imie):'...............................')+'</b> &nbsp;&nbsp; Data: '+dzis()+'</div></div>';
+    +'<div>Imię i nazwisko: <b id="ark-imie">'+(stan.imie?esc(stan.imie):'...............................')+'</b> &nbsp;&nbsp; Data: '+dzis()+'</div></div>';
   Z.forEach(function(z){
     h+='<div class="zb"><div class="unit"><b>Zadanie '+z.nr+'.</b> '+tm(z.p)+'</div>';
     if(z.typ==='abcd'){
@@ -360,7 +360,9 @@ function pokazArkusz(){
   document.getElementById('pdf-info').textContent=''; document.getElementById('pdf-info').className='info';
   odswiezMape(); window.scrollTo(0,0);
 }
-document.getElementById('imie').addEventListener('input',function(e){ stan.imie=e.target.value; zapamietaj(); rysujArkusz(); });
+// zmiana imienia podmienia tylko ten napis, bez ponownego rysowania wszystkich wzorow (MathJax)
+document.getElementById('imie').addEventListener('input',function(e){ stan.imie=e.target.value; zapamietaj();
+  var b=document.getElementById('ark-imie'); if(b) b.textContent=stan.imie||'...............................'; else rysujArkusz(); });
 
 function opcjePDF(){
   var d=new Date(),dd=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);

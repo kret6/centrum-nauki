@@ -109,7 +109,7 @@ Potem <b>sprawdź się</b> — te same ćwiczenia co na kartce, tylko stukasz.</
 </div>
 
 <script>
-var RESULTS_URL="https://julia-hub-161045418771.europe-west1.run.app/results",RESULTS_TOKEN="XW09DH2_fs8SdHh7B9pGMoCZuDVwAHSQ";
+var RESULTS_URL="https://julia-hub-161045418771.europe-west1.run.app/results",/* token wynikow: z pamieci przegladarki (link od rodzica albo otwarta klasowka), nie z publicznej strony */RESULTS_TOKEN=(function(){ try{ return localStorage.getItem('token_wynikow')||''; }catch(e){ return ''; } })();
 function postResult(score,total,nazwa){
   if(!RESULTS_URL||!RESULTS_TOKEN)return;
   try{fetch(RESULTS_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
