@@ -5,46 +5,132 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex">
 <meta name="referrer" content="no-referrer">
-<title>Klucz do klasówek</title>
+<title>Klucz do Centrum Nauki</title>
 <style>
 body{font-family:'Segoe UI',Arial,sans-serif;background:#e7e4dc;color:#3e2f1c;padding:40px 16px;margin:0}
 .k{max-width:560px;margin:0 auto;background:#fff;border-radius:16px;padding:28px;font-size:21px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.1)}
-a.b{display:block;margin-top:22px;min-height:64px;line-height:64px;border-radius:14px;background:#3e2f1c;color:#fff;font-weight:700;text-decoration:none}
+.b{display:block;box-sizing:border-box;width:100%;margin-top:18px;min-height:64px;line-height:64px;padding:0 12px;border:0;border-radius:14px;background:#3e2f1c;color:#fff;font:700 21px 'Segoe UI',Arial,sans-serif;text-decoration:none;cursor:pointer}
+.b2{background:#fff;color:#3e2f1c;border:3px solid #3e2f1c;line-height:58px}
+ul{list-style:none;padding:0;margin:18px 0 0;text-align:left;font-size:19px}
+li{padding:9px 0;border-bottom:1px solid #eee}
+textarea{display:block;box-sizing:border-box;width:100%;min-height:96px;margin-top:12px;padding:10px;font-size:17px;border:2px solid #3e2f1c;border-radius:10px}
+.mala{font-size:17px;color:#6b5a44;margin-top:22px;line-height:1.4}
+.ukryte{display:none}
 </style>
 </head>
 <body>
-<div class="k" id="k">⏳ Sprawdzam klucz…</div>
+<div class="k">
+  <div id="k">⏳ Sprawdzam klucz…</div>
+  <ul id="st"></ul>
+  <a class="b ukryte" id="dohuba" href="./">Przejdź do huba</a>
+  <div class="ukryte" id="kopiuj">
+    <div class="mala">Hub jest też zainstalowany jako aplikacja na ekranie tego urządzenia (ikona „Nauka”)? Aplikacja ma osobną pamięć: skopiuj link, otwórz aplikację, wejdź w kafelek z kłódką i wklej.</div>
+    <button class="b b2" id="kop">📋 Skopiuj link do aplikacji</button>
+  </div>
+  <div class="ukryte" id="wklej">
+    <div class="mala">Masz link z kluczem od rodzica? Wklej go tutaj:</div>
+    <textarea id="pole" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Link z kluczem"></textarea>
+    <button class="b ukryte" id="schowek">📋 Wklej ze schowka</button>
+    <button class="b b2" id="zap">💾 Zapisz klucz</button>
+  </div>
+</div>
 <script>
-// Klucz przychodzi w czesci adresu po "#": przegladarka nie wysyla jej nigdzie (ani do GitHuba, ani w logach).
+// Klucze przychodza w czesci adresu po "#": przegladarka nie wysyla jej nigdzie (ani do GitHuba, ani w logach).
 // Formaty linku: klucz.html#KLUCZ  albo  klucz.html#klucz=KLUCZ&hub=KLUCZ_HUBA&wyniki=TOKEN_WYNIKOW
-var API='https://julia-hub-161045418771.europe-west1.run.app', HUB='./';
-function pokaz(t,link){ document.getElementById('k').innerHTML=t+(link?'<a class="b" href="'+HUB+'">Przejdź do huba</a>':''); }
+// Aplikacja z ekranu telefonu (zwlaszcza iPhone) ma inna pamiec niz przegladarka, dlatego link mozna tez wkleic.
+var API='https://julia-hub-161045418771.europe-west1.run.app', NAZWY={klucz:'klucz_klasowki',hub:'klucz_huba',wyniki:'token_wynikow'};
+function $(i){ return document.getElementById(i); }
+function pokaz(i,on){ $(i).classList.toggle('ukryte',!on); }
+function czytaj(n){ try{ return localStorage.getItem(n)||''; }catch(e){ return ''; } }
+function zapisz(n,w){ try{ localStorage.setItem(n,w); }catch(e){} }
+function usun(n){ try{ localStorage.removeItem(n); }catch(e){} }
 function dekoduj(t){ try{ return decodeURIComponent(t); }catch(e){ return null; } }
-function zapisz(nazwa,w){ try{ localStorage.setItem(nazwa,w); }catch(e){} }
-var surowy=(location.hash||'').slice(1), zly=false, z='';
-if(surowy){
-  if(/(^|&)(klucz|hub|wyniki)=/.test(surowy)){
-    surowy.split('&').forEach(function(para){
+var APKA=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
+var DOTYK=window.matchMedia&&matchMedia('(pointer: coarse)').matches;
+
+// tekst = czesc po "#" (albo caly wklejony link); golyKlucz = stary format "#KLUCZ" (tylko z adresu)
+// zwraca: liczba zapisanych kluczy, -1 = link uszkodzony
+function wczytaj(tekst,golyKlucz){
+  tekst=(tekst||'').trim(); var h=tekst.indexOf('#'); if(h>=0) tekst=tekst.slice(h+1);
+  if(!tekst) return 0;
+  var ile=0, zly=false;
+  if(/(^|&)(klucz|hub|wyniki)=/.test(tekst)){
+    tekst.split('&').forEach(function(para){
       var i=para.indexOf('='), n=para.slice(0,i), w=dekoduj(para.slice(i+1));
       if(w===null){ zly=true; return; }
-      w=w.trim(); if(!w) return;
-      if(n==='klucz') z=w; else if(n==='hub') zapisz('klucz_huba',w); else if(n==='wyniki') zapisz('token_wynikow',w);
+      w=w.trim(); if(!w||!NAZWY[n]) return;
+      zapisz(NAZWY[n],w); ile++;
     });
-  } else { z=dekoduj(surowy); if(z===null){ zly=true; z=''; } z=z.trim(); }
-  if(z) zapisz('klucz_klasowki',z);
+  } else if(golyKlucz){
+    var z=dekoduj(tekst); if(z===null) zly=true; else if(z.trim()){ zapisz('klucz_klasowki',z.trim()); ile++; }
+  } else zly=true;
+  if(ile&&navigator.storage&&navigator.storage.persist) navigator.storage.persist().catch(function(){});
+  return zly&&!ile?-1:ile;
+}
+
+// 'ok' | 'zly' | 'brak' | '?' (nie da sie sprawdzic: brak internetu, awaria serwera)
+function sprawdzJeden(nazwa,adres,opcje,dobry){
+  var w=czytaj(nazwa); if(!w) return Promise.resolve('brak');
+  return fetch(adres(w),opcje(w)).then(function(r){
+    if(r.status===dobry) return 'ok';
+    // tylko odmowa serwera znaczy zly klucz; bledy serwera (5xx, 429) nie kasuja dobrego klucza
+    if(r.status===401||r.status===403){ usun(nazwa); return 'zly'; }
+    return '?';
+  },function(){ return '?'; });
+}
+var OPIS={ok:'✅ działa',zly:'❌ nie działa — potrzebny nowy link',brak:'🔒 brak',
+  '?':'⚠️ zapisany, ale nie mogę go sprawdzić (internet?)'};
+function sprawdz(zly){
+  $('k').textContent='⏳ Sprawdzam klucze…';
+  Promise.all([
+    sprawdzJeden('klucz_klasowki',function(){ return API+'/k/klucz'; },function(w){ return {headers:{'X-Klucz':w},cache:'no-store'}; },204),
+    sprawdzJeden('klucz_huba',function(w){ return API+'/chat?k='+encodeURIComponent(w); },function(){ return {cache:'no-store'}; },200)
+  ]).then(function(s){
+    var wyniki=czytaj('token_wynikow')?'✅ zapisany':'🔒 brak (dopisze się sam po otwarciu klasówki)';
+    $('st').innerHTML='<li>📝 Klasówki: '+OPIS[s[0]]+'</li><li>✍️ Pomocnik pisania: '+OPIS[s[1]]+'</li><li>📊 Wyniki do rodzica: '+wyniki+'</li>';
+    var komplet=s[0]!=='brak'&&s[0]!=='zly'&&s[1]!=='brak'&&s[1]!=='zly';
+    var gdzie=APKA?'Ta aplikacja':'To urządzenie';
+    if(zly&&!komplet) $('k').textContent='❌ Ten link jest uszkodzony (może ucięty przy kopiowaniu). Poproś rodzica o link jeszcze raz.';
+    else if(komplet) $('k').textContent='✅ Gotowe! '+gdzie+' ma klucze.';
+    else $('k').textContent='🔒 '+gdzie+' nie ma jeszcze wszystkich kluczy. Poproś rodzica o link z kluczem.';
+    pokaz('dohuba',komplet||s[0]==='ok'||s[1]==='ok');
+    pokaz('wklej',!komplet);
+    pokaz('kopiuj',komplet&&!APKA&&DOTYK);
+  });
+}
+
+function link(){
+  var p=[]; for(var n in NAZWY){ var w=czytaj(NAZWY[n]); if(w) p.push(n+'='+encodeURIComponent(w)); }
+  return location.origin+location.pathname+'#'+p.join('&');
+}
+$('kop').onclick=function(){
+  var b=this, t=link();
+  function gotowe(){ b.textContent='✅ Skopiowane — teraz wklej w aplikacji'; }
+  function recznie(){ $('pole').value=t; pokaz('wklej',true); $('pole').select(); try{ document.execCommand('copy'); gotowe(); }catch(e){} }
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(gotowe,recznie); else recznie();
+};
+function zPola(tekst){
+  var r=wczytaj(tekst,false);
+  if(r<=0){ $('k').textContent='❌ To nie wygląda na link z kluczem. Skopiuj cały link od rodzica i wklej jeszcze raz.'; return; }
+  $('pole').value='';
+  // klucz nie zostaje w schowku
+  try{ if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText('').catch(function(){}); }catch(e){}
+  sprawdz(false);
+}
+$('zap').onclick=function(){ zPola($('pole').value); };
+if(navigator.clipboard&&navigator.clipboard.readText){
+  pokaz('schowek',true);
+  $('schowek').onclick=function(){
+    navigator.clipboard.readText().then(zPola,function(){ $('pole').focus(); $('k').textContent='Przytrzymaj palec w polu poniżej i wybierz „Wklej”.'; });
+  };
+}
+
+var surowy=(location.hash||'').slice(1), zlyLink=false;
+if(surowy){
+  zlyLink=wczytaj(surowy,true)<0;
   history.replaceState(null,'',location.pathname);
 }
-var k=''; try{ k=localStorage.getItem('klucz_klasowki')||''; }catch(e){}
-if(zly&&!k) pokaz('❌ Ten link jest uszkodzony (może ucięty przy kopiowaniu). Poproś rodzica o link jeszcze raz.');
-else if(!k) pokaz('🔒 Brak klucza. Otwórz link z kluczem od rodzica.');
-else fetch(API+'/k/klucz',{headers:{'X-Klucz':k},cache:'no-store'})
-  .then(function(r){
-    if(r.status===204) pokaz('✅ Gotowe! Ten komputer może już otwierać klasówki.',true);
-    // tylko odmowa serwera znaczy zly klucz; bledy serwera (5xx, 429) nie kasuja dobrego klucza
-    else if(r.status===401||r.status===403){ try{ localStorage.removeItem('klucz_klasowki'); }catch(e){} pokaz('❌ Ten klucz nie działa. Poproś rodzica o aktualny link.'); }
-    else pokaz('⚠️ Serwer chwilowo nie odpowiada (błąd '+r.status+'). Klucz jest zapisany — spróbuj otworzyć klasówkę za chwilę.',true);
-  })
-  .catch(function(){ pokaz('⚠️ Nie mogę sprawdzić klucza — brak internetu? Klucz jest zapisany, spróbuj otworzyć klasówkę.',true); });
+sprawdz(zlyLink);
 </script>
 </body>
 </html>

@@ -265,7 +265,9 @@ function dalejTest(){
   var k=''; try{ k=localStorage.getItem('klucz_huba')||''; }catch(e){}
   Array.prototype.forEach.call(document.querySelectorAll('a[data-hub]'),function(a){
     if(k){ var u=new URL(a.href); u.searchParams.set('k',k); a.href=u.toString(); }
-    else a.addEventListener('click',function(e){ e.preventDefault(); alert('🔒 Ten komputer nie ma jeszcze klucza do pomocnika pisania. Poproś rodzica o link z kluczem.'); });
+    else a.addEventListener('click',function(e){ e.preventDefault();
+      // brak klucza (np. aplikacja z ekranu telefonu ma osobna pamiec): strona klucza pozwala wkleic link
+      if(confirm('🔒 To urządzenie nie ma jeszcze klucza do pomocnika pisania. Otworzyć stronę, gdzie można wkleić link z kluczem od rodzica?')) location.href='../klucz.html'; });
   });
 })();
 </script>

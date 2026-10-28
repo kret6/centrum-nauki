@@ -175,12 +175,14 @@ if(!stan.uznane) stan.uznane={};
 // kolejka kartek do wyslania: kazda oddana kartka czeka tu, az serwer ja przyjmie (stary zapis: jedno pole doWyslania)
 if(!stan.kolejka) stan.kolejka=[];
 if(stan.doWyslania){ stan.kolejka.push(stan.doWyslania); delete stan.doWyslania; }
+// zastepcze zdjecie kartki: sam wynik (serwer przyjmuje tylko pelny dokument HTML)
+function bezZdjecia(p,powod){ return '<!DOCTYPE html>\n<p>Zdjęcie kartki '+powod+'. Wynik: '+p.score+' / '+p.total+'.</p>'; }
 function zapamietaj(){
   try{ localStorage.setItem(KARTA.pamiec,JSON.stringify(stan)); return; }catch(e){}
   // brak miejsca w przegladarce: zapisujemy bez zdjec kartek, zeby odpowiedzi i wyniki nie przepadly
   try{
     var lekki=JSON.parse(JSON.stringify(stan));
-    lekki.kolejka.forEach(function(p){ p.html='<p>Zdjęcie kartki nie zmieściło się w pamięci przeglądarki. Wynik: '+p.score+' / '+p.total+'.</p>'; });
+    lekki.kolejka.forEach(function(p){ p.html=bezZdjecia(p,'nie zmieściło się w pamięci przeglądarki'); });
     localStorage.setItem(KARTA.pamiec,JSON.stringify(lekki));
   }catch(e){}
 }
@@ -365,8 +367,12 @@ function wyslijKartke(){
   p.token=RESULTS_TOKEN||p.token;   // po zmianie tokenu stara kartka z kolejki idzie z aktualnym
   fetch(RESULTS_URL.replace(/\/results$/,'/kartka'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)})
     .then(function(r){
-      if(!r.ok) throw r.status;
       WYSYLAM=false;
+      // za duza kartka: wysylamy jeszcze raz sam wynik, zeby nie przepadl
+      if(r.status===413&&!p.lekka){ p.html=bezZdjecia(p,'było za duże do wysłania'); p.lekka=true; zapamietaj(); return wyslijKartke(); }
+      // 400/413 = serwer tej kartki nigdy nie przyjmie: wypada z kolejki, zeby nie blokowac nastepnych;
+      // inne bledy (zly token, awaria serwera) = kartka czeka na kolejna probe
+      if(!r.ok&&r.status!==400&&r.status!==413) throw r.status;
       var i=stan.kolejka.indexOf(p); if(i>=0) stan.kolejka.splice(i,1);
       if(!stan.kolejka.length) stan.wyslana=true;
       zapamietaj(); var e=document.getElementById('wysylka'); if(e) e.textContent=napisWysylki();
@@ -443,7 +449,7 @@ wyslijKartke();
 // ---- ladowanie kartki: tresc i klucz odpowiedzi NIE leza w tej stronie ----
 // Strona publiczna to sam silnik; dane przychodza z serwera huba tylko dla przegladarki z kluczem.
 var ZRODLO=/*__ZRODLO__*/null, ID_KARTKI='polski_spor_sprawdzian', API='https://julia-hub-161045418771.europe-west1.run.app';
-var ZAMEK='🔒 Ta klasówka otwiera się tylko na zaufanym komputerze.<br><br>Poproś rodzica, żeby raz otworzył tu link z kluczem.';
+var ZAMEK='🔒 Ta klasówka otwiera się tylko na zaufanym urządzeniu.<br><br>Poproś rodzica, żeby raz otworzył tu link z kluczem.<br><br><a class="ponow" style="display:inline-block;line-height:48px;text-decoration:none" href="../klucz.html">🔑 Mam link — wklej klucz</a>';
 function komunikat(t){ document.getElementById('kartka').innerHTML='<div class="zamek">'+t+'</div>'; }
 function uruchomKartke(D){
   document.title=D.tytul;
