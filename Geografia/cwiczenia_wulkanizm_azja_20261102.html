@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ćwiczenia</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#e7e4dc;color:#111;padding:12px 12px 60px;font-family:'Segoe UI',Arial,sans-serif}
+.info{max-width:1000px;margin:0 auto 12px;background:#fff8e1;border-radius:12px;padding:10px 14px;font-size:17px;color:#5d4037}
+.strona{position:relative;max-width:1000px;margin:0 auto 14px;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.18);overflow:hidden}
+.strona>img{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
+.pole{position:absolute;display:block;border:0;border-radius:3px;outline:0;padding:0;margin:0;background:rgba(255,226,89,.3);
+  color:#0d2a8a;font-family:'Segoe Print','Comic Sans MS',cursive;line-height:1}
+.pole:focus{background:rgba(255,226,89,.6);box-shadow:0 0 0 2px #d99a00}
+.pole::-webkit-calendar-picker-indicator{display:none !important}
+.pole.kratka{text-align:center;font-weight:700;background:rgba(255,226,89,.4)}
+textarea.pole{resize:none;overflow:hidden;white-space:pre-wrap}
+.traf{position:absolute;display:block;border:0;border-radius:6px;background:rgba(255,226,89,.22);cursor:pointer;padding:0}
+.traf:hover{background:rgba(255,226,89,.42)}
+.traf:focus{outline:2px solid #d99a00;outline-offset:0}
+.koleczko{position:absolute;display:none;border:solid #0d2a8a;border-radius:50%;pointer-events:none}
+.koleczko.wyb{display:block}
+body.oddane .pole,body.oddane .traf{background:transparent;box-shadow:none;cursor:default}
+body.oddane .traf{pointer-events:none}
+.dol{max-width:1000px;margin:0 auto}
+.dol button{display:block;width:100%;min-height:64px;margin:0 0 10px;border:0;border-radius:12px;background:#3e2f1c;color:#fff;font:700 21px 'Segoe UI',Arial,sans-serif;cursor:pointer;padding:10px}
+.dol button.drugi{background:#fff;color:#3e2f1c;border:2px solid #3e2f1c}
+.dol .rzad{display:flex;gap:10px}
+.dol .rzad button{flex:1}
+.dol .kom{background:#fff;border-radius:12px;padding:14px;margin:0 0 10px;text-align:center;font-size:19px;font-weight:600;color:#3e2f1c}
+.zamek{max-width:640px;margin:40px auto;background:#fff;border-radius:12px;padding:28px;text-align:center;font-size:20px;line-height:1.4}
+.ponow{min-height:48px;padding:0 20px;border:0;border-radius:10px;background:#3e2f1c;color:#fff;font:700 18px 'Segoe UI',Arial,sans-serif;cursor:pointer}
+#druk{display:none}
+@media print{
+  @page{size:A4;margin:0}
+  html,body{background:#fff;padding:0;margin:0}
+  body>*{display:none !important}
+  body>#druk{display:block !important}
+  #druk canvas{display:block;width:210mm;height:296mm;object-fit:contain;break-after:page}
+  #druk canvas:last-child{break-after:auto}
+}
+</style>
+</head>
+<body>
+<div class="info" id="info"></div>
+<div id="strony"></div>
+<div class="dol" id="dol"></div>
+<div id="druk"></div>
+<script>
+var ZRODLO=/*__ZRODLO__*/null, ID_KARTKI='geografia_wulkanizm_cw', API='https://julia-hub-161045418771.europe-west1.run.app';
+var D=null, RESULTS_URL='', RESULTS_TOKEN='', KLUCZ_PAMIECI='';
+var stan={odp:{},oddane:false,oddano:0,kolejka:[],wyslana:false};
+var CZCIONKA="'Segoe Print','Comic Sans MS',cursive", KOLOR='#0d2a8a';
+var OBRAZY=[], ELEM={}, KOLKA={};
+var miara=document.createElement('canvas').getContext('2d');
+
+function $(i){ return document.getElementById(i); }
+function szerTekstu(t,fs,gruby){ miara.font=(gruby?'700 ':'')+'100px '+CZCIONKA; return miara.measureText(t).width*fs/100; }
+// tekst ma sie zmiescic w polu tak jak na kartce: czcionka maleje, pole nie rosnie
+function dopasuj(p,t){
+  var fs=p.fs; if(!t) return fs;
+  while(fs>p.min&&szerTekstu(t,fs,p.typ==='kratka')>p.w*0.98) fs*=0.96;
+  return Math.max(fs,p.min);
+}
+function zawin(t,fs,w){
+  var wyj=[]; String(t).split('\n').forEach(function(ak){
+    var l=''; ak.split(' ').forEach(function(s){ var nowa=l?l+' '+s:s;
+      if(l&&szerTekstu(nowa,fs)>w){ wyj.push(l); l=s; } else l=nowa; });
+    wyj.push(l); });
+  return wyj;
+}
+function dopasujObszar(p,t){ var fs=p.fs; if(!t) return fs;
+  while(fs>p.min&&zawin(t,fs,p.w*0.97).length>p.n) fs*=0.96;
+  return Math.max(fs,p.min); }
+
+function zapamietaj(){
+  try{ localStorage.setItem(KLUCZ_PAMIECI,JSON.stringify(stan)); }
+  catch(e){ stan.kolejka.forEach(function(p){ p.html=bezZdjecia(p); p.lekka=true; });
+    try{ localStorage.setItem(KLUCZ_PAMIECI,JSON.stringify(stan)); }catch(e2){} }
+}
+function bezZdjecia(p){ return '<!DOCTYPE html>\n<p>Zdjęcie kartki było za duże do wysłania. Uzupełnione pola: '+p.score+' / '+p.total+'.</p>'; }
+function liczPola(){ var gr={},n=0; D.pola.forEach(function(p){ if(p.typ==='wybor'){ gr[p.gr]=1; } else n++; }); return n+Object.keys(gr).length; }
+function liczWypelnione(){ var gr={},n=0; D.pola.forEach(function(p){
+    if(p.typ==='wybor'){ if(stan.odp[p.gr]) gr[p.gr]=1; } else if(String(stan.odp[p.id]||'').trim()) n++; });
+  return n+Object.keys(gr).length; }
+
+function rozmiesc(){
+  D.pola.forEach(function(p){
+    var S=$('strona'+p.s), W=S.offsetWidth;
+    if(p.typ==='wybor'){
+      var b=ELEM[p.id], k=KOLKA[p.id];
+      b.style.left=p.x*W+'px'; b.style.top=p.y*W+'px'; b.style.width=p.w*W+'px'; b.style.height=p.h*W+'px';
+      k.style.left=(p.kx-p.krx)*W+'px'; k.style.top=(p.ky-p.kry)*W+'px'; k.style.width=2*p.krx*W+'px'; k.style.height=2*p.kry*W+'px';
+      k.style.borderWidth=Math.max(1.5,0.0024*W)+'px';
+      return;
+    }
+    var e=ELEM[p.id], t=stan.odp[p.id]||'';
+    e.style.left=p.x*W+'px'; e.style.top=p.y*W+'px'; e.style.width=p.w*W+'px'; e.style.height=p.h*W+'px';
+    if(p.typ==='obszar'){ e.style.lineHeight=p.dy*W+'px'; e.style.fontSize=dopasujObszar(p,t)*W+'px'; }
+    else e.style.fontSize=dopasuj(p,t)*W+'px';
+  });
+}
+function rysuj(){
+  document.body.classList.toggle('oddane',stan.oddane);
+  D.pola.forEach(function(p){
+    if(p.typ==='wybor'){ var w=stan.odp[p.gr]===p.v; KOLKA[p.id].classList.toggle('wyb',w); ELEM[p.id].setAttribute('aria-pressed',w?'true':'false'); ELEM[p.id].tabIndex=stan.oddane?-1:0; return; }
+    var e=ELEM[p.id]; if(e!==document.activeElement) e.value=stan.odp[p.id]||''; e.readOnly=stan.oddane; e.tabIndex=stan.oddane?-1:0;
+  });
+  rozmiesc();
+  $('info').innerHTML=stan.oddane?'✍️ Kartka oddana. Poniżej możesz pobrać PDF albo wydrukować.':'✍️ '+D.instrukcja+' Na końcu kliknij <b>„Gotowe — oddaję”</b>.';
+  var h='';
+  if(!stan.oddane) h='<button onclick="oddaj()">✅ Gotowe — oddaję</button>';
+  else {
+    h='<div class="kom" id="wysylka">'+napisWysylki()+'</div>';
+    h+='<div class="rzad"><button id="btnPdf" onclick="pobierzPdf()">⬇️ Pobierz PDF</button><button onclick="drukuj()">🖨️ Drukuj</button></div>';
+    h+='<button class="drugi" onclick="wroc()">✏️ Wróć do uzupełniania</button>';
+  }
+  $('dol').innerHTML=h;
+}
+function zbuduj(){
+  var S=$('strony');
+  D.strony.forEach(function(st,i){
+    var d=document.createElement('div'); d.className='strona'; d.id='strona'+i;
+    var im=document.createElement('img'); im.src=st.img; im.alt='Strona '+(i+1)+' ćwiczeń'; im.draggable=false; d.appendChild(im); S.appendChild(d); OBRAZY[i]=im;
+  });
+  D.pola.forEach(function(p){
+    var S2=$('strona'+p.s), e;
+    if(p.typ==='wybor'){
+      e=document.createElement('button'); e.type='button'; e.className='traf'; e.setAttribute('aria-label',p.aria);
+      e.onclick=function(){ if(stan.oddane) return; stan.odp[p.gr]=stan.odp[p.gr]===p.v?'':p.v; zapamietaj(); rysuj(); };
+      var k=document.createElement('div'); k.className='koleczko'; KOLKA[p.id]=k;
+      S2.appendChild(e); S2.appendChild(k); ELEM[p.id]=e; return;
+    }
+    e=document.createElement(p.typ==='obszar'?'textarea':'input');
+    e.className='pole'+(p.typ==='kratka'?' kratka':''); e.setAttribute('data-id',p.id); e.setAttribute('aria-label',p.aria);
+    e.autocomplete='off'; e.spellcheck=false; e.setAttribute('autocapitalize','off');
+    if(p.typ==='kratka') e.maxLength=1;
+    if(p.numer) e.setAttribute('inputmode','numeric');
+    if(p.lista){ e.setAttribute('list','lista_'+p.lista); }
+    e.addEventListener('input',function(){
+      if(p.typ==='kratka') e.value=e.value.toUpperCase();
+      stan.odp[p.id]=e.value; zapamietaj();
+      if(p.typ==='obszar') e.style.fontSize=dopasujObszar(p,e.value)*e.parentNode.offsetWidth+'px';
+      else e.style.fontSize=dopasuj(p,e.value)*e.parentNode.offsetWidth+'px';
+    });
+    if(p.typ!=='obszar') e.addEventListener('keydown',function(ev){ if(ev.key==='Enter'){ ev.preventDefault();
+      var w=Array.prototype.slice.call(document.querySelectorAll('.pole')), i=w.indexOf(e); if(w[i+1]) w[i+1].focus(); } });
+    S2.appendChild(e); ELEM[p.id]=e;
+  });
+  Object.keys(D.listy||{}).forEach(function(n){
+    var l=document.createElement('datalist'); l.id='lista_'+n;
+    D.listy[n].forEach(function(t){ var o=document.createElement('option'); o.value=t; l.appendChild(o); });
+    document.body.appendChild(l);
+  });
+  window.addEventListener('resize',rozmiesc);
+}
+
+// strona z wpisami jako obrazek: skan + odpowiedzi w tych samych miejscach, bez zoltych podswietlen
+function spal(i,szer){
+  var im=OBRAZY[i], W=szer||im.naturalWidth, H=Math.round(W*im.naturalHeight/im.naturalWidth);
+  var c=document.createElement('canvas'); c.width=W; c.height=H;
+  var x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,W,H); x.drawImage(im,0,0,W,H);
+  x.fillStyle=KOLOR; x.strokeStyle=KOLOR;
+  D.pola.forEach(function(p){
+    if(p.s!==i) return;
+    if(p.typ==='wybor'){ if(stan.odp[p.gr]!==p.v) return;
+      x.lineWidth=Math.max(1.5,0.0024*W); x.beginPath(); x.ellipse(p.kx*W,p.ky*W,p.krx*W,p.kry*W,0,0,2*Math.PI); x.stroke(); return; }
+    var t=stan.odp[p.id]||''; if(!String(t).trim()) return;
+    if(p.typ==='obszar'){ var fo=dopasujObszar(p,t); x.font=fo*W+'px '+CZCIONKA; x.textAlign='left'; x.textBaseline='alphabetic';
+      zawin(t,fo,p.w*0.97).slice(0,p.n).forEach(function(l,j){ x.fillText(l,p.x*W,(p.lin+j*p.dy-p.nad)*W); }); return; }
+    var f=dopasuj(p,t);
+    x.font=(p.typ==='kratka'?'700 ':'')+f*W+'px '+CZCIONKA; x.textBaseline='alphabetic';
+    if(p.typ==='kratka'){ x.textAlign='center'; x.fillText(t,(p.x+p.w/2)*W,(p.y+p.h/2+f*0.34)*W); }
+    else { x.textAlign='left'; x.fillText(t,p.x*W,(p.y+p.h-p.nad)*W); }
+  });
+  return c;
+}
+function zdjecieKartki(){
+  var h=D.strony.map(function(s,i){ return '<img style="display:block;width:100%;max-width:1000px;margin:0 auto 12px" alt="Strona '+(i+1)+'" src="'+spal(i,1000).toDataURL('image/jpeg',0.62)+'">'; }).join('');
+  return '<!DOCTYPE html>\n<html lang="pl"><head><meta charset="UTF-8"><title>'+D.tytul+'</title></head><body style="background:#e7e4dc;padding:12px"><div style="max-width:1000px;margin:0 auto 12px;font:600 17px Segoe UI,Arial,sans-serif;color:#3e2f1c">Oddano: '+new Date().toLocaleString('pl-PL')+'</div>'+h+'<\/body><\/html>';
+}
+function oddaj(){
+  if(document.activeElement) document.activeElement.blur();
+  var ile=liczPola(), jest=liczWypelnione();
+  if(jest<ile&&!confirm('Nie wszystko jest uzupełnione (puste miejsca: '+(ile-jest)+'). Oddać kartkę mimo to?')) return;
+  stan.oddane=true; stan.oddano=Date.now(); stan.wyslana=false;
+  stan.kolejka.push({token:RESULTS_TOKEN,przedmiot:D.przedmiot,tytul:D.tytul,score:jest,total:ile,czysta:true,html:zdjecieKartki()});
+  zapamietaj(); rysuj(); wyslijKartke();
+  $('dol').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function wroc(){ stan.oddane=false; zapamietaj(); rysuj(); }
+function napisWysylki(){ return stan.kolejka.length?'⏳ Wysyłam kartkę do rodzica…':(stan.wyslana?'📨 Kartka wysłana do rodzica.':''); }
+var WYSYLAM=false;
+function wyslijKartke(){
+  if(WYSYLAM||!stan.kolejka.length) return;
+  WYSYLAM=true;
+  var p=stan.kolejka[0]; p.token=RESULTS_TOKEN||p.token;
+  fetch(RESULTS_URL.replace(/\/results$/,'/kartka'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)})
+    .then(function(r){
+      WYSYLAM=false;
+      if(r.status===413&&!p.lekka){ p.html=bezZdjecia(p); p.lekka=true; zapamietaj(); return wyslijKartke(); }
+      if(!r.ok&&r.status!==400&&r.status!==413) throw r.status;
+      var i=stan.kolejka.indexOf(p); if(i>=0) stan.kolejka.splice(i,1);
+      if(!stan.kolejka.length) stan.wyslana=true;
+      zapamietaj(); var e=$('wysylka'); if(e) e.textContent=napisWysylki();
+      wyslijKartke();
+    })
+    .catch(function(){ WYSYLAM=false; var e=$('wysylka'); if(e) e.textContent='⚠️ Nie udało się wysłać kartki — spróbuję jeszcze raz przy następnym otwarciu strony.'; });
+}
+function dataOddania(){ return new Date(stan.oddano||Date.now()).toLocaleDateString('pl-PL'); }
+function nazwaDruku(){ return D.przedmiot+' '+dataOddania(); }
+function przygotujDruk(){ var d=$('druk'); d.innerHTML=''; D.strony.forEach(function(s,i){ d.appendChild(spal(i)); }); }
+var TYTUL='';
+window.addEventListener('beforeprint',function(){ przygotujDruk(); TYTUL=document.title; document.title=nazwaDruku(); });
+window.addEventListener('afterprint',function(){ if(TYTUL) document.title=TYTUL; $('druk').innerHTML=''; });
+function drukuj(){ window.print(); }
+function zaladujPdf(){ return new Promise(function(ok,nie){
+  if(window.jspdf) return ok();
+  var s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+  s.onload=function(){ ok(); }; s.onerror=nie; document.head.appendChild(s); }); }
+function zrobPdf(){
+  return zaladujPdf().then(function(){
+    var pdf=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'portrait'}), A=210, B=297;
+    D.strony.forEach(function(s,i){
+      var c=spal(i), sk=Math.min(A/c.width,B/c.height), w=c.width*sk, h=c.height*sk;
+      if(i) pdf.addPage('a4','portrait');
+      pdf.addImage(c.toDataURL('image/jpeg',0.88),'JPEG',(A-w)/2,(B-h)/2,w,h);
+    });
+    pdf.setProperties({title:nazwaDruku(),subject:'',author:'',keywords:'',creator:''});
+    return pdf;
+  });
+}
+function pobierzPdf(){
+  var b=$('btnPdf'); if(b){ b.disabled=true; b.textContent='⏳ Robię PDF…'; }
+  zrobPdf().then(function(p){ p.save(nazwaDruku()+'.pdf'); },function(){ alert('Nie udało się zrobić PDF. Kliknij „Drukuj” i wybierz „Zapisz jako PDF”.'); })
+    .then(function(){ var b2=$('btnPdf'); if(b2){ b2.disabled=false; b2.textContent='⬇️ Pobierz PDF'; } });
+}
+function uruchom(DANE){
+  D=DANE; document.title=D.tytul; RESULTS_URL=D.wyniki_url; RESULTS_TOKEN=D.wyniki_token; KLUCZ_PAMIECI=D.pamiec;
+  try{ if(D.wyniki_token) localStorage.setItem('token_wynikow',D.wyniki_token); }catch(e){}
+  try{ var z=JSON.parse(localStorage.getItem(KLUCZ_PAMIECI)||'null'); if(z&&z.odp) stan=z; }catch(e){}
+  $('strony').innerHTML=''; zbuduj();
+  var czeka=OBRAZY.length, gotowe=function(){ if(--czeka<=0){ rysuj(); wyslijKartke(); window.GOTOWE=true; } };
+  rysuj();
+  OBRAZY.forEach(function(im){ if(im.complete&&im.naturalWidth) gotowe(); else { im.onload=gotowe; im.onerror=gotowe; } });
+}
+var ZAMEK='🔒 Te ćwiczenia otwierają się tylko na zaufanym urządzeniu.<br><br>Poproś rodzica, żeby raz otworzył tu link z kluczem.<br><br><a class="ponow" style="display:inline-block;line-height:48px;text-decoration:none" href="../klucz.html">🔑 Mam link — wklej klucz</a>';
+function komunikat(t){ $('strony').innerHTML='<div class="zamek">'+t+'</div>'; }
+function pobierz(){
+  var k=''; try{ k=localStorage.getItem('klucz_klasowki')||''; }catch(e){}
+  if(!k){ komunikat(ZAMEK); return; }
+  komunikat('⏳ Wczytuję strony…');
+  fetch(API+'/k/dane/'+ID_KARTKI,{headers:{'X-Klucz':k},cache:'no-store'})
+    .then(function(r){ if(r.status===403) throw 'klucz'; if(!r.ok) throw 'blad'; return r.json(); })
+    .then(uruchom)
+    .catch(function(e){ komunikat(e==='klucz'?ZAMEK:'⚠️ Nie mogę wczytać ćwiczeń. Sprawdź internet.<br><br><button class="ponow" onclick="pobierz()">Spróbuj ponownie</button>'); });
+}
+if(ZRODLO) uruchom(ZRODLO); else pobierz();
+</script>
+</body>
+</html>
