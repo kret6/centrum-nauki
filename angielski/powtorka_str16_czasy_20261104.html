@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Powtórka</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f3eef8;color:#222;padding:16px 18px 50px;max-width:900px;margin:0 auto;font-size:20px;line-height:1.5}
+h1{font-size:30px;color:#6a1b9a;margin-bottom:4px}
+h2{font-size:24px;color:#6a1b9a;margin:26px 0 8px;border-bottom:3px solid #d8c8e6;padding-bottom:4px}
+.tag{display:inline-block;background:#e6dcf0;color:#6a1b9a;font-size:14px;padding:3px 12px;border-radius:10px;margin-bottom:8px}
+.ekran{display:none}.ekran.aktywny{display:block}
+.info{background:#fff;border-radius:16px;padding:14px 18px;margin:10px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.zest{background:#fff;border-radius:16px;padding:14px 16px;margin:10px 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.zest .nz{font-size:21px;font-weight:700}
+.zest .op{font-size:16px;color:#675a75;margin:2px 0 8px}
+.zest .prz{display:flex;gap:8px;flex-wrap:wrap}
+.zest button{flex:1 1 180px;min-height:64px;font-size:19px;font-weight:700;border:3px solid #d8c8e6;background:#faf7fc;color:#6a1b9a;border-radius:14px;cursor:pointer;font-family:inherit;padding:4px 8px}
+.zest button:hover,.zest button:focus{background:#6a1b9a;color:#fff;outline:none}
+.zest button .wyn{display:block;font-size:14px;font-weight:600;color:#2e7d32}
+.zest button:hover .wyn,.zest button:focus .wyn{color:#fff}
+.btn{display:block;width:100%;min-height:76px;font-size:22px;font-weight:700;border:none;border-radius:16px;margin-top:14px;cursor:pointer;font-family:inherit}
+.glowny{background:#6a1b9a;color:#fff}.drugi{background:#fff;color:#6a1b9a;border:3px solid #d8c8e6}
+.rzad{display:flex;gap:10px}.rzad .btn{flex:1}
+.licznik{color:#7b6a8a;font-size:17px;font-weight:700;margin:6px 0;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.licznik button{min-height:44px;padding:0 14px;font-size:16px;border-radius:10px;border:2px solid #d8c8e6;background:#fff;color:#6a1b9a;font-weight:700;cursor:pointer;font-family:inherit}
+.pasek{height:10px;background:#e6dcf0;border-radius:6px;overflow:hidden;margin-bottom:8px}
+.pasek div{height:100%;background:#6a1b9a;width:0}
+.karta{background:#fff;border-radius:20px;padding:26px 22px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.08);margin-top:6px}
+.pl{font-size:25px;color:#555}
+.en{font-size:38px;font-weight:800;color:#6a1b9a;margin-top:10px;word-break:break-word}
+.notka{font-size:17px;color:#7a5c00;background:#fff8e1;border-radius:10px;padding:8px 12px;margin-top:12px}
+.glos{margin-top:16px;min-height:60px;padding:0 22px;font-size:20px;border-radius:14px;border:3px solid #d8c8e6;background:#faf7fc;color:#6a1b9a;font-weight:700;cursor:pointer;font-family:inherit}
+.polec{font-size:17px;color:#675a75;margin-bottom:8px}
+.pyt{font-size:27px;line-height:1.75;color:#222;font-weight:600}
+.pyt .ob{display:block;font-size:76px;line-height:1.25}
+.pyt .tl{display:block;font-size:18px;font-weight:400;color:#675a75;line-height:1.4;margin-top:6px}
+.luk{font-size:25px;font-family:inherit;border:none;border-bottom:4px solid #6a1b9a;background:#f6f0fb;color:#0d2a8a;text-align:center;padding:0 6px;border-radius:6px 6px 0 0;margin:0 3px;max-width:100%}
+.luk:focus{outline:none;background:#ece0f7}
+.luk.dobrze{border-color:#2e7d32;background:#e8f5e9}
+.luk.zle{border-color:#c62828;background:#ffebee}
+.duze{width:100%;font-size:30px;padding:14px;border:4px solid #d8c8e6;border-radius:16px;margin-top:14px;text-align:center;font-family:inherit;color:#0d2a8a}
+.duze:focus{outline:none;border-color:#6a1b9a}
+.duze.dobrze{border-color:#2e7d32;background:#e8f5e9}.duze.zle{border-color:#c62828;background:#ffebee}
+.podp{font-family:Consolas,monospace;font-size:26px;letter-spacing:3px;color:#6a1b9a;margin-top:12px;min-height:34px;text-align:center}
+.kom{margin-top:14px;border-radius:14px;padding:14px;font-size:21px;text-align:center;display:none}
+.kom.d{display:block;background:#e8f5e9;color:#2e7d32;font-weight:700}
+.kom.z{display:block;background:#ffebee;color:#c62828}
+.kom b.pop{display:block;font-size:27px;color:#222;margin-top:6px}
+.uw{display:block;font-size:17px;font-weight:400;color:#6b5a00;margin-top:6px}
+.opcje{margin-top:14px}
+.opcje button{display:block;width:100%;min-height:76px;font-size:23px;font-weight:600;border:3px solid #d8c8e6;background:#fff;color:#222;border-radius:16px;margin-top:10px;cursor:pointer;font-family:inherit;text-align:left;padding:8px 18px}
+.opcje button:hover{background:#faf7fc}
+.opcje button .kl{color:#8d7ba0;font-size:17px;margin-right:12px}
+.opcje button.dobrze{background:#e8f5e9;border-color:#2e7d32}
+.opcje button.zle{background:#ffebee;border-color:#c62828}
+.duza{font-size:60px;font-weight:800;color:#6a1b9a;text-align:center;margin-top:10px}
+.zas{background:#fff;border-radius:16px;padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,.08);margin-top:10px}
+.zas h3{font-size:22px;color:#6a1b9a;margin:12px 0 4px}
+.zas h3:first-child{margin-top:0}
+.zas p,.zas li{margin:4px 0}
+.zas ul{padding-left:24px}
+.zas .prz{background:#f6f0fb;border-radius:10px;padding:6px 12px;margin:4px 0}
+.zas table{border-collapse:collapse;margin:6px 0;width:100%}
+.zas td,.zas th{border:2px solid #d8c8e6;padding:6px 10px;text-align:left;font-size:19px}
+.zamek{background:#fff;border-radius:16px;padding:30px;text-align:center;margin-top:30px}
+.ponow{display:inline-block;min-height:56px;line-height:52px;padding:0 22px;border-radius:14px;background:#6a1b9a;color:#fff;font-weight:700;text-decoration:none;border:none;font-size:19px;cursor:pointer}
+@media print{.btn,.glos,.licznik button{display:none}}
+</style>
+</head>
+<body>
+<div id="tresc"></div>
+<script type="text/plain" id="silnik">
+var R=document.getElementById('tresc'), DANE=POWT, pam={naj:{}};
+try{ pam=JSON.parse(localStorage.getItem(DANE.pamiec)||'null')||pam; if(!pam.naj) pam.naj={}; }catch(e){}
+function zapisz(){ try{ localStorage.setItem(DANE.pamiec,JSON.stringify(pam)); }catch(e){} }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function szukaj(id){ var w=null; DANE.dzialy.forEach(function(d){ d.zestawy.forEach(function(z){ if(z.id===id) w=z; }); }); return w; }
+function potasuj(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)), t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+
+// ---- porownywanie: wielkosc liter, kropka na koncu i skroty (did not = didn't) nie maja znaczenia; lacznik i apostrof maja
+function nrm(s){ return String(s||'').toLowerCase().replace(/[’‘`´]/g,"'").replace(/[–—]/g,'-').replace(/,/g,' ').replace(/\s+/g,' ').trim().replace(/[.?!]+$/,'').trim()
+  .replace(/\bdid not\b/g,"didn't").replace(/\bwas not\b/g,"wasn't").replace(/\bwere not\b/g,"weren't"); }
+function luzno(s){ return nrm(s).replace(/[^a-z0-9ąćęłńóśźż]/g,''); }
+function pasuje(v,lista){ var n=nrm(v); return lista.some(function(x){ return nrm(x)===n; }); }
+function prawie(v,lista){ var n=luzno(v); return !!n && lista.some(function(x){ return luzno(x)===n; }); }
+
+// ---- glos angielski
+var glosEN=null;
+function szukajGlosu(){ var v=window.speechSynthesis?speechSynthesis.getVoices():[], en=v.filter(function(x){ return /^en/i.test(x.lang); });
+  glosEN=en.filter(function(x){ return /^en-GB/i.test(x.lang); })[0]||en[0]||null; }
+if(window.speechSynthesis){ szukajGlosu(); speechSynthesis.onvoiceschanged=szukajGlosu; }
+function mow(t){ if(!window.speechSynthesis||!t) return; if(!glosEN) szukajGlosu(); speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(String(t).replace(/\(|\)/g,'')); u.lang='en-GB'; u.rate=.85; if(glosEN) u.voice=glosEN;
+  setTimeout(function(){ speechSynthesis.resume(); speechSynthesis.speak(u); },60); }
+
+// ---- spis
+function wynikTxt(k){ var n=pam.naj[k]; return n?'<span class="wyn">✓ najlepiej '+n.s+' / '+n.t+'</span>':''; }
+function spis(){
+  aktywny=null;
+  var h='<div class="tag">'+esc(DANE.przedmiot)+'</div><h1>'+esc(DANE.tytul)+'</h1>';
+  if(DANE.wstep) h+='<div class="info">'+DANE.wstep+'</div>';
+  DANE.dzialy.forEach(function(d){
+    h+='<h2>'+esc(d.nazwa)+'</h2>';
+    d.zestawy.forEach(function(z){
+      h+='<div class="zest"><div class="nz">'+esc(z.tytul)+'</div>'+(z.opis?'<div class="op">'+esc(z.opis)+'</div>':'')+'<div class="prz">';
+      if(z.slowa){
+        h+='<button onclick="nauka(\''+z.id+'\')">📖 Ucz się ('+z.slowa.length+')</button>';
+        h+='<button onclick="cw(\''+z.id+'\',\'pisz\')">⌨️ Pisz po angielsku'+wynikTxt(z.id+':pisz')+'</button>';
+        h+='<button onclick="cw(\''+z.id+'\',\'znacz\')">🖱️ Co to znaczy?'+wynikTxt(z.id+':znacz')+'</button>';
+      } else if(z.zasady){
+        h+='<button onclick="zasady(\''+z.id+'\')">📖 Czytaj</button>';
+      } else {
+        h+='<button onclick="cw(\''+z.id+'\',\'cw\')">'+(z.pozycje[0].w?'🖱️':'⌨️')+' Ćwicz ('+z.pozycje.length+')'+wynikTxt(z.id+':cw')+'</button>';
+      }
+      h+='</div></div>';
+    });
+  });
+  if(DANE.stopka) h+='<div class="info" style="margin-top:24px">'+DANE.stopka+'</div>';
+  R.innerHTML=h; window.scrollTo(0,0);
+}
+
+// ---- karty do nauki
+var aktywny=null;
+function nauka(id,i){
+  var z=szukaj(id); i=i||0; aktywny={tryb:'nauka',z:z,i:i};
+  var s=z.slowa[i];
+  R.innerHTML='<div class="tag">'+esc(z.tytul)+'</div><div class="licznik"><span>Zwrot '+(i+1)+' z '+z.slowa.length+'</span><button onclick="spis()">☰ Spis</button></div>'+
+    '<div class="pasek"><div style="width:'+Math.round((i+1)*100/z.slowa.length)+'%"></div></div>'+
+    '<div class="karta"><div class="pl">'+esc(s.pl)+'</div><div class="en">'+esc(s.en)+'</div>'+
+    '<button class="glos" onclick="mow(aktywny.z.slowa[aktywny.i].en)">🔊 Posłuchaj</button>'+(s.uw?'<div class="notka">💡 '+esc(s.uw)+'</div>':'')+'</div>'+
+    '<div class="rzad"><button class="btn drugi" onclick="naukaKrok(-1)">‹ Wstecz</button><button class="btn glowny" id="nDalej" onclick="naukaKrok(1)">'+(i===z.slowa.length-1?'⌨️ Teraz pisz':'Dalej ›')+'</button></div>';
+  document.getElementById('nDalej').focus(); window.scrollTo(0,0);
+}
+function naukaKrok(d){ var a=aktywny, n=a.i+d; if(n<0) return spis(); if(n>=a.z.slowa.length) return cw(a.z.id,'pisz'); nauka(a.z.id,n); }
+
+// ---- zasady
+function zasady(id){
+  var z=szukaj(id); aktywny={tryb:'zasady',z:z};
+  R.innerHTML='<div class="tag">'+esc(z.tytul)+'</div><div class="licznik"><span>'+esc(z.tytul)+'</span><button onclick="spis()">☰ Spis</button></div><div class="zas">'+z.zasady+'</div>'+
+    (z.dalej?'<button class="btn glowny" onclick="cw(\''+z.dalej+'\',\'cw\')">⌨️ Teraz ćwicz</button>':'')+'<button class="btn drugi" onclick="spis()">☰ Wróć do spisu</button>';
+  window.scrollTo(0,0);
+}
+
+// ---- pozycje cwiczenia
+function pozycjePisz(z){ return z.slowa.map(function(s){ return {obraz:s.obraz,pyt:s.pl,o:[[s.en].concat(s.alt||[])],mow:s.en,uw:s.uw,pokaz:s.en}; }); }
+function pozycjeZnacz(z){
+  var inne=[]; DANE.dzialy.forEach(function(d){ d.zestawy.forEach(function(x){ if(x.slowa) x.slowa.forEach(function(s){ if(inne.indexOf(s.pl)<0) inne.push(s.pl); }); }); });
+  return z.slowa.map(function(s){
+    var w=potasuj(inne.filter(function(p){ return p!==s.pl; })).slice(0,2).concat([s.pl]); w=potasuj(w);
+    return {pyt:s.en,w:w,ok:w.indexOf(s.pl),mow:s.en}; });
+}
+function pelne(p){ if(p.pokaz) return p.pokaz; if(p.w) return p.w[p.ok]; if(p.t){ var i=0; return p.t.replace(/\{\}/g,function(){ return p.o[i++][0]; }).replace(/\s+\(.*?\)(?=[ .?,]|$)/g,''); } return p.o[0][0]; }
+
+var C=null; // biezace cwiczenie
+function cw(id,tryb,tylko){
+  var z=szukaj(id), poz=tryb==='pisz'?pozycjePisz(z):tryb==='znacz'?pozycjeZnacz(z):z.pozycje;
+  if(tylko) poz=tylko;
+  C={z:z,tryb:tryb,wszystkie:poz,kol:z.staly&&!tylko?poz.slice():potasuj(poz),pierwszy:[],dobrze:0,obecna:null,faza:'',wynikOK:!tylko,zle:[],zrobione:0};
+  aktywny={tryb:'cw'}; nastepna();
+}
+function pasekCw(){ return '<div class="licznik"><span>'+esc(C.z.tytul)+' · zostało '+(C.kol.length+1)+'</span><button onclick="spis()">☰ Spis</button></div><div class="pasek"><div style="width:'+Math.round(C.zrobione*100/C.wszystkie.length)+'%"></div></div>'; }
+function nastepna(){
+  if(!C.kol.length) return koniec();
+  var p=C.obecna=C.kol.shift(); C.faza='pisz';
+  var pol=C.z.polecenie||(p.w?'Wybierz (klawisze 1, 2, 3 albo myszką):':C.tryb==='pisz'?'Napisz po angielsku:':'Wpisz odpowiedź (Enter = sprawdź):');
+  var h=pasekCw()+'<div class="karta"><div class="polec">'+esc(pol)+'</div><div class="pyt" id="pyt">';
+  if(p.obraz) h+='<span class="ob">'+p.obraz+'</span>';
+  if(p.t){ var j=0; h+=esc(p.t).replace(/\{\}/g,function(){ var dl=Math.max.apply(null,p.o[j].map(function(x){ return x.length; })); var w='<input class="luk" data-i="'+j+'" style="width:'+(dl+3)+'ch" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" aria-label="luka '+(j+1)+'">'; j++; return w; }); }
+  else if(p.pyt&&!(p.obraz&&C.tryb==='cw')) h+=esc(p.pyt);
+  if(p.tl) h+='<span class="tl">'+esc(p.tl)+'</span>';
+  h+='</div>';
+  if(!p.t&&!p.w) h+='<input class="duze" id="duze" data-i="0" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" aria-label="odpowiedź">';
+  h+='<div class="podp" id="podp"></div></div>';
+  if(p.w){ h+='<div class="opcje">'+p.w.map(function(x,i){ return '<button data-w="'+i+'" onclick="wybierz('+i+')"><span class="kl">'+(i+1)+'</span>'+esc(x)+'</button>'; }).join('')+'</div>'; }
+  h+='<div class="kom" id="kom"></div>';
+  if(!p.w) h+='<button class="btn glowny" id="spr" onclick="sprawdz()">✓ Sprawdź</button><button class="btn drugi" id="podpBtn" onclick="podpowiedz()">💡 Podpowiedź</button>';
+  else h+='<button class="btn glowny" id="spr" style="display:none" onclick="sprawdz()">Dalej ›</button>';
+  R.innerHTML=h;
+  var pierwsze=R.querySelector('[data-i]'); if(pierwsze) pierwsze.focus();
+  window.scrollTo(0,0);
+}
+function pola(){ return Array.prototype.slice.call(R.querySelectorAll('[data-i]')); }
+function podpowiedz(){
+  var p=C.obecna; if(C.pierwszy.indexOf(p)<0&&C.zle.indexOf(p)<0) C.zle.push(p);
+  document.getElementById('podp').textContent=p.o.map(function(l){ return l[0].split(' ').map(function(w){ var c=w.replace(/[^A-Za-z0-9'-]/g,''); return c?c[0]+new Array(c.length).join('_'):w; }).join('  '); }).join('   |   ');
+  var f=pola().filter(function(x){ return !x.value; })[0]||pola()[0]; if(f) f.focus();
+}
+function pokazKom(cl,html){ var k=document.getElementById('kom'); k.className='kom '+cl; k.innerHTML=html; }
+function uwaga(p){ return p.uw?'<span class="uw">💡 '+esc(p.uw)+'</span>':''; }
+function zaliczona(p){ if(C.zle.indexOf(p)<0&&C.pierwszy.indexOf(p)<0){ C.pierwszy.push(p); C.dobrze++; } }
+function sprawdz(){
+  var p=C.obecna;
+  if(C.faza==='dalej') return nastepna();
+  var ps=pola();
+  var pusta=ps.filter(function(x){ return !nrm(x.value); })[0]; if(pusta){ pusta.focus(); return; }
+  var oki=ps.map(function(x,i){ return pasuje(x.value,p.o[i]); }), wszystko=oki.every(Boolean);
+  if(C.faza==='pisz'){
+    ps.forEach(function(x,i){ x.classList.remove('dobrze','zle'); x.classList.add(oki[i]?'dobrze':'zle'); });
+    if(wszystko){
+      zaliczona(p); C.zrobione++;
+      pokazKom('d','✓ Dobrze! '+esc(pelne(p))+uwaga(p)); mow(p.mow||pelne(p));
+      C.faza='dalej'; document.getElementById('spr').textContent='Dalej ›'; document.getElementById('podpBtn').style.display='none';
+      document.getElementById('spr').focus();
+    } else {
+      if(C.zle.indexOf(p)<0) C.zle.push(p);
+      var bl=ps.filter(function(x,i){ return !oki[i]; });
+      var pr=ps.every(function(x,i){ return oki[i]||prawie(x.value,p.o[i]); });
+      var pul=(p.pul&&new RegExp(p.pul[0],'i').test(ps.map(function(x){ return x.value; }).join(' ')))?'<span class="uw">⚠️ '+esc(p.pul[1])+'</span>':'';
+      pokazKom('z',(pr?'Prawie! Popatrz na pisownię:':'Jeszcze nie. Tak ma być:')+'<b class="pop">'+esc(pelne(p))+'</b>'+pul+uwaga(p)+'<span class="uw">Przepisz to teraz.</span>');
+      mow(p.mow||pelne(p));
+      bl.forEach(function(x){ x.value=''; x.classList.remove('zle'); }); C.faza='przepisz';
+      document.getElementById('podpBtn').style.display='none'; bl[0].focus();
+    }
+  } else if(C.faza==='przepisz'){
+    if(wszystko){
+      ps.forEach(function(x){ x.classList.remove('zle'); x.classList.add('dobrze'); });
+      C.kol.push(p);
+      pokazKom('d','✓ Tak! To pytanie wróci jeszcze raz.'); C.faza='dalej';
+      document.getElementById('spr').textContent='Dalej ›'; document.getElementById('spr').focus();
+    } else { var zl=ps.filter(function(x,i){ return !oki[i]; })[0]; zl.select(); }
+  }
+}
+function wybierz(i){
+  var p=C.obecna; if(C.faza==='dalej') return;
+  var bs=R.querySelectorAll('.opcje button');
+  bs[p.ok].classList.add('dobrze');
+  if(i===p.ok){ zaliczona(p); C.zrobione++; pokazKom('d','✓ Dobrze!'+uwaga(p)); }
+  else { bs[i].classList.add('zle'); if(C.zle.indexOf(p)<0) C.zle.push(p); C.kol.push(p); pokazKom('z','Jeszcze nie. Dobra odpowiedź: <b class="pop">'+esc(p.w[p.ok])+'</b>'+uwaga(p)+'<span class="uw">To pytanie wróci jeszcze raz.</span>'); }
+  if(p.mow) mow(p.mow);
+  C.faza='dalej'; var s=document.getElementById('spr'); s.style.display='block'; s.focus();
+}
+function koniec(){
+  var z=C.z, kl=z.id+':'+C.tryb, n=C.wszystkie.length;
+  if(C.wynikOK){
+    var st=pam.naj[kl]; if(!st||C.dobrze>st.s){ pam.naj[kl]={s:C.dobrze,t:n}; zapisz(); }
+    try{ var tok=''; try{ tok=localStorage.getItem('token_wynikow')||''; }catch(e){}
+      if(WYNIKI_URL&&(WYNIKI_TOKEN||tok)) fetch(WYNIKI_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},body:JSON.stringify({token:WYNIKI_TOKEN||tok,subject:DANE.przedmiot,title:z.tytul+(C.tryb==='znacz'?' — znaczenia':''),score:C.dobrze,total:n})}).catch(function(){});
+    }catch(e){}
+  }
+  var zle=C.zle.slice(); C.ostatnieZle=zle;
+  var h='<div class="tag">'+esc(z.tytul)+'</div><div class="info" style="text-align:center">Za pierwszym razem dobrze:</div><div class="duza" id="wynik">'+C.dobrze+' / '+n+'</div>';
+  h+=zle.length?'<div class="info"><b>Do powtórki:</b><br>'+zle.map(function(p){ return esc(pelne(p)); }).join('<br>')+'</div>':'<div class="info" style="text-align:center">Wszystko od razu dobrze! 🎉</div>';
+  if(zle.length) h+='<button class="btn glowny" onclick="cw(C.z.id,C.tryb,C.ostatnieZle)">↻ Tylko te ('+zle.length+')</button>';
+  h+='<button class="btn '+(zle.length?'drugi':'glowny')+'" onclick="cw(C.z.id,C.tryb)">↻ Całość jeszcze raz</button><button class="btn drugi" onclick="spis()">☰ Wróć do spisu</button>';
+  R.innerHTML=h; aktywny={tryb:'koniec'}; window.scrollTo(0,0);
+  C.faza='koniec';
+}
+document.addEventListener('keydown',function(e){
+  if(aktywny&&aktywny.tryb==='nauka'){ if(e.key==='ArrowRight'||e.key==='Enter'){ e.preventDefault(); naukaKrok(1); } else if(e.key==='ArrowLeft'){ naukaKrok(-1); } return; }
+  if(!C||!aktywny||aktywny.tryb!=='cw') return;
+  var p=C.obecna;
+  if(e.key==='Enter'){
+    if(e.target&&e.target.tagName==='BUTTON'&&e.target.id!=='spr') return;
+    e.preventDefault();
+    if(C.faza==='dalej') return sprawdz();
+    if(p&&!p.w){ var ps=pola(), i=ps.indexOf(e.target);
+      if(C.faza==='pisz'&&i>=0&&i<ps.length-1&&ps.slice(i+1).some(function(x){ return !x.value; })){ ps.slice(i+1).filter(function(x){ return !x.value; })[0].focus(); return; }
+      sprawdz(); }
+  } else if(p&&p.w&&C.faza==='pisz'&&/^[1-9]$/.test(e.key)){ var n=+e.key-1; if(n<p.w.length) wybierz(n); }
+});
+spis();
+</script>
+<script>
+// ---- ladowanie: tresc i odpowiedzi NIE leza w tej stronie, przychodza z serwera tylko dla przegladarki z kluczem
+var ZRODLO=/*__ZRODLO__*/null, ID_KARTKI='angielski_powtorka_str16', API='https://julia-hub-161045418771.europe-west1.run.app', WYNIKI_URL='', WYNIKI_TOKEN='';
+var ZAMEK='🔒 Ta powtórka otwiera się tylko na zaufanym urządzeniu.<br><br>Poproś rodzica, żeby raz otworzył tu link z kluczem.<br><br><a class="ponow" href="../klucz.html">🔑 Mam link — wklej klucz</a>';
+function komunikat(t){ document.getElementById('tresc').innerHTML='<div class="zamek">'+t+'</div>'; }
+function uruchom(D){
+  document.title=D.tytul; WYNIKI_URL=D.wyniki_url||''; WYNIKI_TOKEN=D.wyniki_token||'';
+  try{ if(D.wyniki_token) localStorage.setItem('token_wynikow',D.wyniki_token); }catch(e){}
+  (0,eval)(D.dane);
+  (0,eval)(document.getElementById('silnik').textContent);
+}
+function pobierz(){
+  var k=''; try{ k=localStorage.getItem('klucz_klasowki')||''; }catch(e){}
+  if(!k){ komunikat(ZAMEK); return; }
+  komunikat('⏳ Wczytuję powtórkę…');
+  fetch(API+'/k/dane/'+ID_KARTKI,{headers:{'X-Klucz':k},cache:'no-store'})
+    .then(function(r){ if(r.status===403) throw 'klucz'; if(!r.ok) throw 'blad'; return r.json(); })
+    .then(uruchom)
+    .catch(function(e){ komunikat(e==='klucz'?ZAMEK:'⚠️ Nie mogę wczytać powtórki. Sprawdź internet.<br><br><button class="ponow" onclick="pobierz()">Spróbuj ponownie</button>'); });
+}
+if(ZRODLO) uruchom(ZRODLO); else pobierz();
+</script>
+</body>
+</html>
