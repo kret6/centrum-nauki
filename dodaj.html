@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>Dodaj materiał</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#e7e4dc;color:#3e2f1c;margin:0;padding:14px 12px 60px;font-size:19px;line-height:1.4}
+.w{max-width:680px;margin:0 auto}
+h1{font-size:26px;margin:6px 0 4px}
+h2{font-size:21px;margin:0 0 10px}
+a.wroc{color:#3e2f1c;font-size:17px}
+.k{background:#fff;border-radius:16px;padding:18px;margin-top:14px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+label.e{display:block;font-weight:700;margin:16px 0 6px}
+label.e:first-child{margin-top:0}
+.op{font-weight:400;color:#6b5a44;font-size:16px}
+select,input[type=text],textarea{width:100%;font:inherit;padding:12px;border:2px solid #3e2f1c;border-radius:12px;background:#fff;color:inherit}
+textarea{min-height:90px;resize:vertical}
+.wyb{display:flex;align-items:center;gap:12px;min-height:58px;padding:8px 14px;border:2px solid #bbb;border-radius:12px;margin-top:8px;cursor:pointer}
+.wyb input{width:26px;height:26px;flex:none}
+.wyb:has(input:checked){border-color:#3e2f1c;background:#f6f1e6}
+.b{display:block;width:100%;min-height:62px;padding:8px 12px;border:3px solid #3e2f1c;border-radius:14px;background:#3e2f1c;color:#fff;font:700 20px 'Segoe UI',Arial,sans-serif;cursor:pointer;margin-top:10px;text-align:center;text-decoration:none}
+.b.dr{background:#fff;color:#3e2f1c}
+.b.cz{background:#fff;color:#b71c1c;border-color:#b71c1c}
+.b.zi{background:#2e7d32;border-color:#2e7d32}
+.b:disabled{opacity:.45;cursor:default}
+.rz{display:flex;gap:10px}.rz .b{flex:1}
+.mini{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.mini div{position:relative;width:86px;height:86px;border-radius:10px;overflow:hidden;border:2px solid #bbb}
+.mini img{width:100%;height:100%;object-fit:cover}
+.mini button{position:absolute;top:0;right:0;width:34px;height:34px;border:0;background:rgba(0,0,0,.65);color:#fff;font-size:20px;cursor:pointer}
+.kom{border-radius:12px;padding:12px 14px;margin-top:12px}
+.kom.i{background:#fff8e1}.kom.z{background:#ffebee;color:#b71c1c}.kom.d{background:#e8f5e9;color:#1b5e20}
+.mat{border-top:2px solid #eee;padding:14px 0}
+.mat:first-of-type{border-top:0;padding-top:0}
+.mat .t{font-weight:700}
+.mat .s{font-size:16px;color:#6b5a44}
+.zn{display:inline-block;font-size:14px;font-weight:700;border-radius:8px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+.zn.g{background:#e8f5e9;color:#1b5e20}.zn.r{background:#fff8e1;color:#8d6e00}.zn.b2{background:#ffebee;color:#b71c1c}
+.pg a{display:block;padding:13px 14px;line-height:1.3;border:2px solid #3e2f1c;border-radius:12px;margin-top:8px;color:#3e2f1c;text-decoration:none;font-weight:700}
+details summary{font-weight:700;font-size:21px;cursor:pointer;min-height:44px;line-height:44px}
+.krec{display:inline-block;width:22px;height:22px;border:4px solid #c9bfa8;border-top-color:#3e2f1c;border-radius:50%;animation:k 1s linear infinite;vertical-align:middle;margin-right:8px}
+@keyframes k{to{transform:rotate(360deg)}}
+.ukr{display:none}
+#prompt{min-height:340px;font-size:16px}
+</style>
+</head>
+<body>
+<div class="w">
+<a class="wroc" href="./">‹ Centrum nauki</a>
+<h1>➕ Dodaj materiał</h1>
+<div class="op">Zrób zdjęcia zeszytu, podręcznika albo kartki. Z tego powstanie nauka, powtórka, test albo karta pracy.</div>
+
+<div class="k ukr" id="zamek">🔒 Ta strona działa tylko na zaufanym urządzeniu.<a class="b" href="klucz.html">🔑 Mam link — wklej klucz</a></div>
+
+<div id="app" class="ukr">
+ <div class="k" id="formularz">
+  <label class="e" for="przedmiot">1. Przedmiot</label>
+  <select id="przedmiot"></select>
+
+  <label class="e" for="temat">2. Temat <span class="op">(nie trzeba)</span></label>
+  <input type="text" id="temat" maxlength="100" placeholder="np. Wulkany i trzęsienia ziemi" autocomplete="off">
+
+  <label class="e">3. Co ma powstać?</label>
+  <div id="rodzaje"></div>
+
+  <label class="e">4. Zdjęcia</label>
+  <div class="rz">
+   <label class="b dr" style="margin-top:0">📷 Zrób zdjęcie<input type="file" id="aparat" accept="image/*" capture="environment" hidden></label>
+   <label class="b dr" style="margin-top:0">🖼️ Z galerii<input type="file" id="galeria" accept="image/*" multiple hidden></label>
+  </div>
+  <div class="mini" id="mini"></div>
+
+  <label class="e" for="uwagi">5. Wskazówki <span class="op">(nie trzeba; np. „tylko strona 12”, „sprawdzian jest z dat”)</span></label>
+  <textarea id="uwagi" maxlength="1500"></textarea>
+
+  <button class="b" id="start">✨ Zrób materiał</button>
+  <div id="kom"></div>
+ </div>
+
+ <div class="k">
+  <h2>Ostatnie materiały</h2>
+  <div id="lista"><span class="op">Jeszcze nic nie ma.</span></div>
+ </div>
+
+ <div class="k">
+  <details>
+   <summary>⚙️ Instrukcja dla agenta</summary>
+   <div class="op">Tu jest napisane, jak agent ma układać materiały. Jeśli wychodzą bzdury (za trudne, za długie, zły styl), popraw instrukcję i zapisz. Zmiana działa od następnego materiału.</div>
+   <textarea id="prompt" spellcheck="false"></textarea>
+   <button class="b" id="pzap">💾 Zapisz instrukcję</button>
+   <button class="b dr" id="pdom">↩️ Przywróć pierwotną</button>
+   <div id="pkom"></div>
+  </details>
+ </div>
+</div>
+</div>
+
+<script>
+var API='https://julia-hub-161045418771.europe-west1.run.app', KLUCZ='';
+try{ KLUCZ=localStorage.getItem('klucz_klasowki')||''; }catch(e){}
+function $(i){ return document.getElementById(i); }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function kom(gdzie,typ,t){ $(gdzie).innerHTML=t?'<div class="kom '+typ+'">'+t+'</div>':''; }
+var KREC='<span class="krec"></span>';
+
+// wywolanie serwera: zwraca JSON albo rzuca {status, tekst}
+function api(metoda,sciezka,cialo){
+  var o={method:metoda,headers:{'X-Klucz':KLUCZ},cache:'no-store'};
+  if(cialo instanceof FormData) o.body=cialo;
+  else if(cialo){ o.headers['Content-Type']='application/json'; o.body=JSON.stringify(cialo); }
+  return fetch(API+sciezka,o).then(function(r){
+    return r.json().catch(function(){ return {}; }).then(function(j){
+      if(!r.ok) throw {status:r.status,tekst:j.detail||''};
+      return j; });
+  });
+}
+function blad(e){ if(e&&e.status===403) return 'Klucz nie pasuje. Otwórz jeszcze raz link z kluczem.';
+  return (e&&e.tekst)||'Nie udało się połączyć z serwerem. Sprawdź internet i spróbuj ponownie.'; }
+
+// ---- zdjecia: zmniejszamy w telefonie (szybsze wysylanie, mniejszy koszt), dluzszy bok do 2000 px
+var ZDJ=[], MAXZ=12;
+function zmniejsz(plik){
+  return new Promise(function(ok,zle){
+    var url=URL.createObjectURL(plik), im=new Image();
+    im.onload=function(){
+      var s=Math.min(1,2000/Math.max(im.naturalWidth,im.naturalHeight)), c=document.createElement('canvas');
+      c.width=Math.round(im.naturalWidth*s); c.height=Math.round(im.naturalHeight*s);
+      c.getContext('2d').drawImage(im,0,0,c.width,c.height); URL.revokeObjectURL(url);
+      c.toBlob(function(b){ b?ok(b):zle(); },'image/jpeg',.85);
+    };
+    im.onerror=function(){ URL.revokeObjectURL(url); zle(); };
+    im.src=url;
+  });
+}
+function dodajPliki(pliki){
+  var kolej=Promise.resolve();
+  Array.prototype.forEach.call(pliki,function(p){
+    kolej=kolej.then(function(){
+      if(ZDJ.length>=MAXZ){ kom('kom','z','Najwyżej '+MAXZ+' zdjęć naraz.'); return; }
+      return zmniejsz(p).then(function(b){ ZDJ.push(b); rysujMini(); },function(){ kom('kom','z','Jednego pliku nie udało się wczytać (to nie zdjęcie?).'); });
+    });
+  });
+}
+function rysujMini(){
+  var m=$('mini'); m.innerHTML='';
+  ZDJ.forEach(function(b,i){
+    var d=document.createElement('div'), im=document.createElement('img'), x=document.createElement('button');
+    im.src=URL.createObjectURL(b); im.alt='zdjęcie '+(i+1); x.textContent='✕'; x.setAttribute('aria-label','Usuń zdjęcie '+(i+1));
+    x.onclick=function(){ ZDJ.splice(i,1); rysujMini(); };
+    d.appendChild(im); d.appendChild(x); m.appendChild(d);
+  });
+}
+$('aparat').onchange=$('galeria').onchange=function(){ dodajPliki(this.files); this.value=''; };
+
+// ---- generowanie
+var RODZ={};
+var SPI='Komputer, który układa materiały, jest teraz wyłączony. Materiał czeka w kolejce i zrobi się sam, gdy komputer wróci. Możesz zamknąć tę stronę.';
+function czekaj(mid,gdzie){
+  // uklada agent na komputerze domowym; strona tylko dopytuje o stan
+  return new Promise(function(ok,zle){
+    var proby=0;
+    (function pytaj(){
+      api('GET','/m/stan/'+mid).then(function(m){
+        if(m.stan==='gotowe') return ok(m);
+        if(m.stan==='blad') return zle({tekst:m.blad});
+        if(m.stan==='w toku') kom(gdzie,'i',KREC+'Agent czyta zdjęcia i układa materiał…');
+        if(++proby>75) return zle({tekst:'To trwa dłużej niż zwykle. Materiał zostaje w kolejce — zajrzyj tu później.'});
+        setTimeout(pytaj,6000);
+      },function(){ if(++proby>75) return zle({}); setTimeout(pytaj,6000); });
+    })();
+  });
+}
+function generuj(mid,poprawki,gdzie){
+  kom(gdzie,'i',KREC+'Wysyłam do agenta…');
+  return api('POST','/m/generuj/'+mid,{poprawki:poprawki||''})
+    .then(function(m){
+      if(!m.agent){ return odswiez().then(function(){ kom(gdzie==='kom'?'kom':'k_'+mid,'i','💤 '+SPI); }); }
+      kom(gdzie,'i',KREC+'Materiał czeka w kolejce. Zwykle trwa to około minuty.');
+      return czekaj(mid,gdzie).then(function(){ return odswiez().then(function(){ kom(gdzie==='kom'?'kom':'k_'+mid,'d','✓ Gotowe. Obejrzyj podgląd poniżej i zdecyduj, czy publikować.'); }); });
+    })
+    .catch(function(e){ return odswiez().then(function(){ kom(gdzie==='kom'?'kom':'k_'+mid,'z',blad(e)); }); });
+}
+$('start').onclick=function(){
+  var rodz=Object.keys(RODZ).filter(function(k){ return $('r_'+k).checked; });
+  if(!ZDJ.length) return kom('kom','z','Dodaj najpierw zdjęcie.');
+  if(!rodz.length) return kom('kom','z','Zaznacz, co ma powstać.');
+  var f=new FormData();
+  f.append('przedmiot',$('przedmiot').value); f.append('temat',$('temat').value); f.append('rodzaje',rodz.join(',')); f.append('uwagi',$('uwagi').value);
+  ZDJ.forEach(function(b,i){ f.append('zdjecia',b,'zdj'+i+'.jpg'); });
+  $('start').disabled=true; kom('kom','i',KREC+'Wysyłam zdjęcia…');
+  api('POST','/m/nowy',f).then(function(m){
+    ZDJ=[]; rysujMini(); $('temat').value=''; $('uwagi').value='';
+    return generuj(m.id,'','kom');
+  },function(e){ kom('kom','z',blad(e)); }).then(function(){ $('start').disabled=false; });
+};
+
+// ---- lista materialow
+function podglad(m){
+  var h='';
+  Object.keys(RODZ).forEach(function(r){
+    var id=(m.wyniki||{})[r]; if(!id) return;
+    h+='<a target="_blank" rel="noopener" href="m/'+(r==='nauka'?'powtorka':'kartka')+'.html?id='+encodeURIComponent(id)+'">👁️ Podgląd: '+esc(RODZ[r])+
+       (m.liczby&&m.liczby[r]!=null?' ('+m.liczby[r]+' pytań)':'')+'</a>';
+  });
+  return h;
+}
+function rysujListe(l){
+  if(!l.length){ $('lista').innerHTML='<span class="op">Jeszcze nic nie ma.</span>'; return; }
+  $('lista').innerHTML=l.map(function(m){
+    var zn=m.stan==='gotowe'?(m.opublikowano?'<span class="zn g">na stronie</span>':'<span class="zn r">czeka na decyzję</span>')
+      :m.stan==='blad'?'<span class="zn b2">błąd</span>':m.stan==='w toku'?'<span class="zn r">agent układa</span>':m.stan==='czeka'?'<span class="zn r">w kolejce</span>':'<span class="zn r">nowy</span>';
+    var h='<div class="mat" data-id="'+m.id+'"><div class="t">'+esc(m.przedmiot)+': '+esc(m.tytul||m.temat||'(bez tytułu)')+zn+'</div>'+
+      '<div class="s">'+esc((m.utworzono||'').replace('T',' ').slice(0,16))+' · zdjęć: '+(m.ile_zdjec||0)+'</div>';
+    if(m.stan==='blad') h+='<div class="kom z">'+esc(m.blad)+'</div>';
+    if(m.stan==='gotowe'){
+      h+='<div class="pg">'+podglad(m)+'</div>';
+      if(!m.opublikowano) h+='<button class="b zi" data-a="pub">✅ Publikuj w centrum nauki</button>';
+      h+='<textarea class="ukr" data-pole="popr" maxlength="2000" placeholder="Napisz, co poprawić. Np. „pytania 3 i 7 są za trudne”, „dodaj więcej o datach”, „w teście ma być 10 pytań”."></textarea>'+
+         '<button class="b dr" data-a="popr">✏️ Popraw i zrób jeszcze raz</button>';
+    } else if(m.stan!=='w toku'&&m.stan!=='czeka'){
+      h+='<button class="b dr" data-a="znow">🔁 Spróbuj jeszcze raz</button>';
+    }
+    h+='<button class="b cz" data-a="usun">🗑️ Usuń</button><div data-kom id="k_'+m.id+'"></div></div>';
+    return h;
+  }).join('');
+}
+function odswiez(){ return api('GET','/m/start').then(function(d){ rysujListe(d.lista); return d; }); }
+$('lista').onclick=function(e){
+  var b=e.target.closest('button[data-a]'); if(!b) return;
+  var mat=b.closest('.mat'), mid=mat.getAttribute('data-id'), a=b.getAttribute('data-a'), k='k_'+mid;
+  if(a==='pub'){
+    b.disabled=true; kom(k,'i',KREC+'Dodaję kafelek na stronę…');
+    api('POST','/m/publikuj/'+mid).then(function(){ return odswiez().then(function(){ kom('k_'+mid,'d','✓ Opublikowane. Kafelek pojawi się na stronie głównej za 1–2 minuty.'); }); },
+      function(er){ b.disabled=false; kom(k,'z',blad(er)); });
+  } else if(a==='popr'){
+    var pole=mat.querySelector('[data-pole=popr]');
+    if(pole.classList.contains('ukr')){ pole.classList.remove('ukr'); pole.focus(); b.textContent='🔁 Zrób jeszcze raz z tymi uwagami'; return; }
+    if(pole.value.trim().length<5) return kom(k,'z','Napisz, co poprawić.');
+    b.disabled=true; generuj(mid,pole.value,k);
+  } else if(a==='znow'){
+    b.disabled=true; generuj(mid,'',k);
+  } else if(a==='usun'){
+    if(b.getAttribute('data-pewne')!=='1'){ b.setAttribute('data-pewne','1'); b.textContent='🗑️ Na pewno usunąć? Kliknij jeszcze raz'; return; }
+    b.disabled=true; kom(k,'i',KREC+'Usuwam…');
+    api('POST','/m/usun/'+mid).then(odswiez,function(er){ b.disabled=false; kom(k,'z',blad(er)); });
+  }
+};
+
+// ---- instrukcja dla agenta
+$('pzap').onclick=function(){ api('POST','/m/prompt',{tekst:$('prompt').value}).then(function(d){ $('prompt').value=d.prompt; kom('pkom','d','✓ Zapisane.'); },function(e){ kom('pkom','z',blad(e)); }); };
+$('pdom').onclick=function(){ api('POST','/m/prompt',{domyslny:true}).then(function(d){ $('prompt').value=d.prompt; kom('pkom','d','✓ Przywrócono pierwotną instrukcję.'); },function(e){ kom('pkom','z',blad(e)); }); };
+
+// ---- start
+if(!KLUCZ){ $('zamek').classList.remove('ukr'); }
+else api('GET','/m/start').then(function(d){
+  MAXZ=d.max_zdjec; RODZ=d.rodzaje;
+  $('przedmiot').innerHTML=d.przedmioty.map(function(p){ return '<option>'+esc(p)+'</option>'; }).join('');
+  try{ var o=localStorage.getItem('dodaj_przedmiot'); if(o&&d.przedmioty.indexOf(o)>=0) $('przedmiot').value=o; }catch(e){}
+  $('przedmiot').onchange=function(){ try{ localStorage.setItem('dodaj_przedmiot',this.value); }catch(e){} };
+  $('rodzaje').innerHTML=Object.keys(RODZ).map(function(k){ return '<label class="wyb"><input type="checkbox" id="r_'+k+'"'+(k!=='karta'?' checked':'')+'>'+esc(RODZ[k])+'</label>'; }).join('');
+  $('prompt').value=d.prompt; rysujListe(d.lista);
+  if(!d.agent) kom('kom','i','💤 '+SPI);
+  $('app').classList.remove('ukr');
+},function(e){ $('zamek').classList.remove('ukr'); if(!(e&&e.status===403)) $('zamek').insertAdjacentHTML('afterbegin','<div class="kom z">'+blad(e)+'</div>'); });
+</script>
+</body>
+</html>
