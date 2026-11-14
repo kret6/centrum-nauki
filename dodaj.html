@@ -168,9 +168,9 @@ function czekaj(mid,gdzie){
         if(m.stan==='gotowe') return ok(m);
         if(m.stan==='blad') return zle({tekst:m.blad});
         if(m.stan==='w toku') kom(gdzie,'i',KREC+'Agent czyta zdjęcia i układa materiał…');
-        if(++proby>75) return zle({tekst:'To trwa dłużej niż zwykle. Materiał zostaje w kolejce — zajrzyj tu później.'});
+        if(++proby>400) return zle({tekst:'To trwa dłużej niż zwykle. Materiał zostaje w kolejce — zajrzyj tu później.'});
         setTimeout(pytaj,6000);
-      },function(){ if(++proby>75) return zle({}); setTimeout(pytaj,6000); });
+      },function(){ if(++proby>400) return zle({}); setTimeout(pytaj,6000); });
     })();
   });
 }
@@ -179,7 +179,7 @@ function generuj(mid,poprawki,gdzie){
   return api('POST','/m/generuj/'+mid,{poprawki:poprawki||''})
     .then(function(m){
       if(!m.agent){ return odswiez().then(function(){ kom(gdzie==='kom'?'kom':'k_'+mid,'i','💤 '+SPI); }); }
-      kom(gdzie,'i',KREC+'Materiał czeka w kolejce. Zwykle trwa to około minuty.');
+      kom(gdzie,'i',KREC+'Materiał czeka w kolejce. Jedna strona to około minuty, kilkanaście stron nawet 15–20 minut. Możesz zamknąć tę stronę i wrócić później.');
       return czekaj(mid,gdzie).then(function(){ return odswiez().then(function(){ kom(gdzie==='kom'?'kom':'k_'+mid,'d','✓ Gotowe. Obejrzyj podgląd poniżej i zdecyduj, czy publikować.'); }); });
     })
     .catch(function(e){ return odswiez().then(function(){ kom(gdzie==='kom'?'kom':'k_'+mid,'z',blad(e)); }); });
