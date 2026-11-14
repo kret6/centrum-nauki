@@ -257,6 +257,9 @@ function rysuj(){
       if(spr&&UKRYJ){ if(wyb) op.className+=dob?' ok':' blad'; }
       else if(spr){ if(wyb&&wl) op.className+=' ok'; if(wyb&&!wl) op.className+=' blad'; if(!wyb&&wl&&!dob) op.className+=' brak'; }
       op.setAttribute('aria-pressed',wyb?'true':'false');
+      var etykieta=op.querySelector('.ocena-opcji');
+      if(etykieta) etykieta.textContent=op.classList.contains('blad')?' ✕':
+        (op.classList.contains('ok')||op.classList.contains('brak')?' ✓':'');
       op.tabIndex=blok?-1:0;
     });
   }
@@ -276,8 +279,9 @@ function rysuj(){
   else {
     var s=oc.suma, M=MAXSUMA, kom=s===M?(stan.czysta?'🎉 Bezbłędnie!':'🎉 Wszystko poprawione!'):(s>=M-2?'Prawie! Popraw błędy i zrób jeszcze raz od nowa.':'Zajrzyj do wyjaśnień 💡 przy błędach, potem popraw.');
     if(s===M&&stan.czysta&&stan.seria>=3) kom='🏆 Trzy razy z rzędu bezbłędnie — umiesz tę kartkówkę!';
-    h='<div class="wynik"><div class="duzy">'+s+' / '+M+' pkt</div><div class="kom2">'+kom+'</div><div class="kom2" id="wysylka">'+napisWysylki()+'</div></div>';
+    h='<div class="wynik"'+(KARTA.skoczDoBledu?' tabindex="-1"':'')+'><div class="duzy">'+s+' / '+M+' pkt</div><div class="kom2">'+kom+'</div><div class="kom2" id="wysylka">'+napisWysylki()+'</div></div>';
     if(s<M) h+='<button onclick="poprawBledy()">✏️ Popraw tylko błędy</button>';
+    if(s<M&&KARTA.skoczDoBledu) h+='<button class="drugi" onclick="skoczDoBledu()">Zobacz pierwszy błąd</button>';
     h+='<button class="'+(s<M?'drugi':'')+'" onclick="odNowa()">🔄 Od nowa — czysta kartka</button>';
     h+='<div class="rzad"><button class="drugi" id="btnPdf" onclick="pobierzPdf()">⬇️ Pobierz PDF</button><button class="drugi" onclick="drukuj()">🖨️ Drukuj</button></div>';
   }
@@ -291,14 +295,28 @@ function sprawdz(){
   var w=ocen();
   if(stan.czysta){ if(w.suma===MAXSUMA) stan.seria++; else stan.seria=0; }
   stan.wyslana=false; rysuj();
-  stan.kolejka.push({token:RESULTS_TOKEN,przedmiot:KARTA.przedmiot,tytul:KARTA.tytul,score:w.suma,total:MAXSUMA,czysta:stan.czysta,html:zdjecieKartki()});
+  var wysylamy=RESULTS_URL&&RESULTS_TOKEN;
+  if(wysylamy){
+    stan.kolejka.push({token:RESULTS_TOKEN,przedmiot:KARTA.przedmiot,tytul:KARTA.tytul,score:w.suma,total:MAXSUMA,czysta:stan.czysta,html:zdjecieKartki()});
+  }
   zapamietaj(); rysuj(); wyslijKartke();
+  var wynik=document.querySelector('.wynik[tabindex]');
+  if(wynik) wynik.focus({preventScroll:true});
   document.getElementById('dol').scrollIntoView({behavior:'smooth',block:'start'});
-  try{ fetch(RESULTS_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({token:RESULTS_TOKEN,subject:KARTA.przedmiot,title:KARTA.tytul+' — jak na kartce'+(stan.czysta?'':' (poprawa błędów)'),score:w.suma,total:MAXSUMA})}); }catch(e){}
+  if(wysylamy){
+    fetch(RESULTS_URL,{method:'POST',keepalive:true,headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({token:RESULTS_TOKEN,subject:KARTA.przedmiot,title:KARTA.tytul+' — jak na kartce'+(stan.czysta?'':' (poprawa błędów)'),score:w.suma,total:MAXSUMA})}).catch(function(){});
+  }
 }
 
 function uznaj(id){ stan.uznane[id]=true; zapamietaj(); rysuj(); }
+
+function skoczDoBledu(){
+  var odp=document.querySelector('.zad .zle,.zad .opc.blad,.zad .opc.brak');
+  if(!odp) return;
+  var zad=odp.closest('.zad');
+  zad.tabIndex=-1; zad.focus({preventScroll:true}); zad.scrollIntoView({block:'start'});
+}
 
 function poprawBledy(){
   var w=ocen().w;
@@ -362,7 +380,7 @@ function napisWysylki(){
 }
 var WYSYLAM=false;
 function wyslijKartke(){
-  if(WYSYLAM||!stan.kolejka.length) return;
+  if(WYSYLAM||!RESULTS_URL||!RESULTS_TOKEN||!stan.kolejka.length) return;
   WYSYLAM=true;
   var p=stan.kolejka[0];
   p.token=RESULTS_TOKEN||p.token;   // po zmianie tokenu stara kartka z kolejki idzie z aktualnym
@@ -447,8 +465,7 @@ rysuj();
 wyslijKartke();
 </script>
 <script>
-// ---- ladowanie kartki: tresc i klucz odpowiedzi NIE leza w tej stronie ----
-// Strona publiczna to sam silnik; dane przychodza z serwera huba tylko dla przegladarki z kluczem.
+// Chronione kartki są pobierane z huba. Próbne kartki z przekroju działu mają osobny moduł.
 var ZRODLO=/*__ZRODLO__*/null, ID_KARTKI=(new URLSearchParams(location.search).get('id')||'').replace(/[^A-Za-z0-9_]/g,''), API='https://julia-hub-161045418771.europe-west1.run.app';
 var ZAMEK='🔒 Ta klasówka otwiera się tylko na zaufanym urządzeniu.<br><br>Poproś rodzica, żeby raz otworzył tu link z kluczem.<br><br><a class="ponow" style="display:inline-block;line-height:48px;text-decoration:none" href="../klucz.html">🔑 Mam link — wklej klucz</a>';
 function komunikat(t){ document.getElementById('kartka').innerHTML='<div class="zamek">'+t+'</div>'; }
@@ -456,12 +473,31 @@ function uruchomKartke(D){
   document.title=D.tytul;
   document.getElementById('cssDane').textContent=D.css||'';
   document.getElementById('kartka').innerHTML=D.tresc;
+  if(D.powrot){
+    var link=document.createElement('a');
+    link.className='powrot';
+    link.href=D.powrot.href;
+    link.textContent='← '+D.powrot.nazwa;
+    document.querySelector('.pasek').prepend(link);
+  }
   RESULTS_URL=D.wyniki_url; RESULTS_TOKEN=D.wyniki_token;
   try{ if(D.wyniki_token) localStorage.setItem('token_wynikow',D.wyniki_token); }catch(e){}
-  (0,eval)(D.dane);
+  if(D.karta) window.KARTA=D.karta;
+  else (0,eval)(D.dane);
   (0,eval)(document.getElementById('silnik').textContent);
 }
 function pobierz(){
+  var przekroj=/^historia_przekroj_([abc])$/.exec(ID_KARTKI);
+  if(przekroj){
+    komunikat('⏳ Wczytuję kartkę…');
+    import('../Historia/przekroj_dzialu.js').then(function(modul){
+      var D=modul.przygotujKartke(przekroj[1],{jedno:jedno,wybor:wybor});
+      D.wyniki_url=API+'/results';
+      try{ D.wyniki_token=localStorage.getItem('token_wynikow')||''; }catch(e){}
+      uruchomKartke(D);
+    }).catch(function(){ komunikat('⚠️ Nie mogę wczytać kartki. Sprawdź internet.<br><br><button class="ponow" onclick="pobierz()">Spróbuj ponownie</button>'); });
+    return;
+  }
   var k=''; try{ k=localStorage.getItem('klucz_klasowki')||''; }catch(e){}
   if(!k){ komunikat(ZAMEK); return; }
   komunikat('⏳ Wczytuję kartkę…');
