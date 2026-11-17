@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Angielski — urządzenia, used to, czasy przeszłe | Centrum Nauki</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#eef3ee;color:#1c2920;font:18px/1.55 'Segoe UI',Arial,sans-serif;padding:16px 14px 85px}
+main{max-width:860px;margin:auto}
+a{color:#1d6531}
+header{margin:6px 0 22px}
+.back{display:inline-flex;min-height:44px;align-items:center}
+h1{font-size:clamp(27px,5vw,37px);line-height:1.16;margin:8px 0}
+h2{font-size:clamp(22px,4vw,27px);margin:0 0 12px;color:#1e6535}
+h3{font-size:21px;margin:14px 0 8px}
+.card{background:#fff;border-radius:18px;padding:22px;margin:16px 0;box-shadow:0 2px 8px #00000012}
+p{margin:9px 0}ul{margin:8px 0;padding-left:26px}
+li{margin:8px 0}
+blockquote{margin:10px 0;padding:6px 16px;border-left:4px solid #83b791}
+.note{color:#455c4a;background:#f1f7f1;padding:10px 14px;border-radius:10px}
+.item{padding:15px 0;border-top:1px solid #e1e8e1}
+.item:first-child{border-top:0}
+.number{font-weight:700;margin-right:7px}
+.sentence{display:inline;line-height:2.25}
+input[type=text],textarea{font:inherit;color:#0d3080;background:#f7fbff;border:2px solid #aabdb0;border-radius:9px;padding:9px;min-height:48px;max-width:100%}
+input[type=text]:focus,textarea:focus{outline:3px solid #a2cbe8;outline-offset:1px}
+input.blank{width:210px;vertical-align:middle;margin:3px 4px}
+input.blank.short{width:108px}
+textarea{display:block;width:100%;min-height:85px;margin-top:8px;resize:vertical}
+.hint{font-style:italic;color:#515c50}
+.option{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:2px 8px;border-radius:8px;cursor:pointer;white-space:normal}
+.option input{width:22px;height:22px;accent-color:#1f743f}
+.option:has(input:focus-visible){outline:3px solid #a2cbe8}
+.good{background:#e4f5e8!important;border-color:#248346!important}
+.bad{background:#fff0ef!important;border-color:#c33f36!important}
+.solution{display:none;font-size:15px;color:#176334;font-weight:700;margin:4px 0}
+.submitted .solution{display:block}
+.choices{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.selectrow{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+.selectrow select{font:inherit;padding:9px;min-height:48px;min-width:95px;border-radius:8px;border:2px solid #aabdb0;background:#fff}
+.fieldhead{font-weight:700}
+.status{font-size:16px;margin-top:10px;color:#59695c}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0}
+button{font:700 19px 'Segoe UI',Arial,sans-serif;min-height:56px;padding:10px 17px;border-radius:12px;border:2px solid #1f743f;background:#1f743f;color:#fff;cursor:pointer;flex:1}
+button.secondary{background:#fff;color:#1c6534}
+button:focus-visible{outline:3px solid #8bc2a1;outline-offset:3px}
+#result{padding:16px;border-radius:12px;background:#fff;margin:12px 0;font-size:20px;font-weight:700}
+#result[hidden]{display:none}
+.small{font-size:16px;color:#59695c}
+@media(max-width:600px){
+ body{padding:12px 10px 65px;font-size:17px}
+ .card{padding:17px 13px}
+ input.blank{width:155px;max-width:90%}
+ input.blank.short{width:95px}
+ .sentence{line-height:2.6}
+ .option{min-height:50px}
+ button{width:100%;flex-basis:100%}
+}
+@media print{
+ body{background:#fff;padding:0}
+ .back,.actions,.status{display:none!important}
+ .card{box-shadow:none;border:1px solid #ccc;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<main>
+<header>
+<a class="back" href="../index.html">← Centrum Nauki</a>
+<h1>🇬🇧 Angielski — urządzenia, used to, Past Simple i Past Continuous</h1>
+<p class="note">Zadania i przykłady z przekazanych czterech kart pracy, w oryginalnej kolejności. Wypełnij pola, a następnie kliknij „Oddaj kartkę”.</p>
+</header>
+
+<section class="card" aria-labelledby="urzh">
+<h2 id="urzh">Zadanie 1. Napisz zdania o urządzeniach 1-5. Użyj zwrotów z ramki.</h2>
+<p>I have/ I haven’t got　　I like / I don’t like　　My … is/are …..　　I think …. are ….</p>
+<p>Przykład: laptop → My laptop is quite light. (Mój laptop jest dość lekki).</p>
+<div id="devices"></div>
+<p class="status">Odpowiedzi własne — zapisują się na urządzeniu, ale nie mają jednego automatycznego klucza.</p>
+</section>
+
+<section class="card" aria-labelledby="listenh">
+<h2 id="listenh">Zadanie 2. Usłyszysz dwukrotnie cztery wypowiedzi osób na temat problemów z obsługą komputera.</h2>
+<p>Na podstawie informacji zawartych w nagraniu dopasuj do każdej wypowiedzi (1-4) odpowiadające jej zdanie (A-E). UWAGA! Jedno zdanie zostało podane dodatkowo i nie pasuje do żadnej wypowiedzi.</p>
+<p>This speaker</p>
+<p>A) has to reset his/her password.</p>
+<p>B) has to charge the battery.</p>
+<p>C) hasn’t got high-speed Internet.</p>
+<p>D) says his/her computer crashed.</p>
+<p>E) can’t print out document.</p>
+<div id="listening"></div>
+<p class="status">Na przesłanych zdjęciach nie ma nagrania. Odpowiedzi można wpisać, ale nie będą automatycznie sprawdzane.</p>
+</section>
+
+<section class="card" aria-labelledby="theorypast">
+<h2 id="theorypast">Czasy przeszłe: Past Simple i Past Continuous</h2>
+<p>Gdy opowiadamy o przeszłości, często łączymy ze sobą dwa czasy:</p>
+<ul>
+<li><strong>Past Continuous</strong> to czynność <strong>DŁUGA.</strong> Trwała przez jakiś czas i tworzyła tło całej sytuacji (np. czytanie książki, sen, spacer).</li>
+<li><strong>Past Simple</strong> to czynność <strong>KRÓTKA.</strong> Wydarzyła się nagle, trwała chwilę i <strong>przerwała</strong> tę długą czynność (np. dzwonek telefonu, upuszczenie szklanki).</li>
+</ul>
+<h3>Słowa-pomocnicy</h3>
+<ul>
+<li>Po słowie <strong>WHEN</strong> (kiedy / gdy) wstawiamy czynność <strong>krótką (Past Simple).</strong></li>
+<li>Po słowie <strong>WHILE</strong> (podczas gdy) wstawiamy czynność <strong>długą (Past Continuous).</strong></li>
+</ul>
+<h3>Dwa proste przykłady:</h3>
+<ol>
+<li><strong>I was reading a book when the phone rang.</strong>
+<p><em>(Czytałem książkę, kiedy zadzwonił telefon.)</em></p>
+<ul>
+<li>Długa czynność: czytanie książki (<em>was reading</em>).</li>
+<li>Nagle przerwał ją: dzwonek telefonu (<em>rang – po słowie when</em>).</li>
+</ul></li>
+<li><strong>The phone rang while I was reading a book.</strong>
+<p><em>(Telefon zadzwonił, podczas gdy ja czytałem książkę.)</em></p>
+<ul>
+<li>Po słowie <em>while</em> jest długa czynność: czytanie (<em>was reading</em>).</li>
+<li>Krótka czynność, która się wydarzyła: telefon zadzwonił (<em>rang</em>).</li>
+</ul></li>
+</ol>
+</section>
+
+<section class="card" aria-labelledby="pasth">
+<h2 id="pasth">Zadanie 3. Wybierz i zakreśl właściwe słowo:</h2>
+<div id="past"></div>
+</section>
+
+<section class="card" aria-labelledby="usedrule">
+<h2 id="usedrule">Konstrukcja „used to” – przeszłe nawyki</h2>
+<p>Zwrotu <strong>used to</strong> używamy, gdy mówimy o czymś, co <strong>robiliśmy kiedyś regularnie w przeszłości, ale teraz już tego nie robimy</strong> (tłumaczymy to często jako: <em>„kiedyś miałem w zwyczaju...”</em> lub po prostu <em>„kiedyś...”</em>).</p>
+<h3>1. Zdania twierdzące (+)</h3>
+<p>Kiedy chcemy powiedzieć, że coś kiedyś robiliśmy.</p>
+<ul><li><strong>Wzór:</strong> Osoba + <strong>used to</strong> + czynność (podstawowa forma)</li>
+<li><strong>Przykłady:</strong>
+<ul><li>I <strong>used to play</strong> football. <em>(Kiedyś grałem w piłkę nożną – teraz już nie gram).</em></li>
+<li>She <strong>used to drink</strong> milk. <em>(Ona kiedyś piła mleko).</em></li></ul></li></ul>
+<h3>2. Zdania przeczące (−)</h3>
+<p>Kiedy chcemy powiedzieć, że czegoś kiedyś <strong>nie</strong> robiliśmy.</p>
+<p><em>(Uwaga: pojawia się słówko <strong>didn't</strong>, a z <strong>used</strong> znika literka <strong>d</strong> – zostaje <strong>use to</strong>).</em></p>
+<ul><li><strong>Wzór:</strong> Osoba + <strong>didn't use to</strong> + czynność</li>
+<li><strong>Przykłady:</strong>
+<ul><li>I <strong>didn't use to like</strong> apples. <em>(Kiedyś nie lubiłem jabłek).</em></li>
+<li>He <strong>didn't use to swim</strong>. <em>(On kiedyś nie pływał).</em></li></ul></li></ul>
+<h3>3. Pytania (?)</h3>
+<p>Kiedy pytamy, czy ktoś coś kiedyś robił.</p>
+<p><em>(Pytanie zaczynamy od słówka <strong>Did</strong>, a tu również piszemy <strong>use to</strong> bez literki <strong>d</strong>).</em></p>
+<ul><li><strong>Wzór:</strong> <strong>Did</strong> + osoba + <strong>use to</strong> + czynność?</li>
+<li><strong>Przykłady:</strong>
+<ul><li><strong>Did you use to have</strong> a dog? <em>(Czy miałeś kiedyś psa?)</em></li>
+<li><strong>Did they use to live</strong> here? <em>(Czy oni kiedyś tu mieszkali?)</em></li></ul></li></ul>
+<h3>Zapamiętaj prostą zasadę:</h3>
+<p>Literka <strong>-d</strong> na końcu jest tylko w zdaniach twierdzących (<strong>used to</strong>).</p>
+<p>W przeczeniach i pytaniach pojawia się słówko <strong>did / didn't</strong>, dlatego piszemy samo <strong>use to</strong>.</p>
+</section>
+
+<section class="card" aria-labelledby="used1h">
+<h2 id="used1h">ZADANIE 1 Uzupełnij luki właściwą formą: used to, didn't use to lub Did ... use to.</h2>
+<p>W nawiasach podano podpowiedź, jakiego typu jest to zdanie: twierdzenie (+), przeczenie (−) lub pytanie (?).</p>
+<div id="used1"></div>
+</section>
+
+<section class="card" aria-labelledby="used2h">
+<h2 id="used2h">Zadanie 2: Uzupełnij luki w zdaniach odpowiednią formą: used to, didn't use to lub pytaniem z Did ... use to.</h2>
+<p>Wykorzystaj czasownik podany w nawiasie w podstawowej formie.</p>
+<div id="used2"></div>
+</section>
+
+<div class="actions">
+<button id="submit" type="button">✍️ Oddaj kartkę</button>
+<button id="retry" type="button" class="secondary" hidden>🔁 Popraw odpowiedzi</button>
+<button id="reset" type="button" class="secondary">↻ Rozwiąż od nowa</button>
+</div>
+<div id="result" role="status" aria-live="polite" hidden></div>
+<p class="small">Postęp zapisuje się tylko w przeglądarce tego urządzenia. Weryfikacja automatyczna dotyczy 27 pytań zamkniętych i luk. Zdania o urządzeniach i zadanie ze słuchu pozostają do samodzielnego sprawdzenia.</p>
+</main>
+<script>
+(function () {
+'use strict';
+var KEY='centrum_nauki_angielski_karty_20261117';
+var DATA={
+  devices:['game controller','keyboard','touch screen','ink cartridge','printer'],
+  used1:[
+    {s:'I {0} play with blocks when I was five.',hint:'(Kiedyś bawiłem się klockami). (+)',a:['used to']},
+    {s:'She {0} like carrots, but now she loves them.',hint:'(Kiedyś nie lubiła marchewek). (−)',a:["didn't use to"]},
+    {s:'{0} you {1} ride a bike to school?',hint:'(Czy kiedyś jeździłeś do szkoły rowerem?) (?)',a:['Did','use to']},
+    {s:'We {0} have a cat, but now we have a dog.',hint:'(Kiedyś mieliśmy kota). (+)',a:['used to']},
+    {s:'He {0} watch TV in the evening.',hint:'(On kiedyś nie oglądał telewizji). (−)',a:["didn't use to"]}
+  ],
+  used2:[
+    {s:'When I was seven, I {0} (play) with teddy bears.',a:['used to play']},
+    {s:'She {0} (not / like) tomatoes, but now she eats them every day.',a:["didn't use to like"]},
+    {s:'{0} you {1} (have) a dog when you were a child?',a:['Did','use to have']},
+    {s:'My brother {0} (watch) cartoons every morning.',a:['used to watch']},
+    {s:'We {0} (not / drink) green tea, but now we love it.',a:["didn't use to drink"]},
+    {s:'{0} they {1} (live) in a big house?',a:['Did','use to live']},
+    {s:'Tom {0} (ride) his bike to school, but now he takes the bus.',a:['used to ride']},
+    {s:'I {0} (not / wear) glasses in primary school.',a:["didn't use to wear"]},
+    {s:'{0} she {1} (read) books before bed?',a:['Did','use to read']},
+    {s:'My parents {0} (listen) to rock music when they were teenagers.',a:['used to listen']}
+  ],
+  past:[
+    {pre:'I was charging my battery when the phone ',opts:['crashed','was crashing'],post:'.',ok:0},
+    {pre:'The computer stopped while I ',opts:['printed out','was printing out'],post:' the document.',ok:1},
+    {pre:'Tomek was listening to music on his Bluetooth speaker when his mum ',opts:['came','was coming'],post:' into the room.',ok:0},
+    {pre:'She dropped her earphones while she ',opts:['scrolled','was scrolling'],post:' down the screen.',ok:1},
+    {pre:'We were connecting to Wi-Fi when the router ',opts:['turned off','was turning off'],post:'.',ok:0},
+    {pre:'I was setting up my social media account when the Internet connection ',opts:['broke','was breaking'],post:'.',ok:0},
+    {pre:'My brother found a broken USB cable while he ',opts:['cleaned','was cleaning'],post:' his room.',ok:1},
+    {pre:'Ola was using the wireless charger when the electricity ',opts:['went out','was going out'],post:'.',ok:0},
+    {pre:'The laptop screen went black while I ',opts:['reset','was resetting'],post:' my password.',ok:1},
+    {pre:'Mark was scrolling up the webpage when he ',opts:['saw','was seeing'],post:' an interesting photo.',ok:0},
+    {pre:'A message arrived while we ',opts:['watched','were watching'],post:' a video on high-speed Internet.',ok:1},
+    {pre:'I was using a streaming app when the tablet ',opts:['fell','was falling'],post:' to the floor.',ok:0}
+  ]
+};
+var state={a:{},submitted:false,attempts:0};
+try{var saved=JSON.parse(localStorage.getItem(KEY)||'null');if(saved&&typeof saved.a==='object')state=saved;}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function norm(s){return String(s||'').toLowerCase().replace(/[’‘\u0060´]/g,"'").replace(/\s+/g,' ').trim().replace(/\bdid not\b/g,"didn't");}
+function answerOK(v,a){return norm(v)===norm(a);}
+function renderText(t,group,i){
+  return esc(t).replace(/\{([01])\}/g,function(_,num){
+    var id=group+'-'+i+'-'+num, short=group==='used1'&&((i===2&&num==='0')||(i===2&&num==='1'))||group==='used2'&&(num==='0'&&(i===2||i===5||i===8));
+    return '<input class="blank '+(short?'short':'')+'" type="text" data-id="'+id+'" aria-label="Zadanie '+group+', zdanie '+(i+1)+', luka '+(Number(num)+1)+'" autocomplete="off" autocapitalize="off" spellcheck="false">';
+  });
+}
+function renderBlank(group,container){
+  document.getElementById(container).innerHTML=DATA[group].map(function(q,i){
+    return '<div class="item" data-question="'+group+'-'+i+'"><span class="number">'+(i+1)+'.</span><span class="sentence">'+renderText(q.s,group,i)+'</span>'+(q.hint?' <span class="hint">'+esc(q.hint)+'</span>':'')+'<div class="solution"></div></div>';
+  }).join('');
+}
+function renderOther(){
+  document.getElementById('devices').innerHTML=DATA.devices.map(function(d,i){
+    return '<div class="item"><label for="device-'+i+'"><span class="number">'+(i+1)+'.</span>'+esc(d)+' -</label><textarea id="device-'+i+'" data-id="device-'+i+'" aria-label="Zdanie o: '+esc(d)+'"></textarea></div>';
+  }).join('');
+  document.getElementById('listening').innerHTML=[1,2,3,4].map(function(n){
+    return '<div class="item selectrow"><label for="listening-'+n+'">'+n+'.</label><select id="listening-'+n+'" data-id="listening-'+n+'"><option value="">—</option>'+['A','B','C','D','E'].map(function(v){return '<option value="'+v+'">'+v+'</option>';}).join('')+'</select></div>';
+  }).join('');
+  document.getElementById('past').innerHTML=DATA.past.map(function(q,i){
+    var id='past-'+i;
+    return '<div class="item" data-question="'+id+'"><span class="number">'+(i+1)+'.</span><span class="sentence">'+esc(q.pre)+
+      '<span class="choices"><label class="option"><input type="radio" name="'+id+'" value="0" data-id="'+id+'"> '+esc(q.opts[0])+'</label><span>/</span>'+
+      '<label class="option"><input type="radio" name="'+id+'" value="1" data-id="'+id+'"> '+esc(q.opts[1])+'</label></span>'+esc(q.post)+'</span><div class="solution"></div></div>';
+  }).join('');
+  renderBlank('used1','used1');
+  renderBlank('used2','used2');
+}
+function restore(){
+  document.querySelectorAll('[data-id]').forEach(function(el){
+    var id=el.getAttribute('data-id'),v=state.a[id];
+    if(el.type==='radio'){el.checked=String(el.value)===String(v);if(v===undefined)el.checked=false;}
+    else el.value=v===undefined?'':v;
+  });
+}
+function graded(){
+  var good=0,total=0,correct={};
+  ['used1','used2'].forEach(function(group){
+    DATA[group].forEach(function(q,i){
+      total++;
+      var ok=q.a.every(function(a,j){return answerOK(state.a[group+'-'+i+'-'+j],a);});
+      correct[group+'-'+i]=ok;if(ok)good++;
+    });
+  });
+  DATA.past.forEach(function(q,i){
+    total++;
+    var ok=String(state.a['past-'+i])===String(q.ok);
+    correct['past-'+i]=ok;if(ok)good++;
+  });
+  return {good:good,total:total,correct:correct};
+}
+function paint(){
+  document.body.classList.toggle('submitted',!!state.submitted);
+  document.querySelectorAll('.good,.bad').forEach(function(el){el.classList.remove('good','bad');});
+  document.querySelectorAll('.solution').forEach(function(el){el.textContent='';});
+  var score=graded();
+  if(state.submitted){
+    Object.keys(score.correct).forEach(function(qid){
+      var row=document.querySelector('[data-question="'+qid+'"]');
+      if(!row)return;
+      var ok=score.correct[qid]; var inputs=row.querySelectorAll('input');
+      inputs.forEach(function(el){el.classList.add(ok?'good':'bad'); if(el.type==='radio'){el.closest('label').classList.add(ok?'good':'bad');}});
+      if(!ok){
+        var parts=qid.split('-'),set=parts[0],index=Number(parts[1]),sol=row.querySelector('.solution');
+        sol.textContent='✔ '+(set==='past'?DATA.past[index].opts[DATA.past[index].ok]:DATA[set][index].a.join(' … '));
+      }
+    });
+  }
+  var result=document.getElementById('result');
+  result.hidden=!state.submitted;
+  if(state.submitted){result.textContent='Wynik: '+score.good+' / '+score.total+' punktów. Zielone = poprawnie, czerwone = do poprawy.';}
+  document.getElementById('retry').hidden=!state.submitted;
+  document.getElementById('submit').hidden=!!state.submitted;
+  document.querySelectorAll('input,textarea,select').forEach(function(el){el.disabled=!!state.submitted;});
+}
+renderOther();restore();
+document.addEventListener('input',function(e){
+  var el=e.target,id=el.getAttribute('data-id');if(!id||state.submitted)return;
+  state.a[id]=el.value;save();
+});
+document.addEventListener('change',function(e){
+  var el=e.target,id=el.getAttribute('data-id');if(!id||state.submitted)return;
+  state.a[id]=el.value;save();
+});
+document.getElementById('submit').addEventListener('click',function(){
+  state.submitted=true;state.attempts=(state.attempts||0)+1;save();paint();
+  document.getElementById('result').scrollIntoView({behavior:'smooth',block:'center'});
+});
+document.getElementById('retry').addEventListener('click',function(){
+  state.submitted=false;save();paint();
+});
+document.getElementById('reset').addEventListener('click',function(){
+  if(!window.confirm('Usunąć wszystkie wpisane odpowiedzi i rozpocząć od nowa?'))return;
+  state={a:{},submitted:false,attempts:0};save();restore();paint();window.scrollTo(0,0);
+});
+paint();
+})();
+</script>
+</body>
+</html>
