@@ -168,13 +168,24 @@ button:focus-visible{outline:3px solid #8bc2a1;outline-offset:3px}
 <div id="used2"></div>
 </section>
 
+<section class="card" aria-labelledby="exampleh">
+<h2 id="exampleh">Ćwiczenie dodatkowe: uzupełnij wszystkie zdania z przykładów</h2>
+<p class="note">To dokładnie te same zdania przykładowe z kart pracy. Uzupełnij brakujące słowa samodzielnie. Zdania i polskie objaśnienia pozostają takie jak w materiale.</p>
+<h3>Przykład: laptop</h3>
+<div id="exampleDevice"></div>
+<h3>Dwa proste przykłady: Past Simple i Past Continuous</h3>
+<div id="examplePast"></div>
+<h3>Przykłady: used to</h3>
+<div id="exampleUsed"></div>
+</section>
+
 <div class="actions">
 <button id="submit" type="button">✍️ Oddaj kartkę</button>
 <button id="retry" type="button" class="secondary" hidden>🔁 Popraw odpowiedzi</button>
 <button id="reset" type="button" class="secondary">↻ Rozwiąż od nowa</button>
 </div>
 <div id="result" role="status" aria-live="polite" hidden></div>
-<p class="small">Postęp zapisuje się tylko w przeglądarce tego urządzenia. Weryfikacja automatyczna dotyczy 27 pytań zamkniętych i luk. Zdania o urządzeniach i zadanie ze słuchu pozostają do samodzielnego sprawdzenia.</p>
+<p class="small">Postęp zapisuje się tylko w przeglądarce tego urządzenia. Weryfikacja automatyczna dotyczy 36 pytań zamkniętych i luk, w tym wszystkich 9 zdań z przykładów. Własne zdania o urządzeniach i zadanie ze słuchu pozostają do samodzielnego sprawdzenia.</p>
 </main>
 <script>
 (function () {
@@ -182,6 +193,21 @@ button:focus-visible{outline:3px solid #8bc2a1;outline-offset:3px}
 var KEY='centrum_nauki_angielski_karty_20261117';
 var DATA={
   devices:['game controller','keyboard','touch screen','ink cartridge','printer'],
+  exampleDevice:[
+    {s:'My laptop {0}.',hint:'(Mój laptop jest dość lekki).',a:['is quite light']}
+  ],
+  examplePast:[
+    {s:'I {0} a book when the phone {1}.',hint:'(Czytałem książkę, kiedy zadzwonił telefon.)',a:['was reading','rang']},
+    {s:'The phone {0} while I {1} a book.',hint:'(Telefon zadzwonił, podczas gdy ja czytałem książkę.)',a:['rang','was reading']}
+  ],
+  exampleUsed:[
+    {s:'I {0} football.',hint:'(Kiedyś grałem w piłkę nożną – teraz już nie gram).',a:['used to play']},
+    {s:'She {0} milk.',hint:'(Ona kiedyś piła mleko).',a:['used to drink']},
+    {s:'I {0} apples.',hint:'(Kiedyś nie lubiłem jabłek).',a:["didn't use to like"]},
+    {s:'He {0}.',hint:'(On kiedyś nie pływał).',a:["didn't use to swim"]},
+    {s:'{0} you {1} a dog?',hint:'(Czy miałeś kiedyś psa?)',a:['Did','use to have']},
+    {s:'{0} they {1} here?',hint:'(Czy oni kiedyś tu mieszkali?)',a:['Did','use to live']}
+  ],
   used1:[
     {s:'I {0} play with blocks when I was five.',hint:'(Kiedyś bawiłem się klockami). (+)',a:['used to']},
     {s:'She {0} like carrots, but now she loves them.',hint:'(Kiedyś nie lubiła marchewek). (−)',a:["didn't use to"]},
@@ -248,6 +274,9 @@ function renderOther(){
   }).join('');
   renderBlank('used1','used1');
   renderBlank('used2','used2');
+  renderBlank('exampleDevice','exampleDevice');
+  renderBlank('examplePast','examplePast');
+  renderBlank('exampleUsed','exampleUsed');
 }
 function restore(){
   document.querySelectorAll('[data-id]').forEach(function(el){
@@ -258,7 +287,7 @@ function restore(){
 }
 function graded(){
   var good=0,total=0,correct={};
-  ['used1','used2'].forEach(function(group){
+  ['used1','used2','exampleDevice','examplePast','exampleUsed'].forEach(function(group){
     DATA[group].forEach(function(q,i){
       total++;
       var ok=q.a.every(function(a,j){return answerOK(state.a[group+'-'+i+'-'+j],a);});
